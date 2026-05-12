@@ -1,0 +1,12 @@
+@use 'tokens' as *;
+
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid #e8f2fc;
+  outline-offset: 2px;
+}

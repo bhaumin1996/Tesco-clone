@@ -1,0 +1,14 @@
+bin/
+obj/
+node_modules/
+dist/
+.angular/
+.npm-cache/
+.npm-appdata/
+dev-server*.log
+.vs/
+*.user
+TestResults/
+coverage/
+*.env
+.env

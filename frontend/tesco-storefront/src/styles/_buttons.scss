@@ -1,0 +1,15 @@
+@use 'tokens' as *;
+
+.button {
+  border: 0;
+  border-radius: $radius-md;
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 44px;
+  padding: 0 1rem;
+}
+
+.button--primary {
+  background: $color-tesco-blue;
+  color: $color-surface;
+}

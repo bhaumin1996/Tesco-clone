@@ -1,0 +1,8 @@
+@use 'tokens' as *;
+
+body {
+  color: $color-ink;
+  font-family: $font-family-base;
+  font-size: 1rem;
+  line-height: 1.5;
+}

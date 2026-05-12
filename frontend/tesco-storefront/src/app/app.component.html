@@ -1,0 +1,38 @@
+<header class="storefront-shell__header">
+  <div class="storefront-shell__container storefront-shell__header-inner">
+    <a class="storefront-shell__brand" href="/" aria-label="Tesco Clone home">Tesco Clone</a>
+    <form class="storefront-shell__search" role="search">
+      <label class="storefront-shell__search-label" for="storefront-search">Search groceries</label>
+      <input id="storefront-search" class="storefront-shell__search-input" type="search" placeholder="Search groceries" />
+      <button class="button button--primary" type="submit">Search</button>
+    </form>
+    <nav class="storefront-shell__actions" aria-label="Customer actions">
+      <a href="/account">Sign in</a>
+      <a href="/basket">Basket</a>
+    </nav>
+  </div>
+  <nav class="storefront-shell__nav" aria-label="Departments">
+    <div class="storefront-shell__container storefront-shell__nav-list">
+      <a href="/groceries">Groceries</a>
+      <a href="/offers">Offers</a>
+      <a href="/clubcard">Clubcard</a>
+      <a href="/recipes">Recipes</a>
+      <a href="/delivery">Delivery</a>
+    </div>
+  </nav>
+</header>
+
+<main class="storefront-shell__main">
+  <section class="storefront-shell__container storefront-shell__hero">
+    <div>
+      <p class="storefront-shell__eyebrow">Fresh foundations</p>
+      <h1>Shop weekly groceries with fast search and clear offers.</h1>
+      <p>Storefront routes, product discovery, basket, delivery slots, and Clubcard flows will build from this shell.</p>
+    </div>
+    <div class="storefront-shell__promo" aria-label="Clubcard offer preview">
+      <span>Clubcard Prices</span>
+      <strong>Value-first grocery UI</strong>
+    </div>
+  </section>
+  <router-outlet />
+</main>

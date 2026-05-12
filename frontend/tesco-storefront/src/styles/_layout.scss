@@ -1,0 +1,7 @@
+@use 'tokens' as *;
+
+.page-container {
+  margin: 0 auto;
+  max-width: $container-max;
+  padding: 0 1rem;
+}
