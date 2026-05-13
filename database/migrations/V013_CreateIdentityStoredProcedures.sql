@@ -1,9 +1,7 @@
--- V013_CreateIdentityStoredProcedures.sql
--- Author: Tesco Clone
--- Date: 2026-05-13
--- Description: Create stored procedures for the Identity module
--- Dependencies: V001-V005
 -- Roles: Admin=1, Customer=2, Seller=3
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 
 BEGIN TRY
     BEGIN TRANSACTION;
@@ -30,6 +28,9 @@ GO
 -- =========================================================
 -- proc_Identity_GetUserByEmail
 -- =========================================================
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 CREATE PROCEDURE proc_Identity_GetUserByEmail
     @Email NVARCHAR(256)
 AS
@@ -64,6 +65,9 @@ GO
 -- =========================================================
 -- proc_Identity_GetUserById
 -- =========================================================
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 CREATE PROCEDURE proc_Identity_GetUserById
     @UserId INT
 AS
@@ -98,6 +102,9 @@ GO
 -- =========================================================
 -- proc_Identity_CheckEmailExists
 -- =========================================================
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 CREATE PROCEDURE proc_Identity_CheckEmailExists
     @Email NVARCHAR(256)
 AS
@@ -120,6 +127,9 @@ GO
 -- =========================================================
 -- proc_Identity_CreateUser
 -- =========================================================
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 CREATE PROCEDURE proc_Identity_CreateUser
     @FirstName    NVARCHAR(100),
     @LastName     NVARCHAR(100),
@@ -164,6 +174,9 @@ GO
 -- =========================================================
 -- proc_Identity_UpdateUser
 -- =========================================================
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 CREATE PROCEDURE proc_Identity_UpdateUser
     @UserId              INT,
     @Status              TINYINT,
@@ -203,6 +216,9 @@ GO
 -- =========================================================
 -- proc_Identity_GetUserRoles
 -- =========================================================
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 CREATE PROCEDURE proc_Identity_GetUserRoles
     @UserId INT
 AS
@@ -226,6 +242,9 @@ GO
 -- =========================================================
 -- proc_Identity_SaveRefreshToken
 -- =========================================================
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 CREATE PROCEDURE proc_Identity_SaveRefreshToken
     @UserId    INT,
     @TokenHash NVARCHAR(512),
@@ -248,6 +267,9 @@ GO
 -- =========================================================
 -- proc_Identity_ValidateRefreshToken
 -- =========================================================
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 CREATE PROCEDURE proc_Identity_ValidateRefreshToken
     @UserId    INT,
     @TokenHash NVARCHAR(512)
@@ -273,6 +295,9 @@ GO
 -- =========================================================
 -- proc_Identity_RevokeRefreshToken
 -- =========================================================
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 CREATE PROCEDURE proc_Identity_RevokeRefreshToken
     @UserId    INT,
     @TokenHash NVARCHAR(512)

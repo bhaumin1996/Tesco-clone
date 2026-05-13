@@ -17,13 +17,20 @@ public static class SqlHelper
         IEnumerable<SqlParameter>? parameters = null,
         CancellationToken cancellationToken = default)
     {
-        await connection.OpenAsync(cancellationToken);
-        using var command = BuildCommand(connection, storedProcedure, parameters);
-        using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        var results = new List<T>();
-        while (await reader.ReadAsync(cancellationToken))
-            results.Add(map(reader));
-        return results;
+        try
+        {
+            await OpenAndSetupConnectionAsync(connection, cancellationToken);
+            using var command = BuildCommand(connection, storedProcedure, parameters);
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            var results = new List<T>();
+            while (await reader.ReadAsync(cancellationToken))
+                results.Add(map(reader));
+            return results;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error executing reader for stored procedure: {storedProcedure}", ex);
+        }
     }
 
     public static async Task<T?> ExecuteReaderSingleAsync<T>(
@@ -33,10 +40,17 @@ public static class SqlHelper
         IEnumerable<SqlParameter>? parameters = null,
         CancellationToken cancellationToken = default)
     {
-        await connection.OpenAsync(cancellationToken);
-        using var command = BuildCommand(connection, storedProcedure, parameters);
-        using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        return await reader.ReadAsync(cancellationToken) ? map(reader) : default;
+        try
+        {
+            await OpenAndSetupConnectionAsync(connection, cancellationToken);
+            using var command = BuildCommand(connection, storedProcedure, parameters);
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            return await reader.ReadAsync(cancellationToken) ? map(reader) : default;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error executing single reader for stored procedure: {storedProcedure}", ex);
+        }
     }
 
     public static async Task<int> ExecuteScalarAsync(
@@ -45,10 +59,17 @@ public static class SqlHelper
         IEnumerable<SqlParameter>? parameters = null,
         CancellationToken cancellationToken = default)
     {
-        await connection.OpenAsync(cancellationToken);
-        using var command = BuildCommand(connection, storedProcedure, parameters);
-        var result = await command.ExecuteScalarAsync(cancellationToken);
-        return Convert.ToInt32(result, System.Globalization.CultureInfo.InvariantCulture);
+        try
+        {
+            await OpenAndSetupConnectionAsync(connection, cancellationToken);
+            using var command = BuildCommand(connection, storedProcedure, parameters);
+            var result = await command.ExecuteScalarAsync(cancellationToken);
+            return Convert.ToInt32(result, System.Globalization.CultureInfo.InvariantCulture);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error executing scalar for stored procedure: {storedProcedure}", ex);
+        }
     }
 
     public static async Task ExecuteNonQueryAsync(
@@ -57,9 +78,16 @@ public static class SqlHelper
         IEnumerable<SqlParameter>? parameters = null,
         CancellationToken cancellationToken = default)
     {
-        await connection.OpenAsync(cancellationToken);
-        using var command = BuildCommand(connection, storedProcedure, parameters);
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        try
+        {
+            await OpenAndSetupConnectionAsync(connection, cancellationToken);
+            using var command = BuildCommand(connection, storedProcedure, parameters);
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error executing non-query for stored procedure: {storedProcedure}", ex);
+        }
     }
 
     public static T GetValue<T>(SqlDataReader reader, string column) =>
@@ -70,6 +98,13 @@ public static class SqlHelper
 
     public static string? GetNullableString(SqlDataReader reader, string column) =>
         reader[column] == DBNull.Value ? null : (string)reader[column];
+
+    private static async Task OpenAndSetupConnectionAsync(SqlConnection connection, CancellationToken cancellationToken)
+    {
+        await connection.OpenAsync(cancellationToken);
+        using var command = new SqlCommand("SET QUOTED_IDENTIFIER ON;", connection);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
 
     private static SqlCommand BuildCommand(
         SqlConnection connection,
