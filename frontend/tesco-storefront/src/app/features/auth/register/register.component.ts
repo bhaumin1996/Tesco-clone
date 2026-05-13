@@ -46,7 +46,7 @@ export class RegisterComponent {
       email: v.email!,
       password: v.password!
     }).subscribe({
-      next: () => this._router.navigate(['/']),
+      next: () => { this.loading.set(false); this._router.navigate(['/account']); },
       error: (err) => {
         this.loading.set(false);
         this._notifications.error(err?.error?.error?.message ?? 'Registration failed. Please try again.');

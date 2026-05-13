@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminAuthService } from '../../../core/services/admin-auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-admin-login',
@@ -20,6 +21,8 @@ export class AdminLoginComponent {
   protected step = signal<'login' | '2fa'>('login');
   protected loading = signal(false);
   protected error = signal('');
+  protected devCode = signal('');
+  protected readonly isDev = !environment.production;
 
   protected loginForm = this._fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -38,8 +41,14 @@ export class AdminLoginComponent {
     this._auth.login(email!, password!).subscribe({
       next: r => {
         this.loading.set(false);
-        if (r.requiresTwoFactor) { this.step.set('2fa'); }
-        else { this._router.navigate(['/dashboard']); }
+        if (r.twoFactorToken) {
+          // twoFactorToken format: "{userId}:{code}" — expose code in dev for testability
+          const code = r.twoFactorToken.split(':')[1] ?? '';
+          this.devCode.set(code);
+          this.step.set('2fa');
+        } else {
+          this._router.navigate(['/dashboard']);
+        }
       },
       error: () => { this.loading.set(false); this.error.set('Invalid email or password.'); }
     });

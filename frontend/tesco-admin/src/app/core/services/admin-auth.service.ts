@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { tap, catchError, throwError } from 'rxjs';
+import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface AdminUser {
@@ -12,12 +12,27 @@ export interface AdminUser {
   role: string;
 }
 
-export interface AdminLoginResponse {
-  requiresTwoFactor: boolean;
-  tempToken?: string;
-  accessToken?: string;
-  refreshToken?: string;
-  user?: AdminUser;
+// Matches AdminLoginResultDto from the backend
+interface AdminLoginApiResponse {
+  userId: number;
+  twoFactorToken: string;
+}
+
+// Matches AuthResultDto from the backend
+interface VerifyTwoFactorApiResponse {
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string | null;
+    roles: string[];
+  };
+  token: {
+    accessToken: string;
+    refreshToken: string;
+    expiresAt: string;
+  };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -27,7 +42,7 @@ export class AdminAuthService {
 
   private readonly _user = signal<AdminUser | null>(this._loadUser());
   private readonly _token = signal<string | null>(localStorage.getItem('admin_token'));
-  private _tempToken = '';
+  private _pendingUserId = 0;
 
   readonly user = this._user.asReadonly();
   readonly isAuthenticated = computed(() => this._user() !== null);
@@ -35,27 +50,32 @@ export class AdminAuthService {
   private get baseUrl() { return `${environment.apiUrl}/admin`; }
 
   login(email: string, password: string) {
-    return this._http.post<AdminLoginResponse>(`${this.baseUrl}/auth/login`, { email, password }).pipe(
-      tap(r => {
-        if (!r.requiresTwoFactor && r.accessToken && r.user) {
-          this._storeSession(r.accessToken, r.refreshToken ?? '', r.user);
-        } else if (r.tempToken) {
-          this._tempToken = r.tempToken;
-        }
-      })
+    return this._http.post<AdminLoginApiResponse>(`${this.baseUrl}/auth/login`, { email, password }).pipe(
+      tap(r => { this._pendingUserId = r.userId; })
     );
   }
 
   verifyTwoFactor(code: string) {
-    return this._http.post<AdminLoginResponse>(`${this.baseUrl}/auth/verify-2fa`, { tempToken: this._tempToken, code }).pipe(
+    return this._http.post<VerifyTwoFactorApiResponse>(
+      `${this.baseUrl}/auth/verify-2fa`,
+      { userId: this._pendingUserId, code }
+    ).pipe(
       tap(r => {
-        if (r.accessToken && r.user) this._storeSession(r.accessToken, r.refreshToken ?? '', r.user);
+        const adminUser: AdminUser = {
+          id: r.user.id,
+          firstName: r.user.firstName,
+          lastName: r.user.lastName,
+          email: r.user.email,
+          role: r.user.roles[0] ?? 'Admin'
+        };
+        this._storeSession(r.token.accessToken, r.token.refreshToken, adminUser);
       })
     );
   }
 
   logout() {
     localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_refresh');
     localStorage.removeItem('admin_user');
     this._token.set(null);
     this._user.set(null);

@@ -53,7 +53,13 @@
 
     @if (step() === '2fa') {
       <h1 class="login-card__title">Two-factor authentication</h1>
-      <p class="login-card__subtitle">Enter the 6-digit code from your authenticator app</p>
+      <p class="login-card__subtitle">Enter the 6-digit code sent to your email or phone</p>
+
+      @if (isDev && devCode()) {
+        <div class="login-dev-hint" role="note">
+          <strong>Dev mode — your code:</strong> {{ devCode() }}
+        </div>
+      }
 
       @if (error()) {
         <div class="login-alert" role="alert">{{ error() }}</div>

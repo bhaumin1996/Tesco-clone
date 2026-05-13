@@ -18,7 +18,7 @@ public sealed class SecurityHeadersMiddleware
         headers["X-XSS-Protection"] = "0";
         headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
         headers["Cross-Origin-Opener-Policy"] = "same-origin";
-        headers["Cross-Origin-Resource-Policy"] = "same-origin";
+        headers["Cross-Origin-Resource-Policy"] = "cross-origin";
 
         headers["Permissions-Policy"] =
             "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()";
@@ -35,11 +35,14 @@ public sealed class SecurityHeadersMiddleware
             headers["Pragma"] = "no-cache";
         }
 
-        await _next(context);
-
-        // HSTS is added here for non-HTTPS enforcement awareness in logs;
-        // actual HSTS is applied by UseHttpsRedirection() in the pipeline.
+        // HSTS must be added before the response starts.
+        // actual HSTS is applied by UseHttpsRedirection() in the pipeline,
+        // but we add it here as well for consistency.
         if (context.Request.IsHttps)
+        {
             headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
+        }
+
+        await _next(context);
     }
 }

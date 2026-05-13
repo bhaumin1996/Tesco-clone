@@ -37,12 +37,15 @@ BEGIN TRY
     IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 't' AND TABLE_NAME = 'tblUserRole')
     BEGIN
         CREATE TABLE t.tblUserRole (
-            Id         INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-            UserId     INT NOT NULL,
-            RoleId     INT NOT NULL,
-            CreatedBy  INT NOT NULL,
-            CreatedOn  DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-            IsDeleted  BIT NOT NULL DEFAULT 0,
+            Id             INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+            UserId         INT NOT NULL,
+            RoleId         INT NOT NULL,
+            RecordStatusId TINYINT NOT NULL DEFAULT 1,
+            CreatedBy      INT NOT NULL,
+            CreatedOn      DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+            ModifiedBy     INT NULL,
+            ModifiedOn     DATETIME2 NULL,
+            IsDeleted      BIT NOT NULL DEFAULT 0,
             CONSTRAINT FK_tblUserRole_tblUser FOREIGN KEY (UserId) REFERENCES t.tblUser (Id),
             CONSTRAINT FK_tblUserRole_tblRole FOREIGN KEY (RoleId) REFERENCES m.tblRole (Id)
         );

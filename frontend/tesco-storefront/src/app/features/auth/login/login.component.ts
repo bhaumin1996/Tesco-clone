@@ -38,11 +38,15 @@ export class LoginComponent {
     this.loading.set(true);
     const { email, password } = this.form.getRawValue();
     this._auth.login({ email: email!, password: password! }).subscribe({
-      next: () => {
-        const returnUrl = this._route.snapshot.queryParamMap.get('returnUrl') ?? '/';
+      next: (response) => {        
+        console.log('Login successful:', response);
+        this.loading.set(false);
+        const returnUrl = this._route.snapshot.queryParamMap.get('returnUrl') ?? '/account';
+        console.log('Navigating to:', returnUrl);
         this._router.navigateByUrl(returnUrl);
       },
       error: (err) => {
+        console.error('Login error:', err);
         this.loading.set(false);
         this._notifications.error(err?.error?.error?.message ?? 'Invalid email or password');
       }

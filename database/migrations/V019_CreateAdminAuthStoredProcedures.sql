@@ -8,17 +8,20 @@ BEGIN TRY
     BEGIN TRANSACTION;
 
     -- Admin 2FA codes table
-    IF NOT EXISTS (SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID(N't.tblAdminTwoFactorCode') AND type = 'U')
+    IF NOT EXISTS (
+        SELECT 1 FROM INFORMATION_SCHEMA.TABLES
+        WHERE TABLE_SCHEMA = 't' AND TABLE_NAME = 'tblAdminTwoFactorCode'
+    )
     BEGIN
         CREATE TABLE t.tblAdminTwoFactorCode (
-            Id           INT IDENTITY(1,1) PRIMARY KEY,
+            Id           INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
             UserId       INT NOT NULL,
             CodeHash     NVARCHAR(512) NOT NULL,
             ExpiresAt    DATETIME2 NOT NULL,
             IsConsumed   BIT NOT NULL DEFAULT 0,
             ConsumedOn   DATETIME2 NULL,
             CreatedOn    DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
-            CONSTRAINT FK_tblAdminTwoFactorCode_tblUser FOREIGN KEY (UserId) REFERENCES t.tblUser(Id)
+            CONSTRAINT FK_tblAdminTwoFactorCode_tblUser FOREIGN KEY (UserId) REFERENCES t.tblUser (Id)
         );
         CREATE INDEX IX_tblAdminTwoFactorCode_UserId ON t.tblAdminTwoFactorCode (UserId);
     END
@@ -239,12 +242,10 @@ BEGIN
         BEGIN TRANSACTION;
 
         UPDATE t.tblUserRole
-        SET IsDeleted  = 1,
-            RecordStatusId = 3,
-            ModifiedBy = @AdminId,
-            ModifiedOn = GETUTCDATE()
-        WHERE UserId   = @UserId
-          AND RoleId   = @RoleId
+        SET IsDeleted      = 1,
+            RecordStatusId = 3
+        WHERE UserId    = @UserId
+          AND RoleId    = @RoleId
           AND IsDeleted = 0;
 
         INSERT INTO t.tblAuditLog (TableName, RecordId, Action, NewValues, ChangedBy, ChangedOn)
