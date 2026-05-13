@@ -1,0 +1,31 @@
+@use '../../../styles/tokens' as *;
+
+.audit-tabs {
+  display: flex; border-bottom: 2px solid $color-border; margin-bottom: 1.25rem;
+}
+
+.audit-tab {
+  background: none; border: none; cursor: pointer; padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem; color: $color-muted; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  &.active { color: $color-tesco-blue; border-bottom-color: $color-tesco-blue; font-weight: 600; }
+  &:hover:not(.active) { color: $color-text-primary; }
+}
+
+.audit-filters {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  padding: 1rem 1.25rem; border-bottom: 1px solid $color-border;
+}
+
+.audit-action {
+  display: inline-block; font-size: 0.75rem; font-weight: 700; border-radius: 9999px;
+  padding: 2px 8px; background: #e8f2fc; color: $color-tesco-blue;
+  &--insert { background: #e6f4ed; color: #1a7340; }
+  &--update { background: #fff3e0; color: #8a4800; }
+  &--delete { background: #fde8ec; color: #a0001e; }
+}
+
+.audit-summary { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.8125rem; }
+
+.log-corr { font-size: 0.75rem; color: $color-muted; font-family: monospace; }
+
+.log-row--error { background: #fff8f8; }

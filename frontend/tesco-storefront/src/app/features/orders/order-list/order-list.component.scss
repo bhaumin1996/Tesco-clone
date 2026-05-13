@@ -1,0 +1,25 @@
+@use '../../../../styles/tokens' as *;
+
+.orders-list { display: flex; flex-direction: column; gap: $space-3; }
+
+.order-card {
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease;
+
+  &:hover { box-shadow: $shadow-popover; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-3 $space-4;
+    border-bottom: 1px solid $color-border;
+  }
+
+  &__number { font-weight: 700; font-size: $font-size-sm; }
+  &__date { font-size: $font-size-xs; color: $color-muted; }
+  &__body { padding: $space-3 $space-4; display: flex; gap: $space-5; font-size: $font-size-sm; flex-wrap: wrap; }
+  &__items, &__delivery { color: $color-muted; }
+  &__total { font-weight: 700; margin-left: auto; }
+}

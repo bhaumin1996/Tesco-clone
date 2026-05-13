@@ -1,0 +1,155 @@
+<div class="page-container page-content">
+  <h1 class="checkout-title">Checkout</h1>
+
+  <!-- Progress steps -->
+  <div class="checkout-steps">
+    <div class="checkout-step" [class.active]="step() >= 1" [class.done]="step() > 1">
+      <span class="checkout-step__num">1</span>
+      <span class="checkout-step__label">Delivery</span>
+    </div>
+    <div class="checkout-step__line"></div>
+    <div class="checkout-step" [class.active]="step() >= 2" [class.done]="step() > 2">
+      <span class="checkout-step__num">2</span>
+      <span class="checkout-step__label">Payment</span>
+    </div>
+    <div class="checkout-step__line"></div>
+    <div class="checkout-step" [class.active]="step() >= 3">
+      <span class="checkout-step__num">3</span>
+      <span class="checkout-step__label">Review</span>
+    </div>
+  </div>
+
+  <div class="checkout-layout">
+    <!-- Main form -->
+    <div class="checkout-main">
+      <!-- Step 1: Delivery address -->
+      @if (step() === 1) {
+        <div class="card">
+          <div class="card__header">Delivery address</div>
+          <div class="card__body">
+            <form [formGroup]="addressForm" novalidate>
+              <div class="checkout-name-row">
+                <div class="form-group">
+                  <label class="form-label" for="firstName">First name</label>
+                  <input id="firstName" type="text" class="form-control" formControlName="firstName" autocomplete="given-name" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="lastName">Last name</label>
+                  <input id="lastName" type="text" class="form-control" formControlName="lastName" autocomplete="family-name" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="addr1">Address line 1</label>
+                <input id="addr1" type="text" class="form-control" formControlName="addressLine1" autocomplete="address-line1" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="addr2">Address line 2 (optional)</label>
+                <input id="addr2" type="text" class="form-control" formControlName="addressLine2" autocomplete="address-line2" />
+              </div>
+              <div class="checkout-name-row">
+                <div class="form-group">
+                  <label class="form-label" for="city">Town / City</label>
+                  <input id="city" type="text" class="form-control" formControlName="city" autocomplete="address-level2" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="postcode">Postcode</label>
+                  <input id="postcode" type="text" class="form-control" formControlName="postcode" autocomplete="postal-code" placeholder="SW1A 1AA" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
+
+      <!-- Step 2: Payment -->
+      @if (step() === 2) {
+        <div class="card">
+          <div class="card__header">Payment details</div>
+          <div class="card__body">
+            <form [formGroup]="paymentForm" novalidate>
+              <div class="form-group">
+                <label class="form-label" for="cardNumber">Card number</label>
+                <input id="cardNumber" type="text" class="form-control" formControlName="cardNumber" placeholder="1234 5678 9012 3456" maxlength="16" autocomplete="cc-number" />
+              </div>
+              <div class="checkout-name-row">
+                <div class="form-group">
+                  <label class="form-label" for="expiry">Expiry date</label>
+                  <input id="expiry" type="text" class="form-control" formControlName="expiryDate" placeholder="MM/YY" autocomplete="cc-exp" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="cvv">CVV</label>
+                  <input id="cvv" type="text" class="form-control" formControlName="cvv" placeholder="123" maxlength="4" autocomplete="cc-csc" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="nameOnCard">Name on card</label>
+                <input id="nameOnCard" type="text" class="form-control" formControlName="nameOnCard" autocomplete="cc-name" />
+              </div>
+              <div class="checkout-accept-options">
+                <label class="checkout-checkbox">
+                  <input type="checkbox" formControlName="acceptSubstitutions" />
+                  <span>I accept suitable substitutions if any item is unavailable</span>
+                </label>
+                @if (cartService.cart()?.hasAgeRestrictedItems) {
+                  <label class="checkout-checkbox">
+                    <input type="checkbox" formControlName="ageConfirmed" />
+                    <span>I confirm that I am 18 or over and all recipients of age-restricted products are 18 or over</span>
+                  </label>
+                }
+              </div>
+            </form>
+          </div>
+        </div>
+      }
+
+      <!-- Step 3: Review -->
+      @if (step() === 3) {
+        <div class="card">
+          <div class="card__header">Review your order</div>
+          <div class="card__body">
+            @if (cartService.cart()) {
+              @for (item of cartService.cart()!.items; track item.id) {
+                <div class="review-item">
+                  <span class="review-item__name">{{ item.productName }}</span>
+                  <span class="review-item__qty">× {{ item.quantity }}</span>
+                  <span class="review-item__price">£{{ item.lineTotal | number:'1.2-2' }}</span>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Navigation -->
+      <div class="checkout-nav">
+        @if (step() > 1) {
+          <button class="button button--secondary" (click)="prevStep()">Back</button>
+        } @else {
+          <a routerLink="/cart" class="button button--secondary">Back to basket</a>
+        }
+        @if (step() < 3) {
+          <button class="button button--primary" (click)="nextStep()">Continue</button>
+        } @else {
+          <button class="button button--primary" [disabled]="submitting()" (click)="placeOrder()">
+            @if (submitting()) { Placing order... } @else { Place order }
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Order summary -->
+    <aside class="checkout-summary card">
+      <div class="card__header">Your order</div>
+      <div class="card__body">
+        @if (cartService.cart()) {
+          @let c = cartService.cart()!;
+          <div class="summary-row"><span>Subtotal</span><span>£{{ c.subtotal | number:'1.2-2' }}</span></div>
+          @if (c.clubcardSavings > 0) { <div class="summary-row"><span>Clubcard savings</span><span>-£{{ c.clubcardSavings | number:'1.2-2' }}</span></div> }
+          <div class="summary-row"><span>Delivery</span><span>{{ c.deliveryCharge === 0 ? 'Free' : '£' + (c.deliveryCharge | number:'1.2-2') }}</span></div>
+          <hr style="border-color: #d8dde6; margin: 0.5rem 0" />
+          <div class="summary-row" style="font-weight: 700; font-size: 1.125rem"><span>Total</span><span>£{{ c.total | number:'1.2-2' }}</span></div>
+        }
+      </div>
+    </aside>
+  </div>
+</div>

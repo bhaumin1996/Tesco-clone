@@ -1,0 +1,102 @@
+<main class="home">
+  <!-- Department Roundels -->
+  <section class="home__roundels">
+    <div class="page-container">
+      @if (loading()) {
+        <app-spinner />
+      } @else {
+        <div class="roundel-scroll">
+          @for (dept of departments(); track dept.id) {
+            <a [routerLink]="['/departments', dept.slug]" class="roundel">
+              <div class="roundel__circle">
+                @if (dept.imageUrl) {
+                  <img [src]="dept.imageUrl" [alt]="dept.name" loading="lazy" />
+                } @else {
+                  <span class="roundel__icon">🛒</span>
+                }
+              </div>
+              <span class="roundel__label">{{ dept.name }}</span>
+            </a>
+          }
+          <a routerLink="/departments" class="roundel">
+            <div class="roundel__circle roundel__circle--all">
+              <span>All</span>
+            </div>
+            <span class="roundel__label">All Departments</span>
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Hero banners -->
+  <section class="home__hero">
+    <div class="page-container">
+      <div class="hero-grid">
+        @for (banner of heroBanners; track banner.title) {
+          <a [routerLink]="banner.url" class="hero-card" [style.background]="banner.bg">
+            <h2 class="hero-card__title">{{ banner.title }}</h2>
+            <p class="hero-card__subtitle">{{ banner.subtitle }}</p>
+            <span class="hero-card__cta button button--primary">{{ banner.cta }}</span>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Ways to save -->
+  <section class="home__section">
+    <div class="page-container">
+      <h2 class="home__section-title">Ways to shop and save</h2>
+      <div class="promo-grid">
+        @for (item of waysToSave; track item.title) {
+          <a [routerLink]="item.url" class="promo-tile">
+            <span class="promo-tile__icon">{{ item.icon }}</span>
+            <div>
+              <h3 class="promo-tile__title">{{ item.title }}</h3>
+              <p class="promo-tile__subtitle">{{ item.subtitle }}</p>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Clubcard banner -->
+  <section class="home__clubcard-banner">
+    <div class="page-container">
+      <div class="clubcard-banner">
+        <div class="clubcard-banner__content">
+          <span class="clubcard-banner__eyebrow">Tesco Clubcard</span>
+          <h2 class="clubcard-banner__title">Earn points on every shop</h2>
+          <p class="clubcard-banner__text">Get 1 point for every £1 you spend. Collect points, get vouchers and enjoy Clubcard Prices.</p>
+          <a routerLink="/auth/register" class="button button--primary">Join Clubcard – it's free</a>
+        </div>
+        <div class="clubcard-banner__visual">
+          <div class="clubcard-mock">
+            <span class="clubcard-mock__logo">Tesco Clubcard</span>
+            <span class="clubcard-mock__number">**** **** **** 1234</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Discover more -->
+  <section class="home__section">
+    <div class="page-container">
+      <h2 class="home__section-title">Discover more</h2>
+      <div class="promo-grid">
+        @for (item of discoverMore; track item.title) {
+          <a [routerLink]="item.url" class="promo-tile promo-tile--blue">
+            <span class="promo-tile__icon">{{ item.icon }}</span>
+            <div>
+              <h3 class="promo-tile__title">{{ item.title }}</h3>
+              <p class="promo-tile__subtitle">{{ item.subtitle }}</p>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+</main>

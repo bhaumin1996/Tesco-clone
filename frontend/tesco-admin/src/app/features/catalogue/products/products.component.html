@@ -1,0 +1,71 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-header__title">Products</h1>
+</div>
+
+@if (actionMessage()) {
+  <div class="admin-alert admin-alert--success">{{ actionMessage() }}</div>
+}
+
+<div class="admin-card">
+  <form [formGroup]="filterForm" class="prod-filters">
+    <input class="form-control" formControlName="search" placeholder="Search by name or SKU…" />
+    <select class="form-control" formControlName="isActive">
+      <option value="">All statuses</option>
+      <option value="true">Active</option>
+      <option value="false">Inactive</option>
+    </select>
+  </form>
+
+  @if (loading()) {
+    <p class="admin-loading">Loading…</p>
+  } @else {
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>SKU</th>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of products(); track p.productId) {
+          <tr>
+            <td>{{ p.sku }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.categoryName }}</td>
+            <td>£{{ p.price | number:'1.2-2' }}</td>
+            <td [class.low-stock]="p.stockQuantity < 10">{{ p.stockQuantity }}</td>
+            <td>
+              <span class="status-badge" [class.status--active]="p.isActive" [class.status--inactive]="!p.isActive">
+                {{ p.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button class="table-btn" (click)="toggleActive(p)">
+                {{ p.isActive ? 'Deactivate' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7" class="admin-empty">No products found.</td></tr>
+        }
+      </tbody>
+    </table>
+
+    @if (totalPages() > 1) {
+      <div class="admin-pagination">
+        @for (page of pages(); track page) {
+          <button
+            class="page-btn"
+            [class.active]="page === currentPage()"
+            (click)="goTo(page)"
+          >{{ page }}</button>
+        }
+      </div>
+    }
+  }
+</div>

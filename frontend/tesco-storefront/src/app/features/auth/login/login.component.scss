@@ -1,0 +1,56 @@
+@use '../../../../styles/tokens' as *;
+
+.auth-page {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-6 $space-4;
+  background: $color-surface-alt;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+
+  &__title { font-size: $font-size-xl; }
+
+  &__password-wrap { position: relative; }
+
+  &__pw-toggle {
+    position: absolute;
+    right: $space-3;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: $color-tesco-blue;
+    cursor: pointer;
+    font-size: $font-size-xs;
+    font-weight: 700;
+    padding: 0;
+  }
+
+  &__forgot {
+    display: block;
+    font-size: $font-size-xs;
+    margin-top: $space-2;
+    text-align: right;
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    margin: $space-5 0;
+
+    &::before, &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: $color-border;
+    }
+
+    span { font-size: $font-size-sm; color: $color-muted; white-space: nowrap; }
+  }
+}

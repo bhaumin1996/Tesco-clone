@@ -1,0 +1,76 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-header__title">Dashboard</h1>
+  <p class="admin-page-header__subtitle">Welcome back — here's what's happening today.</p>
+</div>
+
+@if (loading()) {
+  <p class="dash-loading">Loading…</p>
+} @else {
+  <div class="dash-stats">
+    <div class="admin-card dash-stat">
+      <p class="dash-stat__label">Orders today</p>
+      <p class="dash-stat__value">{{ stats()?.totalOrdersToday ?? 0 }}</p>
+      <a routerLink="/orders" class="dash-stat__link">View orders →</a>
+    </div>
+    <div class="admin-card dash-stat">
+      <p class="dash-stat__label">Revenue today</p>
+      <p class="dash-stat__value">£{{ (stats()?.totalRevenueToday ?? 0) | number:'1.2-2' }}</p>
+      <a routerLink="/analytics" class="dash-stat__link">View analytics →</a>
+    </div>
+    <div class="admin-card dash-stat">
+      <p class="dash-stat__label">New customers</p>
+      <p class="dash-stat__value">{{ stats()?.newCustomersToday ?? 0 }}</p>
+      <a routerLink="/users" class="dash-stat__link">View users →</a>
+    </div>
+    <div class="admin-card dash-stat">
+      <p class="dash-stat__label">Pending orders</p>
+      <p class="dash-stat__value dash-stat__value--warn">{{ stats()?.pendingOrders ?? 0 }}</p>
+      <a routerLink="/orders" class="dash-stat__link">Manage →</a>
+    </div>
+    <div class="admin-card dash-stat">
+      <p class="dash-stat__label">Low stock items</p>
+      <p class="dash-stat__value dash-stat__value--warn">{{ stats()?.lowStockProducts ?? 0 }}</p>
+      <a routerLink="/catalogue/inventory" class="dash-stat__link">View inventory →</a>
+    </div>
+    <div class="admin-card dash-stat">
+      <p class="dash-stat__label">Open disputes</p>
+      <p class="dash-stat__value dash-stat__value--err">{{ stats()?.openDisputes ?? 0 }}</p>
+      <a routerLink="/marketplace" class="dash-stat__link">View disputes →</a>
+    </div>
+  </div>
+
+  <div class="admin-card dash-recent">
+    <h2 class="dash-recent__title">Recent Orders</h2>
+    @if (recentOrders().length === 0) {
+      <p class="dash-empty">No recent orders found.</p>
+    } @else {
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of recentOrders(); track order.orderId) {
+            <tr>
+              <td>#{{ order.orderId }}</td>
+              <td>{{ order.customerName }}</td>
+              <td>£{{ order.total | number:'1.2-2' }}</td>
+              <td><span class="status-badge status--{{ order.status | lowercase }}">{{ order.status }}</span></td>
+              <td>{{ order.createdOn | date:'dd MMM yyyy' }}</td>
+              <td><a [routerLink]="['/orders', order.orderId]" class="dash-link">View</a></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+    <div class="dash-recent__footer">
+      <a routerLink="/orders" class="button button--secondary">View all orders</a>
+    </div>
+  </div>
+}

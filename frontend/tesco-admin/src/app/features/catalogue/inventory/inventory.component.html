@@ -1,0 +1,63 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-header__title">Inventory</h1>
+</div>
+
+@if (message()) {
+  <div class="admin-alert admin-alert--success">{{ message() }}</div>
+}
+
+@if (adjustTarget()) {
+  <div class="admin-card inv-adjust-card">
+    <h2 class="inv-adjust-card__title">Adjust stock — {{ adjustTarget()!.productName }}</h2>
+    <p class="inv-adjust-card__current">Current stock: <strong>{{ adjustTarget()!.stockQuantity }}</strong></p>
+    <form [formGroup]="adjustForm" (ngSubmit)="submitAdjust()">
+      <div class="form-group">
+        <label class="form-label">Adjustment quantity (positive = add, negative = remove)</label>
+        <input type="number" class="form-control" formControlName="quantity" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reason</label>
+        <input class="form-control" formControlName="reason" placeholder="e.g. Delivery received" />
+        @if (adjustForm.get('reason')!.invalid && adjustForm.get('reason')!.touched) {
+          <span class="form-error">Reason is required.</span>
+        }
+      </div>
+      <div class="inv-adjust-card__actions">
+        <button type="submit" class="button button--primary">Apply adjustment</button>
+        <button type="button" class="button button--secondary" (click)="adjustTarget.set(null)">Cancel</button>
+      </div>
+    </form>
+  </div>
+}
+
+<div class="admin-card">
+  @if (loading()) {
+    <p class="admin-loading">Loading…</p>
+  } @else {
+    <table class="admin-table">
+      <thead>
+        <tr><th>SKU</th><th>Product</th><th>Stock</th><th>Low Stock Threshold</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track item.productId) {
+          <tr [class.inv-row--low]="item.isLowStock">
+            <td>{{ item.sku }}</td>
+            <td>{{ item.productName }}</td>
+            <td>{{ item.stockQuantity }}</td>
+            <td>{{ item.lowStockThreshold }}</td>
+            <td>
+              @if (item.isLowStock) {
+                <span class="status-badge status--error">Low Stock</span>
+              } @else {
+                <span class="status-badge status--active">OK</span>
+              }
+            </td>
+            <td><button class="table-btn" (click)="openAdjust(item)">Adjust</button></td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="admin-empty">No inventory data found.</td></tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

@@ -4,4 +4,31 @@
   background: $color-surface;
   border: 1px solid $color-border;
   border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.card--hover {
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    box-shadow: $shadow-popover;
+    transform: translateY(-2px);
+  }
+}
+
+.card__body {
+  padding: $space-4;
+}
+
+.card__header {
+  border-bottom: 1px solid $color-border;
+  padding: $space-3 $space-4;
+  font-weight: 700;
+  font-size: $font-size-lg;
+}
+
+.card__footer {
+  border-top: 1px solid $color-border;
+  padding: $space-3 $space-4;
 }

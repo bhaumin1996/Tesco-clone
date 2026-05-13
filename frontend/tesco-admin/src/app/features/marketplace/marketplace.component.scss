@@ -1,0 +1,22 @@
+@use '../../../styles/tokens' as *;
+
+.mp-tabs {
+  display: flex; gap: 0; margin-bottom: 1.25rem;
+  border-bottom: 2px solid $color-border;
+}
+
+.mp-tab {
+  background: none; border: none; cursor: pointer; padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem; color: $color-muted; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  &.active { color: $color-tesco-blue; border-bottom-color: $color-tesco-blue; font-weight: 600; }
+  &:hover:not(.active) { color: $color-text-primary; }
+}
+
+.actions-cell { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.table-btn {
+  background: none; border: 1px solid $color-border; border-radius: 4px; cursor: pointer;
+  font-size: 0.8125rem; padding: 0.25rem 0.625rem;
+  &--success:hover { border-color: #27ae60; color: #27ae60; }
+  &--danger:hover { border-color: #c0392b; color: #c0392b; }
+}

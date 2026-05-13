@@ -1,0 +1,102 @@
+<div class="page-container page-content">
+  <app-breadcrumb [items]="[{ label: 'Home', url: '/' }, { label: 'Basket' }]" />
+  <h1 class="cart-title">Your Basket</h1>
+
+  @if (loading()) {
+    <div class="cart-loading"><app-spinner size="lg" /></div>
+  } @else if (!cartService.cart() || cartService.itemCount() === 0) {
+    <div class="cart-empty">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#d8dde6" stroke-width="1.5">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+      <h2>Your basket is empty</h2>
+      <p>Add items to your basket to get started.</p>
+      <a routerLink="/departments" class="button button--primary">Start shopping</a>
+    </div>
+  } @else {
+    @let c = cartService.cart()!;
+    <div class="cart-layout">
+      <!-- Items -->
+      <div class="cart-items">
+        @if (!c.minimumOrderMet) {
+          <div class="cart-warning">
+            <strong>Minimum order required.</strong> Add more items to proceed to checkout.
+          </div>
+        }
+        @for (item of c.items; track item.id) {
+          <div class="cart-item">
+            <a [routerLink]="['/products', item.productId]" class="cart-item__img-link">
+              @if (item.imageUrl) {
+                <img [src]="item.imageUrl" [alt]="item.productName" class="cart-item__img" />
+              } @else {
+                <div class="cart-item__img-placeholder">🛒</div>
+              }
+            </a>
+            <div class="cart-item__info">
+              <a [routerLink]="['/products', item.productId]" class="cart-item__name">{{ item.productName }}</a>
+              @if (item.promotionLabel) { <span class="badge badge--red cart-item__promo">{{ item.promotionLabel }}</span> }
+              <p class="cart-item__unit">{{ item.unitPrice }}</p>
+              <div class="cart-item__actions">
+                <app-quantity-stepper
+                  [quantity]="item.quantity"
+                  [min]="0"
+                  (quantityChange)="updateQuantity(item, $event)"
+                />
+                <button class="button button--ghost button--sm" (click)="removeItem(item.id)">Remove</button>
+              </div>
+            </div>
+            <div class="cart-item__price">
+              <span class="cart-item__line-total">£{{ item.lineTotal | number:'1.2-2' }}</span>
+              <span class="cart-item__unit-price">£{{ item.price | number:'1.2-2' }} each</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Summary -->
+      <aside class="cart-summary card">
+        <div class="card__header">Order Summary</div>
+        <div class="card__body">
+          <div class="summary-row">
+            <span>Subtotal ({{ cartService.itemCount() }} items)</span>
+            <span>£{{ c.subtotal | number:'1.2-2' }}</span>
+          </div>
+          @if (c.promotionSavings > 0) {
+            <div class="summary-row summary-row--saving">
+              <span>Promotion savings</span>
+              <span>-£{{ c.promotionSavings | number:'1.2-2' }}</span>
+            </div>
+          }
+          @if (c.clubcardSavings > 0) {
+            <div class="summary-row summary-row--clubcard">
+              <span>Clubcard savings</span>
+              <span>-£{{ c.clubcardSavings | number:'1.2-2' }}</span>
+            </div>
+          }
+          <div class="summary-row">
+            <span>Delivery</span>
+            <span>{{ c.deliveryCharge === 0 ? 'Free' : '£' + (c.deliveryCharge | number:'1.2-2') }}</span>
+          </div>
+          <hr class="summary-divider" />
+          <div class="summary-row summary-row--total">
+            <span>Total</span>
+            <span>£{{ c.total | number:'1.2-2' }}</span>
+          </div>
+
+          <a
+            routerLink="/checkout"
+            class="button button--primary button--full button--lg"
+            [class.disabled]="!c.minimumOrderMet"
+            style="margin-top: 1rem; text-align: center"
+          >
+            Checkout
+          </a>
+          <a routerLink="/delivery" class="button button--secondary button--full" style="margin-top: 0.5rem">
+            Book a delivery slot
+          </a>
+        </div>
+      </aside>
+    </div>
+  }
+</div>

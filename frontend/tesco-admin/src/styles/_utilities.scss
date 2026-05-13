@@ -1,0 +1,55 @@
+@use 'tokens' as *;
+
+// Page header sub-elements
+.admin-page-header__title { font-size: $font-size-xl; font-weight: 700; }
+.admin-page-header__subtitle { color: $color-muted; font-size: $font-size-sm; margin-top: 0.25rem; }
+.admin-page-header__actions { display: flex; gap: $space-3; }
+
+// Alerts
+.admin-alert {
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  padding: $space-3 $space-4;
+  margin-bottom: $space-4;
+
+  &--success { background: $color-success-light; border: 1px solid #a3d9bc; color: $color-success; }
+  &--error   { background: $color-error-light;   border: 1px solid #f5a7b4; color: $color-error;   }
+  &--warning { background: $color-warning-light; border: 1px solid #f5c97b; color: $color-warning; }
+  &--info    { background: $color-info-light;    border: 1px solid #a7c7ec; color: $color-info;    }
+}
+
+// Loading / empty states
+.admin-loading { color: $color-muted; padding: $space-5 $space-5; }
+.admin-empty   { color: $color-muted; text-align: center; padding: $space-5; }
+
+// Pagination
+.admin-pagination {
+  display: flex;
+  gap: $space-2;
+  justify-content: flex-end;
+  padding: $space-4 $space-5;
+  border-top: 1px solid $color-border;
+}
+
+.page-btn {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  font-size: $font-size-sm;
+  min-width: 2rem;
+  padding: 0.25rem 0.5rem;
+  text-align: center;
+  transition: border-color 0.15s ease;
+
+  &:hover { border-color: $color-tesco-blue; color: $color-tesco-blue; }
+  &.active { background: $color-tesco-blue; border-color: $color-tesco-blue; color: $color-surface; font-weight: 700; }
+}
+
+// Extra status variants
+.status--critical { background: #3d0010; color: #fff; }
+.status--warning  { background: $color-warning-light; color: $color-warning; }
+.status--info     { background: $color-info-light; color: $color-info; }
+
+// button--full
+.button--full { width: 100%; }

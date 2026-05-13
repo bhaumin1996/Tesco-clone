@@ -1,0 +1,27 @@
+.admin-topbar__mobile-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.25rem;
+  display: none;
+
+  @media (max-width: 768px) { display: block; }
+}
+
+.admin-topbar__spacer { flex: 1; }
+
+.admin-topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.admin-topbar__badge {
+  background: #e8f2fc;
+  border-radius: 9999px;
+  color: #00539f;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+}

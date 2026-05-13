@@ -1,12 +1,76 @@
 @use 'tokens' as *;
 
-input,
-select,
-textarea {
-  font: inherit;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  margin-bottom: $space-4;
 }
 
-:focus-visible {
-  outline: 3px solid #e8f2fc;
-  outline-offset: 2px;
+.form-label {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-ink;
 }
+
+.form-control {
+  width: 100%;
+  padding: $space-2 $space-3;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  color: $color-ink;
+  background: $color-surface;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $color-tesco-blue;
+    box-shadow: 0 0 0 3px rgba($color-tesco-blue, 0.12);
+  }
+
+  &.is-invalid { border-color: $color-tesco-red; }
+  &:disabled { background: $color-surface-alt; cursor: not-allowed; }
+}
+
+.form-error { font-size: $font-size-xs; color: $color-error; margin-top: $space-1; }
+.form-hint  { font-size: $font-size-xs; color: $color-muted; margin-top: $space-1; }
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+
+  th {
+    text-align: left;
+    padding: $space-3 $space-4;
+    border-bottom: 2px solid $color-border;
+    font-weight: 700;
+    color: $color-muted;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: $space-3 $space-4;
+    border-bottom: 1px solid $color-border;
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: $color-surface-alt; }
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  font-size: $font-size-xs;
+  font-weight: 700;
+  padding: 2px $space-3;
+}
+
+.status--active   { background: $color-success-light; color: $color-success; }
+.status--inactive { background: $color-surface-alt; color: $color-muted; }
+.status--pending  { background: $color-warning-light; color: $color-warning; }
+.status--error    { background: $color-error-light; color: $color-error; }
+.status--info     { background: $color-info-light; color: $color-info; }

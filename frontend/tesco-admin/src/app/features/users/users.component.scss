@@ -1,0 +1,18 @@
+@use '../../../styles/tokens' as *;
+
+.users-filters {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  padding: 1rem 1.25rem; border-bottom: 1px solid $color-border;
+}
+
+.role-select {
+  border: 1px solid $color-border; border-radius: 4px; padding: 0.25rem 0.5rem;
+  font-size: 0.8125rem; background: #fff; cursor: pointer;
+}
+
+.table-btn {
+  background: none; border: 1px solid $color-border; border-radius: 4px; cursor: pointer;
+  font-size: 0.8125rem; padding: 0.25rem 0.625rem;
+  &:hover { border-color: $color-tesco-blue; color: $color-tesco-blue; }
+  &--danger:hover { border-color: #c0392b; color: #c0392b; }
+}

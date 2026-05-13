@@ -1,0 +1,84 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-header__title">Audit &amp; Logs</h1>
+</div>
+
+<div class="audit-tabs">
+  <button class="audit-tab" [class.active]="activeTab() === 'audit'" (click)="activeTab.set('audit')">Audit Log</button>
+  <button class="audit-tab" [class.active]="activeTab() === 'logs'" (click)="activeTab.set('logs')">Application Logs</button>
+</div>
+
+@if (loading()) {
+  <p class="admin-loading">Loading…</p>
+} @else {
+  @if (activeTab() === 'audit') {
+    <div class="admin-card">
+      <form [formGroup]="auditFilter" class="audit-filters">
+        <input class="form-control" formControlName="table" placeholder="Filter by table…" />
+        <input class="form-control" formControlName="action" placeholder="Filter by action…" />
+      </form>
+
+      <table class="admin-table">
+        <thead><tr><th>Table</th><th>Action</th><th>Record #</th><th>Changed By</th><th>Date</th><th>Summary</th></tr></thead>
+        <tbody>
+          @for (e of auditEntries(); track e.auditId) {
+            <tr>
+              <td>{{ e.tableName }}</td>
+              <td><span class="audit-action audit-action--{{ e.action | lowercase }}">{{ e.action }}</span></td>
+              <td>{{ e.recordId }}</td>
+              <td>{{ e.changedBy }}</td>
+              <td>{{ e.changedOn | date:'dd MMM yyyy HH:mm' }}</td>
+              <td class="audit-summary">{{ e.summary }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="admin-empty">No audit entries.</td></tr>
+          }
+        </tbody>
+      </table>
+
+      @if (totalAuditPages() > 1) {
+        <div class="admin-pagination">
+          @for (p of auditPages(); track p) {
+            <button class="page-btn" [class.active]="p === auditPage()" (click)="goAudit(p)">{{ p }}</button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @if (activeTab() === 'logs') {
+    <div class="admin-card">
+      <form [formGroup]="logFilter" class="audit-filters">
+        <select class="form-control" formControlName="level">
+          <option value="">All levels</option>
+          @for (l of logLevels; track l) { <option [value]="l">{{ l }}</option> }
+        </select>
+        <input class="form-control" formControlName="source" placeholder="Filter by source…" />
+      </form>
+
+      <table class="admin-table">
+        <thead><tr><th>Level</th><th>Source</th><th>Message</th><th>Correlation ID</th><th>Date</th></tr></thead>
+        <tbody>
+          @for (e of logEntries(); track e.logId) {
+            <tr [class.log-row--error]="e.level === 'Error' || e.level === 'Critical'">
+              <td><span class="status-badge status--{{ e.level | lowercase }}">{{ e.level }}</span></td>
+              <td>{{ e.source }}</td>
+              <td class="audit-summary">{{ e.message }}</td>
+              <td class="log-corr">{{ e.correlationId }}</td>
+              <td>{{ e.createdOn | date:'dd MMM yyyy HH:mm' }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="admin-empty">No log entries.</td></tr>
+          }
+        </tbody>
+      </table>
+
+      @if (totalLogPages() > 1) {
+        <div class="admin-pagination">
+          @for (p of logPages(); track p) {
+            <button class="page-btn" [class.active]="p === logPage()" (click)="goLog(p)">{{ p }}</button>
+          }
+        </div>
+      }
+    </div>
+  }
+}

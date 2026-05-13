@@ -1,0 +1,56 @@
+@use '../../../../styles/tokens' as *;
+@use '../../../../styles/mixins' as *;
+
+.slots-title { font-size: $font-size-xl; margin-bottom: $space-2; }
+.slots-subtitle { color: $color-muted; margin-bottom: $space-5; }
+.slots-search { display: flex; gap: $space-3; margin-bottom: $space-5; flex-wrap: wrap; }
+
+.slots-day { margin-bottom: $space-5; }
+.slots-day__title { font-size: $font-size-md; font-weight: 700; margin-bottom: $space-3; }
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-2;
+
+  @include respond-to(md) { grid-template-columns: repeat(4, 1fr); }
+}
+
+.slot-btn {
+  background: $color-surface;
+  border: 2px solid $color-border;
+  border-radius: $radius-md;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  padding: $space-3;
+  text-align: center;
+  transition: border-color 0.15s ease;
+
+  &:hover:not(:disabled) { border-color: $color-tesco-blue; }
+  &--selected { border-color: $color-tesco-blue; background: $color-tesco-blue-light; }
+  &--free { border-color: $color-success; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  &__time { font-size: $font-size-xs; font-weight: 700; }
+  &__price { font-size: $font-size-sm; color: $color-muted; }
+}
+
+.slot-btn--free .slot-btn__price { color: $color-success; font-weight: 700; }
+
+.slots-confirm {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  background: $color-tesco-blue-light;
+  border: 2px solid $color-tesco-blue;
+  border-radius: $radius-md;
+  padding: $space-4;
+  margin-top: $space-4;
+  flex-wrap: wrap;
+
+  p { flex: 1; font-size: $font-size-sm; }
+}
+
+.slots-empty { text-align: center; padding: $space-6 0; color: $color-muted; }

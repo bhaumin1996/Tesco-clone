@@ -1,0 +1,47 @@
+<div class="page-container page-content">
+  <div class="search-header">
+    @if (query()) {
+      <h1 class="search-header__title">
+        Search results for <em>"{{ query() }}"</em>
+      </h1>
+      @if (result()) {
+        <span class="search-header__count">{{ result()!.totalCount }} products found</span>
+      }
+    }
+    <div class="search-header__sort">
+      <label for="sort">Sort by</label>
+      <select id="sort" class="form-control" style="width: auto" [(ngModel)]="sortBy" (ngModelChange)="onSortChange()">
+        @for (opt of sortOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (!query()) {
+    <div class="search-empty">
+      <p>Enter a search term to find products.</p>
+    </div>
+  } @else if (loading()) {
+    <div class="search-loading"><app-spinner size="lg" /></div>
+  } @else if (!result()?.items?.length) {
+    <div class="search-empty">
+      <h2>No results found for "{{ query() }}"</h2>
+      <p>Try checking your spelling or using more general terms.</p>
+      <a routerLink="/departments" class="button button--primary">Browse all departments</a>
+    </div>
+  } @else {
+    <div class="product-grid">
+      @for (product of result()!.items; track product.id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
+    <div class="search-pagination">
+      <app-pagination
+        [currentPage]="currentPage()"
+        [totalPages]="result()!.totalPages"
+        (pageChange)="onPageChange($event)"
+      />
+    </div>
+  }
+</div>

@@ -1,0 +1,64 @@
+<div class="page-container page-content">
+  @if (loading()) {
+    <app-spinner size="lg" />
+  } @else if (!order()) {
+    <div style="text-align:center;padding:3rem"><h2>Order not found</h2><a routerLink="/account/orders" class="button button--primary">Back to orders</a></div>
+  } @else {
+    @let o = order()!;
+    <app-breadcrumb [items]="[{ label: 'Home', url: '/' }, { label: 'My Orders', url: '/account/orders' }, { label: 'Order #' + o.orderNumber }]" />
+
+    <div class="order-detail-layout">
+      <div>
+        <div class="card" style="margin-bottom: 1.5rem">
+          <div class="card__header" style="display:flex;justify-content:space-between;align-items:center">
+            <span>Order #{{ o.orderNumber }}</span>
+            <span class="badge badge--blue">{{ o.status }}</span>
+          </div>
+          <div class="card__body">
+            <p><strong>Placed:</strong> {{ o.createdAt | date:'d MMMM yyyy, h:mm a' }}</p>
+            @if (o.deliveryDate) { <p><strong>Delivery:</strong> {{ o.deliveryDate | date:'EEE d MMMM yyyy' }} {{ o.deliverySlot }}</p> }
+            <hr style="border-color:#d8dde6;margin:1rem 0" />
+            <h3 style="margin-bottom:0.75rem">Items</h3>
+            @for (item of o.items; track item.id) {
+              <div style="display:flex;align-items:center;gap:1rem;padding:0.5rem 0;border-bottom:1px solid #d8dde6">
+                @if (item.imageUrl) { <img [src]="item.imageUrl" [alt]="item.productName" style="width:56px;height:56px;object-fit:contain" /> }
+                <div style="flex:1">
+                  <p style="font-weight:700;font-size:0.875rem">{{ item.productName }}</p>
+                  <p style="font-size:0.8125rem;color:#5f6368">Qty: {{ item.quantity }} × £{{ item.price | number:'1.2-2' }}</p>
+                </div>
+                <span style="font-weight:700">£{{ item.lineTotal | number:'1.2-2' }}</span>
+              </div>
+            }
+          </div>
+        </div>
+        @if (o.status === 'Pending' || o.status === 'Confirmed') {
+          <button class="button button--danger" [disabled]="cancelling()" (click)="cancelOrder()">
+            @if (cancelling()) { Cancelling... } @else { Cancel order }
+          </button>
+        }
+      </div>
+
+      <aside>
+        <div class="card" style="margin-bottom:1rem">
+          <div class="card__header">Delivery address</div>
+          <div class="card__body" style="font-size:0.875rem;line-height:1.8">
+            <p>{{ o.address.firstName }} {{ o.address.lastName }}</p>
+            <p>{{ o.address.addressLine1 }}</p>
+            @if (o.address.addressLine2) { <p>{{ o.address.addressLine2 }}</p> }
+            <p>{{ o.address.city }}, {{ o.address.postcode }}</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card__header">Order total</div>
+          <div class="card__body">
+            <div style="display:flex;justify-content:space-between;padding:0.25rem 0;font-size:0.875rem"><span>Subtotal</span><span>£{{ o.subtotal | number:'1.2-2' }}</span></div>
+            @if (o.clubcardSavings > 0) { <div style="display:flex;justify-content:space-between;padding:0.25rem 0;font-size:0.875rem;color:#00539f"><span>Clubcard savings</span><span>-£{{ o.clubcardSavings | number:'1.2-2' }}</span></div> }
+            <div style="display:flex;justify-content:space-between;padding:0.25rem 0;font-size:0.875rem"><span>Delivery</span><span>{{ o.deliveryCharge === 0 ? 'Free' : '£' + (o.deliveryCharge | number:'1.2-2') }}</span></div>
+            <hr style="border-color:#d8dde6;margin:0.5rem 0" />
+            <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem"><span>Total</span><span>£{{ o.total | number:'1.2-2' }}</span></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  }
+</div>

@@ -1,0 +1,63 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-header__title">Users</h1>
+</div>
+
+@if (message()) {
+  <div class="admin-alert admin-alert--success">{{ message() }}</div>
+}
+
+<div class="admin-card">
+  <form [formGroup]="filterForm" class="users-filters">
+    <input class="form-control" formControlName="search" placeholder="Search by name or email…" />
+    <select class="form-control" formControlName="role">
+      <option value="">All roles</option>
+      @for (r of roles; track r) { <option [value]="r">{{ r }}</option> }
+    </select>
+  </form>
+
+  @if (loading()) {
+    <p class="admin-loading">Loading…</p>
+  } @else {
+    <table class="admin-table">
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        @for (u of users(); track u.userId) {
+          <tr>
+            <td>{{ u.firstName }} {{ u.lastName }}</td>
+            <td>{{ u.email }}</td>
+            <td>
+              <select class="role-select" [value]="u.role" (change)="assignRole(u.userId, $any($event.target).value)">
+                @for (r of roles; track r) {
+                  <option [value]="r" [selected]="r === u.role">{{ r }}</option>
+                }
+              </select>
+            </td>
+            <td>
+              <span class="status-badge" [class.status--active]="!u.isLocked" [class.status--error]="u.isLocked">
+                {{ u.isLocked ? 'Locked' : 'Active' }}
+              </span>
+            </td>
+            <td>{{ u.createdOn | date:'dd MMM yyyy' }}</td>
+            <td>
+              <button class="table-btn" [class.table-btn--danger]="!u.isLocked" (click)="toggleLock(u)">
+                {{ u.isLocked ? 'Unlock' : 'Lock' }}
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="admin-empty">No users found.</td></tr>
+        }
+      </tbody>
+    </table>
+
+    @if (totalPages() > 1) {
+      <div class="admin-pagination">
+        @for (page of pages(); track page) {
+          <button class="page-btn" [class.active]="page === currentPage()" (click)="goTo(page)">{{ page }}</button>
+        }
+      </div>
+    }
+  }
+</div>

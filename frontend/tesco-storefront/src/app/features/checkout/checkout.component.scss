@@ -1,0 +1,90 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+.checkout-title { font-size: $font-size-xl; margin-bottom: $space-5; }
+
+.checkout-steps {
+  display: flex;
+  align-items: center;
+  margin-bottom: $space-6;
+}
+
+.checkout-step {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  opacity: 0.4;
+  &.active { opacity: 1; }
+
+  &__num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: $color-surface-alt;
+    border: 2px solid $color-border;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: $font-size-sm;
+  }
+
+  &.active &__num {
+    background: $color-tesco-blue;
+    border-color: $color-tesco-blue;
+    color: $color-surface;
+  }
+
+  &.done &__num {
+    background: $color-success;
+    border-color: $color-success;
+    color: $color-surface;
+  }
+
+  &__label { font-size: $font-size-sm; font-weight: 700; white-space: nowrap; }
+}
+
+.checkout-step__line {
+  flex: 1;
+  height: 2px;
+  background: $color-border;
+  margin: 0 $space-2;
+}
+
+.checkout-layout {
+  display: grid;
+  gap: $space-5;
+  @include respond-to(lg) { grid-template-columns: 1fr 320px; align-items: start; }
+}
+
+.checkout-main { display: flex; flex-direction: column; gap: $space-4; }
+
+.checkout-name-row { display: grid; grid-template-columns: 1fr 1fr; gap: $space-4; }
+
+.checkout-accept-options { display: flex; flex-direction: column; gap: $space-3; }
+
+.checkout-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  cursor: pointer;
+
+  input { margin-top: 3px; accent-color: $color-tesco-blue; }
+}
+
+.checkout-nav { display: flex; justify-content: space-between; margin-top: $space-4; }
+
+.review-item {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-2 0;
+  border-bottom: 1px solid $color-border;
+  font-size: $font-size-sm;
+  &__name { flex: 1; }
+  &__qty { color: $color-muted; }
+  &__price { font-weight: 700; }
+}
+
+.summary-row { display: flex; justify-content: space-between; padding: $space-2 0; font-size: $font-size-sm; }

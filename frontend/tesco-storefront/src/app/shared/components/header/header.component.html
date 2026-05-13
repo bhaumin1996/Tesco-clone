@@ -1,0 +1,113 @@
+<header class="header">
+  <!-- Utility bar -->
+  <div class="header__utility">
+    <div class="page-container header__utility-inner">
+      <nav class="header__utility-links">
+        <a href="#" class="header__utility-link">Tesco Bank</a>
+        <a href="#" class="header__utility-link">Tesco Mobile</a>
+        <a routerLink="/delivery" class="header__utility-link">Delivery Saver</a>
+        <a routerLink="/stores" class="header__utility-link">Store Locator</a>
+        <a routerLink="/help" class="header__utility-link">Help</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main header bar -->
+  <div class="header__main">
+    <div class="page-container header__main-inner">
+      <!-- Logo -->
+      <a routerLink="/" class="header__logo">
+        <span class="header__logo-text">Tesco</span>
+      </a>
+
+      <!-- Search -->
+      <form class="header__search" (ngSubmit)="search()">
+        <input
+          class="header__search-input"
+          type="search"
+          placeholder="Search products..."
+          [value]="searchQuery()"
+          (input)="searchQuery.set($any($event.target).value)"
+          aria-label="Search products"
+        />
+        <button class="header__search-btn" type="submit" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+      </form>
+
+      <!-- Actions -->
+      <div class="header__actions">
+        <!-- Account -->
+        <div class="header__account" (click)="toggleAccountMenu()">
+          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span class="header__action-label">
+            @if (auth.isAuthenticated()) {
+              <span>{{ auth.user()?.firstName }}</span>
+            } @else {
+              <span>Sign In</span>
+            }
+          </span>
+          <!-- Account dropdown -->
+          @if (accountMenuOpen()) {
+            <div class="header__dropdown">
+              @if (auth.isAuthenticated()) {
+                <a routerLink="/account" class="header__dropdown-item">My Account</a>
+                <a routerLink="/account/orders" class="header__dropdown-item">Orders</a>
+                <a routerLink="/account/clubcard" class="header__dropdown-item">Clubcard</a>
+                <a routerLink="/account/favourites" class="header__dropdown-item">Favourites</a>
+                <hr class="header__dropdown-divider" />
+                <button class="header__dropdown-item" (click)="logout()">Sign Out</button>
+              } @else {
+                <a routerLink="/auth/login" class="header__dropdown-item">Sign In</a>
+                <a routerLink="/auth/register" class="header__dropdown-item">Register</a>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Clubcard -->
+        <a routerLink="/account/clubcard" class="header__clubcard">
+          <span class="header__clubcard-badge">Clubcard</span>
+        </a>
+
+        <!-- Cart -->
+        <a routerLink="/cart" class="header__cart">
+          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          @if (cart.itemCount() > 0) {
+            <span class="header__cart-count">{{ cart.itemCount() }}</span>
+          }
+          <span class="header__action-label">Basket</span>
+        </a>
+
+        <!-- Mobile menu toggle -->
+        <button class="header__mobile-toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Department nav -->
+  <nav class="header__dept-nav" [class.open]="mobileMenuOpen()">
+    <div class="page-container">
+      <ul class="header__dept-list">
+        <li><a routerLink="/departments" class="header__dept-link">All Departments</a></li>
+        <li><a routerLink="/offers" class="header__dept-link">Offers</a></li>
+        <li><a routerLink="/account/clubcard" class="header__dept-link header__dept-link--clubcard">Clubcard</a></li>
+        <li><a routerLink="/recipes" class="header__dept-link">Recipes</a></li>
+        @for (dept of departments; track dept.slug) {
+          <li><a [routerLink]="['/departments', dept.slug]" class="header__dept-link">{{ dept.name }}</a></li>
+        }
+      </ul>
+    </div>
+  </nav>
+</header>

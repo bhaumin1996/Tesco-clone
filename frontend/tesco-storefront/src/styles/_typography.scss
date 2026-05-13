@@ -1,8 +1,19 @@
 @use 'tokens' as *;
 
-body {
-  color: $color-ink;
-  font-family: $font-family-base;
-  font-size: 1rem;
-  line-height: 1.5;
-}
+.text-xs   { font-size: $font-size-xs; }
+.text-sm   { font-size: $font-size-sm; }
+.text-md   { font-size: $font-size-md; }
+.text-lg   { font-size: $font-size-lg; }
+.text-xl   { font-size: $font-size-xl; }
+.text-2xl  { font-size: $font-size-2xl; }
+
+.text-bold   { font-weight: 700; }
+.text-muted  { color: $color-muted; }
+.text-blue   { color: $color-tesco-blue; }
+.text-red    { color: $color-tesco-red; }
+.text-center { text-align: center; }
+
+h1 { font-size: $font-size-2xl; }
+h2 { font-size: $font-size-xl; }
+h3 { font-size: $font-size-lg; }
+h4 { font-size: $font-size-md; }

@@ -1,0 +1,102 @@
+<div class="page-container page-content">
+  <app-breadcrumb [items]="[{ label: 'Home', url: '/' }, { label: 'Account', url: '/account' }, { label: 'Clubcard' }]" />
+  <h1 class="cc-title">Tesco Clubcard</h1>
+
+  @if (loading()) {
+    <app-spinner size="lg" />
+  } @else {
+    <!-- Balance card -->
+    <div class="cc-balance-card">
+      <div class="cc-balance-card__main">
+        <p class="cc-balance-card__label">Current points balance</p>
+        <p class="cc-balance-card__points">{{ balance()?.points ?? 0 | number }}</p>
+        <p class="cc-balance-card__sub">= £{{ ((balance()?.points ?? 0) / 100) | number:'1.2-2' }} in vouchers</p>
+      </div>
+      <div class="cc-balance-card__actions">
+        <a routerLink="/offers" class="button button--primary">Shop Clubcard Prices</a>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="cc-tabs">
+      <button class="cc-tab" [class.active]="activeTab() === 'overview'" (click)="activeTab.set('overview')">Overview</button>
+      <button class="cc-tab" [class.active]="activeTab() === 'vouchers'" (click)="activeTab.set('vouchers')">Vouchers ({{ vouchers().length }})</button>
+      <button class="cc-tab" [class.active]="activeTab() === 'history'" (click)="activeTab.set('history')">Points History</button>
+    </div>
+
+    @if (activeTab() === 'overview') {
+      <div class="cc-grid">
+        <div class="cc-info-card card">
+          <div class="card__body">
+            <h3>How Clubcard works</h3>
+            <ul class="cc-list">
+              <li>Earn 1 point for every £1 you spend</li>
+              <li>Collect 100 points = £1 in vouchers</li>
+              <li>Use vouchers at checkout or with Clubcard Partners for even more value</li>
+              <li>Get exclusive Clubcard Prices on hundreds of products</li>
+            </ul>
+          </div>
+        </div>
+        <div class="cc-info-card card">
+          <div class="card__body">
+            <h3>Your Clubcard</h3>
+            <div class="cc-digital-card">
+              <span class="cc-digital-card__logo">Tesco Clubcard</span>
+              <div class="cc-digital-card__barcode">|||||||||||||||</div>
+              <span class="cc-digital-card__number">{{ balance() ? '1234 5678 9012' : '—' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (activeTab() === 'vouchers') {
+      @if (!vouchers().length) {
+        <p style="padding: 2rem 0; color: #5f6368; text-align: center">No vouchers available. Collect 100 points to earn your first voucher.</p>
+      } @else {
+        <div class="voucher-grid">
+          @for (v of vouchers(); track v.id) {
+            <div class="voucher-card card" [class.voucher-card--used]="v.isUsed">
+              <div class="voucher-card__value">£{{ v.value | number:'1.2-2' }}</div>
+              <div class="voucher-card__body">
+                <p class="voucher-card__desc">{{ v.description ?? 'Clubcard voucher' }}</p>
+                <p class="voucher-card__expiry">Expires: {{ v.expiryDate | date:'d MMM yyyy' }}</p>
+                <p class="voucher-card__code">Code: <strong>{{ v.code }}</strong></p>
+              </div>
+              @if (v.isUsed) { <span class="badge badge--grey" style="align-self:center">Used</span> }
+            </div>
+          }
+        </div>
+      }
+    }
+
+    @if (activeTab() === 'history') {
+      @if (!transactions()?.items?.length) {
+        <p style="padding: 2rem 0; color: #5f6368; text-align: center">No points transactions yet.</p>
+      } @else {
+        <div class="card">
+          <table style="width:100%;border-collapse:collapse;font-size:0.875rem">
+            <thead>
+              <tr style="border-bottom:2px solid #d8dde6">
+                <th style="text-align:left;padding:0.75rem 1rem;color:#5f6368">Date</th>
+                <th style="text-align:left;padding:0.75rem 1rem;color:#5f6368">Description</th>
+                <th style="text-align:right;padding:0.75rem 1rem;color:#5f6368">Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (t of transactions()!.items; track t.id) {
+                <tr style="border-bottom:1px solid #d8dde6">
+                  <td style="padding:0.75rem 1rem">{{ t.date | date:'d MMM yyyy' }}</td>
+                  <td style="padding:0.75rem 1rem">{{ t.description }}</td>
+                  <td style="padding:0.75rem 1rem;text-align:right;font-weight:700" [style.color]="t.type === 'Earn' ? '#007a3d' : '#b00020'">
+                    {{ t.type === 'Earn' ? '+' : '-' }}{{ t.points }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  }
+</div>

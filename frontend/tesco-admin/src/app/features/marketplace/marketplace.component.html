@@ -1,0 +1,77 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-header__title">Marketplace</h1>
+</div>
+
+@if (message()) {
+  <div class="admin-alert admin-alert--success">{{ message() }}</div>
+}
+
+<div class="mp-tabs">
+  <button class="mp-tab" [class.active]="activeTab() === 'sellers'" (click)="activeTab.set('sellers')">Sellers</button>
+  <button class="mp-tab" [class.active]="activeTab() === 'disputes'" (click)="activeTab.set('disputes')">Disputes</button>
+</div>
+
+@if (loading()) {
+  <p class="admin-loading">Loading…</p>
+} @else {
+  @if (activeTab() === 'sellers') {
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead>
+          <tr><th>Business</th><th>Email</th><th>Status</th><th>Listings</th><th>Joined</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          @for (s of sellers(); track s.sellerId) {
+            <tr>
+              <td>{{ s.businessName }}</td>
+              <td>{{ s.email }}</td>
+              <td><span class="status-badge status--{{ s.status | lowercase }}">{{ s.status }}</span></td>
+              <td>{{ s.totalListings }}</td>
+              <td>{{ s.joinedOn | date:'dd MMM yyyy' }}</td>
+              <td class="actions-cell">
+                @if (s.status !== 'Active') {
+                  <button class="table-btn table-btn--success" (click)="approveSeller(s.sellerId)">Approve</button>
+                }
+                @if (s.status === 'Active') {
+                  <button class="table-btn table-btn--danger" (click)="suspendSeller(s.sellerId)">Suspend</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="admin-empty">No sellers found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (activeTab() === 'disputes') {
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead>
+          <tr><th>Dispute #</th><th>Order #</th><th>Seller</th><th>Reason</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+          @for (d of disputes(); track d.disputeId) {
+            <tr>
+              <td>#{{ d.disputeId }}</td>
+              <td>#{{ d.orderId }}</td>
+              <td>{{ d.sellerName }}</td>
+              <td>{{ d.reason }}</td>
+              <td><span class="status-badge status--{{ d.status | lowercase }}">{{ d.status }}</span></td>
+              <td>{{ d.createdOn | date:'dd MMM yyyy' }}</td>
+              <td class="actions-cell">
+                @if (d.status === 'Open') {
+                  <button class="table-btn table-btn--success" (click)="resolveDispute(d.disputeId, 'BuyerFavour')">Buyer favour</button>
+                  <button class="table-btn table-btn--danger" (click)="resolveDispute(d.disputeId, 'SellerFavour')">Seller favour</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="admin-empty">No disputes found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

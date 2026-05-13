@@ -1,0 +1,75 @@
+<div class="page-container page-content">
+  <app-breadcrumb [items]="breadcrumb" />
+
+  <div class="cat-layout">
+    <!-- Filters sidebar -->
+    <aside class="cat-filters card">
+      <div class="card__header">Filters</div>
+      <div class="card__body">
+        <div class="filter-group">
+          <h3 class="filter-group__title">Price range</h3>
+          <div class="filter-group__options">
+            <label class="filter-option"><input type="checkbox" /> Under £5</label>
+            <label class="filter-option"><input type="checkbox" /> £5 – £10</label>
+            <label class="filter-option"><input type="checkbox" /> £10 – £20</label>
+            <label class="filter-option"><input type="checkbox" /> Over £20</label>
+          </div>
+        </div>
+        <div class="filter-group">
+          <h3 class="filter-group__title">Offers</h3>
+          <label class="filter-option"><input type="checkbox" /> Clubcard prices only</label>
+          <label class="filter-option"><input type="checkbox" /> Special offers</label>
+        </div>
+        <div class="filter-group">
+          <h3 class="filter-group__title">Dietary</h3>
+          <div class="filter-group__options">
+            <label class="filter-option"><input type="checkbox" /> Vegan</label>
+            <label class="filter-option"><input type="checkbox" /> Vegetarian</label>
+            <label class="filter-option"><input type="checkbox" /> Gluten Free</label>
+            <label class="filter-option"><input type="checkbox" /> Organic</label>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Product grid -->
+    <main class="cat-main">
+      <div class="cat-toolbar">
+        <h1 class="cat-toolbar__title" style="text-transform: capitalize">{{ categoryName() }}</h1>
+        @if (result()) {
+          <span class="cat-toolbar__count">{{ result()!.totalCount }} products</span>
+        }
+        <div class="cat-toolbar__sort">
+          <label for="sort" class="cat-toolbar__sort-label">Sort by</label>
+          <select id="sort" class="form-control" style="width: auto" [value]="sortBy()" (change)="sortBy.set($any($event.target).value)">
+            @for (opt of sortOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="cat-loading"><app-spinner size="lg" /></div>
+      } @else if (result()?.items?.length === 0) {
+        <div class="cat-empty">
+          <p>No products found in this category.</p>
+          <a routerLink="/departments" class="button button--secondary">Browse all departments</a>
+        </div>
+      } @else {
+        <div class="product-grid">
+          @for (product of result()?.items ?? []; track product.id) {
+            <app-product-card [product]="product" />
+          }
+        </div>
+        <div class="cat-pagination">
+          <app-pagination
+            [currentPage]="currentPage()"
+            [totalPages]="result()?.totalPages ?? 1"
+            (pageChange)="onPageChange($event)"
+          />
+        </div>
+      }
+    </main>
+  </div>
+</div>

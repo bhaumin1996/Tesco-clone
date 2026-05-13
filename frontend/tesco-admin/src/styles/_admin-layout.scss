@@ -1,6 +1,127 @@
 @use 'tokens' as *;
 
-.admin-page {
-  margin: 0 auto;
-  max-width: $container-max;
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
 }
+
+.admin-sidebar {
+  background: $color-tesco-blue-dark;
+  color: $color-surface;
+  width: $sidebar-width;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease;
+
+  @media (max-width: $breakpoint-md) {
+    transform: translateX(-100%);
+    &.open { transform: translateX(0); }
+  }
+}
+
+.admin-sidebar__logo {
+  background: $color-tesco-blue;
+  padding: $space-4 $space-5;
+  font-size: $font-size-lg;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.admin-sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: $space-3 0;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-5;
+  color: rgba(255,255,255,0.8);
+  font-size: $font-size-sm;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  text-decoration: none;
+
+  &:hover, &.active {
+    background: rgba(255,255,255,0.12);
+    color: $color-surface;
+    text-decoration: none;
+  }
+
+  .nav-icon { font-size: 1.1rem; min-width: 1.25rem; }
+}
+
+.admin-nav-group {
+  padding: $space-3 $space-5 $space-1;
+  font-size: $font-size-xs;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.admin-main {
+  margin-left: $sidebar-width;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  @media (max-width: $breakpoint-md) { margin-left: 0; }
+}
+
+.admin-topbar {
+  background: $color-surface;
+  border-bottom: 1px solid $color-border;
+  height: $topbar-height;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $space-5;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: $shadow-card;
+}
+
+.admin-content {
+  flex: 1;
+  padding: $space-5;
+}
+
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-5;
+
+  h1 { font-size: $font-size-xl; }
+}
+
+.admin-card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+}
+
+.admin-card__header {
+  border-bottom: 1px solid $color-border;
+  padding: $space-4 $space-5;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-card__body {
+  padding: $space-5;
+}
+
+.admin-page { max-width: $container-max; margin: 0 auto; }

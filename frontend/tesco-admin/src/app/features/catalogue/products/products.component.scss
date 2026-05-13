@@ -1,0 +1,21 @@
+@use '../../../../styles/tokens' as *;
+
+.prod-filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid $color-border;
+}
+
+.low-stock { color: #c0392b; font-weight: 700; }
+.actions-cell { white-space: nowrap; }
+.table-btn {
+  background: none;
+  border: 1px solid $color-border;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.625rem;
+  &:hover { border-color: $color-tesco-blue; color: $color-tesco-blue; }
+}

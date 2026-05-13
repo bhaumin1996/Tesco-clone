@@ -1,0 +1,56 @@
+<div class="admin-shell">
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" [class.open]="sidebarOpen()">
+    <div class="admin-sidebar__logo">
+      <span>Tesco</span>
+      <span style="opacity:0.6;font-size:0.75rem;font-weight:400"> Admin</span>
+    </div>
+
+    <nav class="admin-sidebar__nav">
+      @for (group of navGroups; track group.label) {
+        <p class="admin-nav-group">{{ group.label }}</p>
+        @for (item of group.items; track item.route) {
+          <a
+            [routerLink]="item.route"
+            class="admin-nav-item"
+            routerLinkActive="active"
+          >
+            <span class="nav-icon">{{ item.icon }}</span>
+            {{ item.label }}
+          </a>
+        }
+      }
+    </nav>
+
+    <div style="padding: 1rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.12)">
+      <button class="admin-nav-item" style="width:100%;background:none;border:none;text-align:left;cursor:pointer" (click)="logout()">
+        <span class="nav-icon">🚪</span>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <div class="admin-main">
+    <!-- Top bar -->
+    <header class="admin-topbar">
+      <button
+        class="admin-topbar__mobile-toggle"
+        (click)="toggleSidebar()"
+        aria-label="Toggle sidebar"
+      >
+        ☰
+      </button>
+      <div class="admin-topbar__spacer"></div>
+      <div class="admin-topbar__user">
+        <span class="admin-topbar__badge">{{ auth.user()?.role }}</span>
+        <span>{{ auth.user()?.firstName }} {{ auth.user()?.lastName }}</span>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="admin-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

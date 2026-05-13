@@ -1,7 +1,75 @@
 @use 'tokens' as *;
+@use 'mixins' as *;
 
 .page-container {
   margin: 0 auto;
   max-width: $container-max;
-  padding: 0 1rem;
+  padding: 0 $space-4;
+
+  @include respond-to(md) {
+    padding: 0 $space-5;
+  }
+}
+
+.page-content {
+  padding-top: $space-5;
+  padding-bottom: $space-7;
+}
+
+.section { margin-bottom: $space-6; }
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-4;
+
+  @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-4;
+
+  @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+  @include respond-to(lg) { grid-template-columns: repeat(3, 1fr); }
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-3;
+
+  @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
+  @include respond-to(lg) { grid-template-columns: repeat(4, 1fr); }
+}
+
+.grid-5 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-3;
+
+  @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
+  @include respond-to(lg) { grid-template-columns: repeat(5, 1fr); }
+}
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: $space-2; }
+.gap-3 { gap: $space-3; }
+.gap-4 { gap: $space-4; }
+
+.mt-4 { margin-top: $space-4; }
+.mb-4 { margin-bottom: $space-4; }
+.mt-5 { margin-top: $space-5; }
+.mb-5 { margin-bottom: $space-5; }
+
+.w-full { width: 100%; }
+.hidden { display: none; }
+
+@include respond-to(md) {
+  .md\:block { display: block; }
+  .md\:hidden { display: none; }
 }

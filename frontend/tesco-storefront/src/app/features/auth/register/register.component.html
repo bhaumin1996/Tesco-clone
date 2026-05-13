@@ -1,0 +1,56 @@
+<div class="auth-page">
+  <div class="auth-card card">
+    <div class="card__header">
+      <h1>Create your account</h1>
+    </div>
+    <div class="card__body">
+      <p class="auth-card__intro">Join Tesco today. It's free and you can start earning Clubcard points right away.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="auth-card__name-row">
+          <div class="form-group">
+            <label class="form-label" for="firstName">First name</label>
+            <input id="firstName" type="text" class="form-control" [class.is-invalid]="fieldError('firstName')" formControlName="firstName" autocomplete="given-name" />
+            @if (fieldError('firstName')) { <p class="form-error">{{ fieldError('firstName') }}</p> }
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lastName">Last name</label>
+            <input id="lastName" type="text" class="form-control" [class.is-invalid]="fieldError('lastName')" formControlName="lastName" autocomplete="family-name" />
+            @if (fieldError('lastName')) { <p class="form-error">{{ fieldError('lastName') }}</p> }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input id="email" type="email" class="form-control" [class.is-invalid]="fieldError('email')" formControlName="email" autocomplete="email" />
+          @if (fieldError('email')) { <p class="form-error">{{ fieldError('email') }}</p> }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input id="password" type="password" class="form-control" [class.is-invalid]="fieldError('password')" formControlName="password" autocomplete="new-password" />
+          @if (fieldError('password')) { <p class="form-error">{{ fieldError('password') }}</p> }
+          <p class="form-hint">At least 8 characters</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword">Confirm password</label>
+          <input id="confirmPassword" type="password" class="form-control" [class.is-invalid]="confirmError" formControlName="confirmPassword" autocomplete="new-password" />
+          @if (confirmError) { <p class="form-error">{{ confirmError }}</p> }
+        </div>
+
+        <p class="auth-card__terms">
+          By creating an account you agree to our <a href="#" target="_blank">Terms & Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>.
+        </p>
+
+        <button type="submit" class="button button--primary button--full button--lg" [disabled]="loading()">
+          @if (loading()) { Creating account... } @else { Create account }
+        </button>
+      </form>
+
+      <p class="auth-card__signin">
+        Already have an account? <a routerLink="/auth/login">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<div class="page-container page-content">
+  <app-breadcrumb [items]="[{ label: 'Home', url: '/' }, { label: 'Account', url: '/account' }, { label: 'My Orders' }]" />
+  <h1 style="font-size: 1.5rem; margin-bottom: 1.5rem">My Orders</h1>
+
+  @if (loading()) {
+    <app-spinner size="lg" />
+  } @else if (!result()?.items?.length) {
+    <div style="text-align: center; padding: 3rem 0; color: #5f6368">
+      <p>You haven't placed any orders yet.</p>
+      <a routerLink="/departments" class="button button--primary" style="margin-top: 1rem">Start shopping</a>
+    </div>
+  } @else {
+    <div class="orders-list">
+      @for (order of result()!.items; track order.id) {
+        <a [routerLink]="['/account/orders', order.id]" class="order-card card">
+          <div class="order-card__header">
+            <div>
+              <p class="order-card__number">Order #{{ order.orderNumber }}</p>
+              <p class="order-card__date">{{ order.createdAt | date:'d MMMM yyyy' }}</p>
+            </div>
+            <span class="badge" [class]="'badge--' + (statusColors[order.status] ?? 'grey')">{{ order.status }}</span>
+          </div>
+          <div class="order-card__body">
+            <p class="order-card__items">{{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}</p>
+            @if (order.deliveryDate) {
+              <p class="order-card__delivery">Delivery: {{ order.deliveryDate | date:'EEE d MMM' }}</p>
+            }
+            <p class="order-card__total">Total: £{{ order.total | number:'1.2-2' }}</p>
+          </div>
+        </a>
+      }
+    </div>
+    <div style="display: flex; justify-content: center; margin-top: 1.5rem">
+      <app-pagination [currentPage]="currentPage()" [totalPages]="result()!.totalPages" (pageChange)="onPageChange($event)" />
+    </div>
+  }
+</div>

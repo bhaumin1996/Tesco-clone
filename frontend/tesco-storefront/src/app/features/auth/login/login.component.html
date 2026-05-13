@@ -1,0 +1,53 @@
+<div class="auth-page">
+  <div class="auth-card card">
+    <div class="card__header">
+      <h1 class="auth-card__title">Sign in</h1>
+    </div>
+    <div class="card__body">
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            [class.is-invalid]="emailError"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="your@email.com"
+          />
+          @if (emailError) { <p class="form-error">{{ emailError }}</p> }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="auth-card__password-wrap">
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              class="form-control"
+              [class.is-invalid]="passwordError"
+              formControlName="password"
+              autocomplete="current-password"
+            />
+            <button type="button" class="auth-card__pw-toggle" (click)="toggleShowPassword()">
+              {{ showPassword() ? 'Hide' : 'Show' }}
+            </button>
+          </div>
+          @if (passwordError) { <p class="form-error">{{ passwordError }}</p> }
+          <a routerLink="/auth/forgot-password" class="auth-card__forgot">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="button button--primary button--full button--lg" [disabled]="loading()">
+          @if (loading()) { Signing in... } @else { Sign in }
+        </button>
+      </form>
+
+      <div class="auth-card__divider"><span>New to Tesco?</span></div>
+
+      <a routerLink="/auth/register" class="button button--secondary button--full">
+        Create an account
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-header__title">Analytics</h1>
+  <button class="button button--secondary" (click)="exportCsv()">Export CSV</button>
+</div>
+
+<div class="admin-card analytics-filter-card">
+  <form [formGroup]="filterForm" (ngSubmit)="applyFilter()" class="analytics-filters">
+    <div class="form-group">
+      <label class="form-label">From</label>
+      <input type="date" class="form-control" formControlName="from" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">To</label>
+      <input type="date" class="form-control" formControlName="to" />
+    </div>
+    <button type="submit" class="button button--primary analytics-filters__btn">Apply</button>
+  </form>
+</div>
+
+@if (loading()) {
+  <p class="admin-loading">Loading…</p>
+} @else if (report()) {
+  <div class="analytics-stats">
+    <div class="admin-card analytics-stat">
+      <p class="analytics-stat__label">Total orders</p>
+      <p class="analytics-stat__value">{{ report()!.totalOrders }}</p>
+    </div>
+    <div class="admin-card analytics-stat">
+      <p class="analytics-stat__label">Total revenue</p>
+      <p class="analytics-stat__value">£{{ report()!.totalRevenue | number:'1.2-2' }}</p>
+    </div>
+    <div class="admin-card analytics-stat">
+      <p class="analytics-stat__label">Average order value</p>
+      <p class="analytics-stat__value">£{{ report()!.averageOrderValue | number:'1.2-2' }}</p>
+    </div>
+    <div class="admin-card analytics-stat">
+      <p class="analytics-stat__label">New customers</p>
+      <p class="analytics-stat__value">{{ report()!.newCustomers }}</p>
+    </div>
+    <div class="admin-card analytics-stat">
+      <p class="analytics-stat__label">Returning customers</p>
+      <p class="analytics-stat__value">{{ report()!.returningCustomers }}</p>
+    </div>
+  </div>
+
+  <div class="admin-card">
+    <h2 class="analytics-section-title">Top Products</h2>
+    @if (topProducts().length === 0) {
+      <p class="admin-empty">No product data for this period.</p>
+    } @else {
+      <table class="admin-table">
+        <thead><tr><th>Product</th><th>Units Sold</th><th>Revenue</th></tr></thead>
+        <tbody>
+          @for (p of topProducts(); track p.productName) {
+            <tr>
+              <td>{{ p.productName }}</td>
+              <td>{{ p.unitsSold }}</td>
+              <td>£{{ p.revenue | number:'1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+}

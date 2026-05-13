@@ -1,12 +1,63 @@
 @use 'tokens' as *;
 
-input,
-select,
-textarea {
-  font: inherit;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  margin-bottom: $space-4;
 }
 
-:focus-visible {
-  outline: 3px solid $color-tesco-blue-light;
-  outline-offset: 2px;
+.form-label {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-ink;
+}
+
+.form-control {
+  width: 100%;
+  padding: $space-3 $space-3;
+  border: 2px solid $color-border;
+  border-radius: $radius-sm;
+  font-family: $font-family-base;
+  font-size: $font-size-md;
+  color: $color-ink;
+  background: $color-surface;
+  transition: border-color 0.15s ease;
+
+  &::placeholder { color: $color-muted; }
+
+  &:focus {
+    outline: none;
+    border-color: $color-tesco-blue;
+    box-shadow: 0 0 0 3px rgba($color-tesco-blue, 0.15);
+  }
+
+  &.is-invalid {
+    border-color: $color-tesco-red;
+  }
+
+  &:disabled {
+    background: $color-surface-alt;
+    cursor: not-allowed;
+  }
+}
+
+.form-error {
+  font-size: $font-size-xs;
+  color: $color-tesco-red;
+  margin-top: $space-1;
+}
+
+.form-hint {
+  font-size: $font-size-xs;
+  color: $color-muted;
+  margin-top: $space-1;
+}
+
+select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235f6368' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2.5rem;
 }

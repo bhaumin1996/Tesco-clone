@@ -1,0 +1,75 @@
+@use '../../../styles/tokens' as *;
+
+.cc-title { font-size: $font-size-xl; margin-bottom: $space-5; }
+
+.cc-balance-card {
+  background: $color-clubcard-yellow;
+  border-radius: $radius-md;
+  padding: $space-6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-5;
+  gap: $space-4;
+  flex-wrap: wrap;
+
+  &__label { font-size: $font-size-sm; color: $color-ink; opacity: 0.7; margin-bottom: $space-2; }
+  &__points { font-size: $font-size-2xl; font-weight: 900; color: $color-ink; }
+  &__sub { font-size: $font-size-sm; color: $color-ink; opacity: 0.7; }
+}
+
+.cc-tabs { display: flex; border-bottom: 2px solid $color-border; margin-bottom: $space-5; }
+.cc-tab {
+  background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer;
+  font-size: $font-size-sm; font-weight: 700; margin-bottom: -2px; padding: $space-3 $space-4; color: $color-muted;
+  &.active { border-bottom-color: $color-tesco-blue; color: $color-tesco-blue; }
+}
+
+.cc-grid { display: grid; gap: $space-4; grid-template-columns: 1fr; }
+@media (min-width: 768px) { .cc-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.cc-list { list-style: disc; padding-left: 1.5rem; display: flex; flex-direction: column; gap: $space-2; font-size: $font-size-sm; color: $color-muted; margin-top: $space-3; }
+
+.cc-digital-card {
+  background: $color-tesco-blue;
+  border-radius: $radius-md;
+  color: $color-surface;
+  margin-top: $space-3;
+  padding: $space-5;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__logo { font-size: $font-size-lg; font-weight: 900; font-style: italic; }
+  &__barcode { font-size: 1.5rem; letter-spacing: 2px; opacity: 0.6; }
+  &__number { font-family: monospace; font-size: $font-size-md; letter-spacing: 0.15em; opacity: 0.8; }
+}
+
+.voucher-grid { display: grid; gap: $space-3; grid-template-columns: 1fr; }
+@media (min-width: 600px) { .voucher-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .voucher-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.voucher-card {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+
+  &--used { opacity: 0.6; }
+
+  &__value {
+    background: $color-clubcard-yellow;
+    color: $color-ink;
+    font-size: $font-size-xl;
+    font-weight: 900;
+    padding: $space-4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    border-radius: $radius-md 0 0 $radius-md;
+  }
+
+  &__body { flex: 1; padding: $space-4; display: flex; flex-direction: column; gap: $space-1; }
+  &__desc { font-size: $font-size-sm; font-weight: 700; }
+  &__expiry, &__code { font-size: $font-size-xs; color: $color-muted; }
+}

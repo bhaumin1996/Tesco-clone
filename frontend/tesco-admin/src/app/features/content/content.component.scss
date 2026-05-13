@@ -1,0 +1,31 @@
+@use '../../../styles/tokens' as *;
+
+.content-tabs {
+  display: flex; border-bottom: 2px solid $color-border; margin-bottom: 1.25rem;
+}
+
+.content-tab {
+  background: none; border: none; cursor: pointer; padding: 0.625rem 1.25rem;
+  font-size: 0.9375rem; color: $color-muted; border-bottom: 2px solid transparent; margin-bottom: -2px;
+  &.active { color: $color-tesco-blue; border-bottom-color: $color-tesco-blue; font-weight: 600; }
+  &:hover:not(.active) { color: $color-text-primary; }
+}
+
+.content-form-card {
+  padding: 1.5rem; margin-bottom: 1.25rem;
+  &__title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+  &__actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
+}
+
+.content-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+
+.actions-cell { display: flex; gap: 0.5rem; }
+
+.dash-link { color: $color-tesco-blue; font-size: 0.875rem; text-decoration: none; &:hover { text-decoration: underline; } }
+
+.table-btn {
+  background: none; border: 1px solid $color-border; border-radius: 4px; cursor: pointer;
+  font-size: 0.8125rem; padding: 0.25rem 0.625rem;
+  &:hover { border-color: $color-tesco-blue; color: $color-tesco-blue; }
+  &--success:hover { border-color: #27ae60; color: #27ae60; }
+}

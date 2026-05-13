@@ -1,0 +1,91 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-card__logo">
+      <span class="login-card__logo-tesco">Tesco</span>
+      <span class="login-card__logo-admin">Admin</span>
+    </div>
+
+    @if (step() === 'login') {
+      <h1 class="login-card__title">Sign in to Admin</h1>
+      <p class="login-card__subtitle">Enter your administrator credentials</p>
+
+      @if (error()) {
+        <div class="login-alert" role="alert">{{ error() }}</div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="submitLogin()" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            [class.is-invalid]="loginForm.get('email')!.invalid && loginForm.get('email')!.touched"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="admin@tesco.com"
+          />
+          @if (loginForm.get('email')!.invalid && loginForm.get('email')!.touched) {
+            <span class="form-error">Enter a valid email address</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            [class.is-invalid]="loginForm.get('password')!.invalid && loginForm.get('password')!.touched"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+          @if (loginForm.get('password')!.invalid && loginForm.get('password')!.touched) {
+            <span class="form-error">Password is required</span>
+          }
+        </div>
+
+        <button type="submit" class="button button--primary button--full login-card__submit" [disabled]="loading()">
+          @if (loading()) { Signing in… } @else { Sign in }
+        </button>
+      </form>
+    }
+
+    @if (step() === '2fa') {
+      <h1 class="login-card__title">Two-factor authentication</h1>
+      <p class="login-card__subtitle">Enter the 6-digit code from your authenticator app</p>
+
+      @if (error()) {
+        <div class="login-alert" role="alert">{{ error() }}</div>
+      }
+
+      <form [formGroup]="twoFaForm" (ngSubmit)="submitTwoFa()" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="code">Verification code</label>
+          <input
+            id="code"
+            type="text"
+            inputmode="numeric"
+            class="form-control login-card__code-input"
+            [class.is-invalid]="twoFaForm.get('code')!.invalid && twoFaForm.get('code')!.touched"
+            formControlName="code"
+            maxlength="6"
+            autocomplete="one-time-code"
+            placeholder="000000"
+          />
+          @if (twoFaForm.get('code')!.invalid && twoFaForm.get('code')!.touched) {
+            <span class="form-error">Enter a valid 6-digit code</span>
+          }
+        </div>
+
+        <button type="submit" class="button button--primary button--full login-card__submit" [disabled]="loading()">
+          @if (loading()) { Verifying… } @else { Verify code }
+        </button>
+
+        <button type="button" class="login-card__back" (click)="step.set('login')">
+          ← Back to sign in
+        </button>
+      </form>
+    }
+  </div>
+</div>

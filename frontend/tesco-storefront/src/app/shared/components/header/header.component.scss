@@ -1,0 +1,224 @@
+@use '../../../../styles/tokens' as *;
+@use '../../../../styles/mixins' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+// Utility bar
+.header__utility {
+  background: $color-tesco-blue-dark;
+  padding: 4px 0;
+}
+
+.header__utility-inner { display: flex; justify-content: flex-end; }
+
+.header__utility-links { display: flex; gap: $space-4; }
+
+.header__utility-link {
+  color: rgba(255,255,255,0.8);
+  font-size: $font-size-xs;
+  text-decoration: none;
+  &:hover { color: $color-surface; text-decoration: underline; }
+}
+
+// Main bar
+.header__main { background: $color-tesco-blue; padding: $space-3 0; }
+
+.header__main-inner {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+}
+
+.header__logo {
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.header__logo-text {
+  color: $color-surface;
+  font-size: $font-size-2xl;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -1px;
+}
+
+// Search
+.header__search {
+  flex: 1;
+  display: flex;
+  max-width: 560px;
+  background: $color-surface;
+  border-radius: $radius-sm;
+  overflow: hidden;
+}
+
+.header__search-input {
+  flex: 1;
+  border: none;
+  font-size: $font-size-md;
+  outline: none;
+  padding: $space-2 $space-3;
+  color: $color-ink;
+}
+
+.header__search-btn {
+  background: $color-clubcard-yellow;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 $space-3;
+  color: $color-ink;
+  &:hover { background: darken($color-clubcard-yellow, 5%); }
+}
+
+// Actions
+.header__actions { display: flex; align-items: center; gap: $space-3; margin-left: auto; }
+
+.header__icon {
+  width: 24px;
+  height: 24px;
+  color: $color-surface;
+}
+
+.header__action-label {
+  color: $color-surface;
+  font-size: $font-size-xs;
+  font-weight: 700;
+  display: none;
+  @include respond-to(md) { display: block; }
+}
+
+.header__account {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  gap: 2px;
+}
+
+.header__dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-popover;
+  min-width: 180px;
+  z-index: 300;
+  padding: $space-2 0;
+}
+
+.header__dropdown-item {
+  display: block;
+  width: 100%;
+  padding: $space-2 $space-4;
+  color: $color-ink;
+  font-size: $font-size-sm;
+  text-decoration: none;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  &:hover { background: $color-surface-alt; }
+}
+
+.header__dropdown-divider { border: none; border-top: 1px solid $color-border; margin: $space-1 0; }
+
+.header__clubcard {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.header__clubcard-badge {
+  background: $color-clubcard-yellow;
+  color: $color-ink;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  font-weight: 900;
+  padding: 3px 8px;
+}
+
+.header__cart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-decoration: none;
+}
+
+.header__cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: $color-tesco-red;
+  color: $color-surface;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header__mobile-toggle {
+  background: none;
+  border: none;
+  color: $color-surface;
+  cursor: pointer;
+  display: flex;
+  @include respond-to(lg) { display: none; }
+}
+
+// Department nav
+.header__dept-nav {
+  background: $color-surface;
+  border-bottom: 1px solid $color-border;
+  overflow-x: auto;
+
+  @media (max-width: $breakpoint-lg) {
+    display: none;
+    &.open { display: block; }
+  }
+}
+
+.header__dept-list {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header__dept-link {
+  display: block;
+  padding: $space-2 $space-3;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-ink;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+
+  &:hover, &.active {
+    color: $color-tesco-blue;
+    border-bottom-color: $color-tesco-blue;
+    text-decoration: none;
+  }
+
+  &--clubcard { color: $color-tesco-blue; }
+}

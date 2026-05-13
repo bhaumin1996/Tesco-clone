@@ -1,0 +1,60 @@
+@use '../../../../styles/tokens' as *;
+@use '../../../../styles/mixins' as *;
+
+.footer {
+  background: $color-ink;
+  color: rgba(255,255,255,0.8);
+  padding: $space-7 0 $space-5;
+  margin-top: auto;
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-5;
+  margin-bottom: $space-6;
+
+  @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+  @include respond-to(lg) { grid-template-columns: repeat(4, 1fr); }
+}
+
+.footer__heading {
+  color: $color-surface;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  margin-bottom: $space-3;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.footer__links { list-style: none; display: flex; flex-direction: column; gap: $space-2; }
+
+.footer__link {
+  color: rgba(255,255,255,0.7);
+  font-size: $font-size-sm;
+  text-decoration: none;
+  &:hover { color: $color-surface; text-decoration: underline; }
+}
+
+.footer__bottom {
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding-top: $space-4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.footer__copyright { font-size: $font-size-xs; color: rgba(255,255,255,0.5); }
+
+.footer__payment-icons { display: flex; align-items: center; gap: $space-2; }
+.footer__payment-label { font-size: $font-size-xs; color: rgba(255,255,255,0.5); }
+
+.footer__payment-chip {
+  background: rgba(255,255,255,0.15);
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  font-weight: 700;
+  padding: 2px $space-2;
+}

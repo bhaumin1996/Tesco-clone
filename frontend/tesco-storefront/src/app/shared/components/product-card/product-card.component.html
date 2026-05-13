@@ -1,0 +1,60 @@
+<article class="product-card" [class.product-card--out-of-stock]="!product.isInStock">
+  <a [routerLink]="['/products', product.id]" class="product-card__link">
+    <div class="product-card__image-wrap">
+      @if (product.imageUrl) {
+        <img [src]="product.imageUrl" [alt]="product.name" class="product-card__image" loading="lazy" />
+      } @else {
+        <div class="product-card__image-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d8dde6" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+      }
+
+      <!-- Badges -->
+      @if (product.promotionLabel) {
+        <span class="product-card__promo-badge">{{ product.promotionLabel }}</span>
+      }
+      @if (!product.isInStock) {
+        <span class="product-card__oos-badge">Out of stock</span>
+      }
+    </div>
+
+    <div class="product-card__body">
+      <p class="product-card__brand">{{ product.brand }}</p>
+      <h3 class="product-card__title">{{ product.name }}</h3>
+      <p class="product-card__unit">{{ product.unitPrice }}</p>
+
+      <div class="product-card__pricing">
+        @if (product.clubcardPrice) {
+          <div class="product-card__clubcard-block">
+            <span class="clubcard-badge">Clubcard Price</span>
+            <span class="product-card__clubcard-price">£{{ product.clubcardPrice | number:'1.2-2' }}</span>
+          </div>
+          <span class="product-card__rrp">Was £{{ product.price | number:'1.2-2' }}</span>
+        } @else {
+          <span class="product-card__price">£{{ product.price | number:'1.2-2' }}</span>
+        }
+      </div>
+
+      @if (product.averageRating > 0) {
+        <div class="product-card__rating">
+          <span class="product-card__stars" [style.--rating]="product.averageRating">★★★★★</span>
+          <span class="product-card__review-count">({{ product.reviewCount }})</span>
+        </div>
+      }
+    </div>
+  </a>
+
+  <div class="product-card__actions">
+    <button
+      class="button button--primary button--sm product-card__add-btn"
+      (click)="addToCart($event)"
+      [disabled]="!product.isInStock || adding"
+      [attr.aria-label]="'Add ' + product.name + ' to basket'"
+    >
+      @if (adding) { Adding... } @else { Add to basket }
+    </button>
+  </div>
+</article>

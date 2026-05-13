@@ -1,0 +1,125 @@
+<div class="admin-page-header">
+  <h1 class="admin-page-header__title">Content</h1>
+  <div class="admin-page-header__actions">
+    @if (activeTab() === 'pages') {
+      <button class="button button--primary" (click)="openPageForm()">+ New Page</button>
+    } @else {
+      <button class="button button--primary" (click)="openBannerForm()">+ New Banner</button>
+    }
+  </div>
+</div>
+
+@if (message()) {
+  <div class="admin-alert admin-alert--success">{{ message() }}</div>
+}
+
+<div class="content-tabs">
+  <button class="content-tab" [class.active]="activeTab() === 'pages'" (click)="activeTab.set('pages')">CMS Pages</button>
+  <button class="content-tab" [class.active]="activeTab() === 'banners'" (click)="activeTab.set('banners')">Banners</button>
+</div>
+
+@if (showForm()) {
+  <div class="admin-card content-form-card">
+    @if (formType() === 'page') {
+      <h2 class="content-form-card__title">{{ editId() ? 'Edit Page' : 'New Page' }}</h2>
+      <form [formGroup]="pageForm" (ngSubmit)="savePage()">
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input class="form-control" formControlName="title" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Slug</label>
+          <input class="form-control" formControlName="slug" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Body (HTML)</label>
+          <textarea class="form-control" formControlName="body" rows="8"></textarea>
+        </div>
+        <div class="content-form-card__actions">
+          <button type="submit" class="button button--primary">Save</button>
+          <button type="button" class="button button--secondary" (click)="showForm.set(false)">Cancel</button>
+        </div>
+      </form>
+    } @else {
+      <h2 class="content-form-card__title">{{ editId() ? 'Edit Banner' : 'New Banner' }}</h2>
+      <form [formGroup]="bannerForm" (ngSubmit)="saveBanner()">
+        <div class="content-form-grid">
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input class="form-control" formControlName="title" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Image URL</label>
+            <input class="form-control" formControlName="imageUrl" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Link URL</label>
+            <input class="form-control" formControlName="linkUrl" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Position</label>
+            <input type="number" class="form-control" formControlName="position" />
+          </div>
+        </div>
+        <div class="content-form-card__actions">
+          <button type="submit" class="button button--primary">Save</button>
+          <button type="button" class="button button--secondary" (click)="showForm.set(false)">Cancel</button>
+        </div>
+      </form>
+    }
+  </div>
+}
+
+@if (loading()) {
+  <p class="admin-loading">Loading…</p>
+} @else {
+  @if (activeTab() === 'pages') {
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead><tr><th>Title</th><th>Slug</th><th>Status</th><th>Last Updated</th><th>Actions</th></tr></thead>
+        <tbody>
+          @for (p of pages(); track p.pageId) {
+            <tr>
+              <td>{{ p.title }}</td>
+              <td>/{{ p.slug }}</td>
+              <td><span class="status-badge" [class.status--active]="p.isPublished" [class.status--pending]="!p.isPublished">{{ p.isPublished ? 'Published' : 'Draft' }}</span></td>
+              <td>{{ p.updatedOn | date:'dd MMM yyyy HH:mm' }}</td>
+              <td class="actions-cell">
+                <button class="table-btn" (click)="openPageForm(p)">Edit</button>
+                @if (!p.isPublished) {
+                  <button class="table-btn table-btn--success" (click)="publishPage(p.pageId)">Publish</button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="admin-empty">No pages found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (activeTab() === 'banners') {
+    <div class="admin-card">
+      <table class="admin-table">
+        <thead><tr><th>Position</th><th>Title</th><th>Link</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          @for (b of banners(); track b.bannerId) {
+            <tr>
+              <td>{{ b.position }}</td>
+              <td>{{ b.title }}</td>
+              <td><a [href]="b.linkUrl" target="_blank" class="dash-link">{{ b.linkUrl || '—' }}</a></td>
+              <td><span class="status-badge" [class.status--active]="b.isActive" [class.status--inactive]="!b.isActive">{{ b.isActive ? 'Active' : 'Inactive' }}</span></td>
+              <td class="actions-cell">
+                <button class="table-btn" (click)="openBannerForm(b)">Edit</button>
+                <button class="table-btn" (click)="toggleBanner(b.bannerId)">{{ b.isActive ? 'Deactivate' : 'Activate' }}</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="admin-empty">No banners found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

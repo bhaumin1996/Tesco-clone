@@ -1,0 +1,62 @@
+<div class="page-container page-content">
+  <app-breadcrumb [items]="[{ label: 'Home', url: '/' }, { label: 'Delivery Slots' }]" />
+  <h1 class="slots-title">Book a delivery slot</h1>
+  <p class="slots-subtitle">Enter your postcode to see available slots in your area.</p>
+
+  <form class="slots-search" (ngSubmit)="search()">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Your postcode"
+      [(ngModel)]="postcode"
+      name="postcode"
+      style="max-width: 280px"
+    />
+    <button type="submit" class="button button--primary" [disabled]="loading()">Find slots</button>
+  </form>
+
+  @if (loading()) {
+    <app-spinner />
+  } @else if (slots().length > 0) {
+    <div class="slots-results">
+      @for (group of groupedByDate; track group.date) {
+        <div class="slots-day">
+          <h3 class="slots-day__title">{{ group.date | date:'EEEE d MMMM' }}</h3>
+          <div class="slots-grid">
+            @for (slot of group.slots; track slot.id) {
+              <button
+                class="slot-btn"
+                [class.slot-btn--selected]="selectedSlot()?.id === slot.id"
+                [class.slot-btn--free]="slot.isFree"
+                [disabled]="!slot.isAvailable"
+                (click)="selectedSlot.set(slot)"
+              >
+                <span class="slot-btn__time">{{ slot.startTime }} – {{ slot.endTime }}</span>
+                <span class="slot-btn__price">
+                  @if (!slot.isAvailable) { Unavailable }
+                  @else if (slot.charge === 0) { Free }
+                  @else { £{{ slot.charge | number:'1.2-2' }} }
+                </span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      @if (selectedSlot()) {
+        <div class="slots-confirm">
+          <p>Selected: <strong>{{ selectedSlot()!.date | date:'d MMM' }}, {{ selectedSlot()!.startTime }} – {{ selectedSlot()!.endTime }}</strong>
+            @if (selectedSlot()!.charge > 0) { — £{{ selectedSlot()!.charge | number:'1.2-2' }} } @else { — Free }
+          </p>
+          <button class="button button--primary" [disabled]="booking()" (click)="bookSlot()">
+            @if (booking()) { Booking... } @else { Confirm slot }
+          </button>
+        </div>
+      }
+    </div>
+  } @else if (searched()) {
+    <div class="slots-empty">
+      <p>No delivery slots available for your postcode. Try Click & Collect instead.</p>
+    </div>
+  }
+</div>

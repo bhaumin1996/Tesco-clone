@@ -1,0 +1,61 @@
+@use '../../../../styles/tokens' as *;
+@use '../../../../styles/mixins' as *;
+
+.cat-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-5;
+  margin-top: $space-4;
+
+  @include respond-to(lg) { grid-template-columns: 240px 1fr; }
+}
+
+.cat-filters {
+  align-self: start;
+  position: sticky;
+  top: 8rem;
+}
+
+.filter-group { margin-bottom: $space-4; }
+
+.filter-group__title { font-size: $font-size-sm; font-weight: 700; margin-bottom: $space-3; }
+
+.filter-group__options { display: flex; flex-direction: column; gap: $space-2; }
+
+.filter-option {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  cursor: pointer;
+
+  input { accent-color: $color-tesco-blue; }
+}
+
+.cat-toolbar {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  margin-bottom: $space-4;
+  flex-wrap: wrap;
+}
+
+.cat-toolbar__title { font-size: $font-size-xl; flex: 1; }
+.cat-toolbar__count { font-size: $font-size-sm; color: $color-muted; }
+.cat-toolbar__sort { display: flex; align-items: center; gap: $space-2; }
+.cat-toolbar__sort-label { font-size: $font-size-sm; white-space: nowrap; }
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-3;
+
+  @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
+  @include respond-to(xl) { grid-template-columns: repeat(4, 1fr); }
+}
+
+.cat-loading { display: flex; justify-content: center; padding: $space-7 0; }
+
+.cat-empty { text-align: center; padding: $space-7 0; display: flex; flex-direction: column; align-items: center; gap: $space-4; }
+
+.cat-pagination { display: flex; justify-content: center; margin-top: $space-6; }

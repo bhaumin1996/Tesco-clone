@@ -1,13 +1,28 @@
 @use 'tokens' as *;
 
 .badge {
-  border-radius: $radius-sm;
   display: inline-flex;
+  align-items: center;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
   font-weight: 700;
-  padding: 0.25rem 0.5rem;
+  padding: 2px $space-2;
+  white-space: nowrap;
 }
+
+.badge--blue    { background: $color-tesco-blue; color: $color-surface; }
+.badge--red     { background: $color-tesco-red; color: $color-surface; }
+.badge--yellow  { background: $color-clubcard-yellow; color: $color-ink; }
+.badge--green   { background: $color-success; color: $color-surface; }
+.badge--grey    { background: $color-surface-alt; color: $color-muted; border: 1px solid $color-border; }
 
 .badge--clubcard {
   background: $color-clubcard-yellow;
   color: $color-ink;
+}
+
+.badge--outline-blue {
+  background: $color-tesco-blue-light;
+  color: $color-tesco-blue;
+  border: 1px solid $color-tesco-blue;
 }

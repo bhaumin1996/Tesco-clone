@@ -1,0 +1,27 @@
+@use '../../../../styles/tokens' as *;
+
+.auth-page {
+  min-height: 60vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: $space-6 $space-4;
+  background: $color-surface-alt;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 520px;
+
+  &__intro { font-size: $font-size-sm; color: $color-muted; margin-bottom: $space-5; }
+
+  &__name-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-4;
+  }
+
+  &__terms { font-size: $font-size-xs; color: $color-muted; margin-bottom: $space-4; }
+
+  &__signin { text-align: center; font-size: $font-size-sm; margin-top: $space-4; color: $color-muted; }
+}

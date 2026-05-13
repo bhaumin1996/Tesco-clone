@@ -1,0 +1,176 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+.home { overflow-x: hidden; }
+
+.home__roundels {
+  background: $color-surface;
+  border-bottom: 1px solid $color-border;
+  padding: $space-4 0;
+}
+
+.roundel-scroll {
+  display: flex;
+  gap: $space-4;
+  overflow-x: auto;
+  padding-bottom: $space-2;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.roundel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-2;
+  text-decoration: none;
+  flex-shrink: 0;
+  min-width: 72px;
+
+  &:hover .roundel__circle { border-color: $color-tesco-blue; }
+}
+
+.roundel__circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: $color-surface-alt;
+  border: 2px solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+
+  &--all {
+    background: $color-tesco-blue;
+    color: $color-surface;
+    font-weight: 700;
+    font-size: $font-size-sm;
+    border-color: $color-tesco-blue;
+  }
+}
+
+.roundel__icon { font-size: 1.75rem; }
+
+.roundel__label {
+  font-size: $font-size-xs;
+  font-weight: 700;
+  color: $color-ink;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 72px;
+}
+
+// Hero
+.home__hero { padding: $space-5 0; }
+
+.hero-grid {
+  display: grid;
+  gap: $space-4;
+
+  @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
+}
+
+.hero-card {
+  border-radius: $radius-md;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  min-height: 200px;
+  padding: $space-6;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+
+  &:hover { transform: translateY(-2px); }
+}
+
+.hero-card__title { font-size: $font-size-xl; color: $color-ink; }
+.hero-card__subtitle { font-size: $font-size-sm; color: $color-muted; flex: 1; }
+.hero-card__cta { align-self: flex-start; }
+
+// Generic sections
+.home__section { padding: $space-6 0; }
+
+.home__section-title {
+  font-size: $font-size-xl;
+  margin-bottom: $space-5;
+  color: $color-ink;
+}
+
+.promo-grid {
+  display: grid;
+  gap: $space-4;
+
+  @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
+}
+
+.promo-tile {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $space-4 $space-5;
+  text-decoration: none;
+  transition: box-shadow 0.15s ease;
+
+  &:hover { box-shadow: $shadow-popover; text-decoration: none; }
+  &--blue { background: $color-surface-blue; border-color: $color-tesco-blue-light; }
+}
+
+.promo-tile__icon { font-size: 2rem; flex-shrink: 0; }
+.promo-tile__title { font-size: $font-size-md; font-weight: 700; color: $color-ink; margin-bottom: $space-1; }
+.promo-tile__subtitle { font-size: $font-size-sm; color: $color-muted; }
+
+// Clubcard banner
+.home__clubcard-banner {
+  background: $color-clubcard-yellow;
+  padding: $space-7 0;
+}
+
+.clubcard-banner {
+  display: flex;
+  align-items: center;
+  gap: $space-7;
+
+  @media (max-width: $breakpoint-md) { flex-direction: column; }
+}
+
+.clubcard-banner__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.clubcard-banner__eyebrow {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-tesco-blue;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.clubcard-banner__title { font-size: $font-size-2xl; color: $color-ink; }
+.clubcard-banner__text { font-size: $font-size-md; color: $color-ink; max-width: 480px; }
+
+.clubcard-banner__visual { flex-shrink: 0; }
+
+.clubcard-mock {
+  background: $color-tesco-blue;
+  border-radius: $radius-md;
+  color: $color-surface;
+  padding: $space-5 $space-6;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  box-shadow: $shadow-popover;
+}
+
+.clubcard-mock__logo { font-size: $font-size-lg; font-weight: 900; font-style: italic; }
+.clubcard-mock__number { font-size: $font-size-md; letter-spacing: 0.15em; font-family: monospace; opacity: 0.8; }
