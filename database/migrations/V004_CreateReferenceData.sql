@@ -4,6 +4,9 @@
 -- Description: Create reference/master lookup tables (RecordStatus, Role)
 -- Dependencies: V001, V002, V003
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

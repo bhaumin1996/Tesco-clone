@@ -4,6 +4,9 @@
 -- Description: Create marketplace tables: tblSeller, tblListing, tblCommission, tblDispute
 -- Dependencies: V001-V011
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

@@ -4,6 +4,9 @@
 -- Description: Create promotions tables: tblPromotion, tblPromotionProduct
 -- Dependencies: V001-V009
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

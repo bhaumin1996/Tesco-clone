@@ -4,6 +4,9 @@
 -- Description: Create loyalty tables: tblClubcardAccount, tblLoyaltyTransaction, tblVoucher
 -- Dependencies: V001-V008
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

@@ -4,6 +4,9 @@
 -- Description: Create delivery tables: tblStore, tblDeliveryZone, tblDeliverySlot, tblSlotBooking
 -- Dependencies: V001-V007
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

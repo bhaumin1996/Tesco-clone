@@ -41,8 +41,9 @@ export class AuthService {
 
   refreshToken() {
     const refreshToken = localStorage.getItem('refresh_token');
-    if (!refreshToken) return throwError(() => new Error('No refresh token'));
-    return this._http.post<AuthResponse>(`${this.baseUrl}/refresh`, { refreshToken }).pipe(
+    const userId = parseInt(localStorage.getItem('user_id') ?? '0', 10);
+    if (!refreshToken || !userId) return throwError(() => new Error('No refresh token'));
+    return this._http.post<AuthResponse>(`${this.baseUrl}/refresh`, { userId, refreshToken }).pipe(
       tap(r => this._storeSession(r)),
       catchError(err => {
         this._clearSession();
@@ -54,16 +55,18 @@ export class AuthService {
   getAccessToken(): string | null { return this._accessToken(); }
 
   private _storeSession(r: AuthResponse): void {
-    localStorage.setItem('access_token', r.accessToken);
-    localStorage.setItem('refresh_token', r.refreshToken);
+    localStorage.setItem('access_token', r.token.accessToken);
+    localStorage.setItem('refresh_token', r.token.refreshToken);
+    localStorage.setItem('user_id', r.user.id.toString());
     localStorage.setItem('user', JSON.stringify(r.user));
-    this._accessToken.set(r.accessToken);
+    this._accessToken.set(r.token.accessToken);
     this._user.set(r.user);
   }
 
   private _clearSession(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user_id');
     localStorage.removeItem('user');
     this._accessToken.set(null);
     this._user.set(null);

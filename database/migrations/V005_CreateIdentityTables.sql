@@ -4,6 +4,9 @@
 -- Description: Create identity tables: tblUser, tblUserRole, tblRefreshToken
 -- Dependencies: V001-V004
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

@@ -4,6 +4,9 @@
 -- Description: Create CMS content tables: tblPage, tblBanner, tblRecipe, tblFaq
 -- Dependencies: V001-V010
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

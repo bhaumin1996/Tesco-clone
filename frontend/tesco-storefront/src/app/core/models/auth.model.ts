@@ -3,7 +3,7 @@ export interface RegisterRequest {
   lastName: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  phoneNumber?: string;
 }
 
 export interface LoginRequest {
@@ -11,11 +11,10 @@ export interface LoginRequest {
   password: string;
 }
 
-export interface AuthResponse {
+export interface AuthToken {
   accessToken: string;
+  expiresAt: string;
   refreshToken: string;
-  expiresIn: number;
-  user: UserProfile;
 }
 
 export interface UserProfile {
@@ -23,11 +22,11 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
-  hasClubcard: boolean;
-  clubcardNumber?: string;
+  phoneNumber?: string | null;
+  roles: string[];
 }
 
-export interface RefreshTokenRequest {
-  refreshToken: string;
+export interface AuthResponse {
+  user: UserProfile;
+  token: AuthToken;
 }

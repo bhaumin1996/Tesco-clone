@@ -4,6 +4,9 @@
 -- Description: Create catalogue tables: tblDepartment, tblCategory, tblBrand, tblProduct, tblProductVariant
 -- Dependencies: V001-V005
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

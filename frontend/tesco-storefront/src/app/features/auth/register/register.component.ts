@@ -44,8 +44,7 @@ export class RegisterComponent {
       firstName: v.firstName!,
       lastName: v.lastName!,
       email: v.email!,
-      password: v.password!,
-      confirmPassword: v.confirmPassword!
+      password: v.password!
     }).subscribe({
       next: () => this._router.navigate(['/']),
       error: (err) => {

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Hosting;
 using TescoClone.Application.Common.Exceptions;
 using TescoClone.Domain.Common;
 
@@ -12,11 +13,13 @@ public sealed class ExceptionMiddleware
 
     private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionMiddleware> _logger;
+    private readonly IWebHostEnvironment _env;
 
-    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
+    public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IWebHostEnvironment env)
     {
         _next = next;
         _logger = logger;
+        _env = env;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -64,8 +67,10 @@ public sealed class ExceptionMiddleware
             _ => (
                 (int)HttpStatusCode.InternalServerError,
                 "INTERNAL_ERROR",
-                "An unexpected error occurred.",
-                Array.Empty<object>())
+                _env.IsDevelopment() ? exception.Message : "An unexpected error occurred.",
+                _env.IsDevelopment()
+                    ? new object[] { new { field = "detail", message = exception.ToString() } }
+                    : Array.Empty<object>())
         };
 
         if (statusCode >= 500)

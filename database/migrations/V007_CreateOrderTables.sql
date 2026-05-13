@@ -4,6 +4,9 @@
 -- Description: Create order tables: tblCart, tblCartItem, tblOrder, tblOrderLine, tblPayment, tblRefund
 -- Dependencies: V001-V006
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+
 BEGIN TRY
     BEGIN TRANSACTION;
 
