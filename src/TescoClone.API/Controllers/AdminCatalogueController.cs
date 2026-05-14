@@ -14,6 +14,7 @@ using TescoClone.Application.Catalogue.Commands.UpdateProduct;
 using TescoClone.Application.Catalogue.Interfaces;
 using TescoClone.Application.Catalogue.Queries.GetAdminCategories;
 using TescoClone.Application.Catalogue.Queries.GetAdminDepartments;
+using TescoClone.Application.Catalogue.Queries.GetAdminInventory;
 using TescoClone.Application.Catalogue.Queries.GetAdminProducts;
 using TescoClone.Application.Catalogue.Queries.GetProductById;
 using TescoClone.Application.Common.Abstractions;
@@ -116,7 +117,7 @@ public sealed class AdminCatalogueController : ControllerBase
 
     // ── Products ─────────────────────────────────────────────────────────────
 
-    [HttpGet("products")]
+    [HttpGet("/api/v1/admin/products")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -132,7 +133,7 @@ public sealed class AdminCatalogueController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("products")]
+    [HttpPost("/api/v1/admin/products")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -147,7 +148,7 @@ public sealed class AdminCatalogueController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, new { id });
     }
 
-    [HttpPut("products/{id:int}")]
+    [HttpPut("/api/v1/admin/products/{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -163,7 +164,7 @@ public sealed class AdminCatalogueController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("products/{id:int}")]
+    [HttpDelete("/api/v1/admin/products/{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -174,14 +175,26 @@ public sealed class AdminCatalogueController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("inventory/adjust")]
+    // ── Inventory ─────────────────────────────────────────────────────────────
+
+    [HttpGet("/api/v1/admin/inventory")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetInventory(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetAdminInventoryQuery(), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpPost("/api/v1/admin/inventory/adjust")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> AdjustInventory([FromBody] AdjustInventoryRequest request, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new AdjustInventoryCommand(request.ProductVariantId, request.QuantityDelta, _currentUser.UserId), cancellationToken);
+        await _mediator.Send(new AdjustInventoryCommand(request.ProductId, request.Quantity, _currentUser.UserId), cancellationToken);
         return NoContent();
     }
 }
@@ -194,7 +207,7 @@ public sealed record UpdateProductRequest(
     int CategoryId, int? BrandId, string Name, string? Description,
     decimal BasePrice, decimal? ClubcardPrice, string? ImageUrl, bool IsAvailable);
 
-public sealed record AdjustInventoryRequest(int ProductVariantId, int QuantityDelta);
+public sealed record AdjustInventoryRequest(int ProductId, int Quantity, string? Reason);
 
 public sealed record CreateDepartmentRequest(string Name);
 public sealed record UpdateDepartmentRequest(string Name);

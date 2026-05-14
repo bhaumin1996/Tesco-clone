@@ -19,12 +19,14 @@ public sealed class AdminAuditController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpGet]
     [HttpGet("logs")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetAuditLogs(
         [FromQuery] string? tableName,
+        [FromQuery] string? table,
         [FromQuery] int? recordId,
         [FromQuery] int? changedBy,
         [FromQuery] DateTime? from,
@@ -34,12 +36,13 @@ public sealed class AdminAuditController : ControllerBase
         CancellationToken cancellationToken = default)
     {
         var result = await _mediator.Send(
-            new GetAuditLogsQuery(tableName, recordId, changedBy, from, to, pageNumber, pageSize),
+            new GetAuditLogsQuery(tableName ?? table, recordId, changedBy, from, to, pageNumber, pageSize),
             cancellationToken);
         return Ok(result);
     }
 
     [HttpGet("application-logs")]
+    [HttpGet("/api/v1/admin/logs")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]

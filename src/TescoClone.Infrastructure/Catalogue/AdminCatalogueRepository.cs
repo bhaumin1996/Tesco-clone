@@ -284,6 +284,32 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         }
     }
 
+    public async Task<IReadOnlyList<AdminInventoryDto>> GetInventoryAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            return await SqlHelper.ExecuteReaderAsync(
+                connection,
+                "proc_Admin_GetInventory",
+                reader => new AdminInventoryDto(
+                    ProductVariantId: SqlHelper.GetValue<int>(reader, "ProductVariantId"),
+                    ProductId: SqlHelper.GetValue<int>(reader, "ProductId"),
+                    ProductName: SqlHelper.GetValue<string>(reader, "ProductName"),
+                    Sku: SqlHelper.GetValue<string>(reader, "Sku"),
+                    StockQuantity: SqlHelper.GetValue<int>(reader, "StockQuantity"),
+                    LowStockThreshold: SqlHelper.GetValue<int>(reader, "LowStockThreshold"),
+                    IsLowStock: SqlHelper.GetValue<bool>(reader, "IsLowStock")),
+                null,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetInventoryAsync");
+            throw;
+        }
+    }
+
     public async Task AdjustInventoryAsync(int productVariantId, int quantityDelta, int adminId, CancellationToken cancellationToken = default)
     {
         try

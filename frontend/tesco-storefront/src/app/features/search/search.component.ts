@@ -22,6 +22,7 @@ export class SearchComponent implements OnInit {
   private readonly _catalogue = inject(CatalogueService);
 
   protected query = signal('');
+  protected brandFilter = signal('');
   protected result = signal<PagedResult<ProductSummary> | null>(null);
   protected loading = signal(false);
   protected currentPage = signal(1);
@@ -36,7 +37,9 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     this._route.queryParams.subscribe(params => {
-      this.query.set(params['q'] ?? '');
+      const brand = params['brand'] ?? '';
+      this.brandFilter.set(brand);
+      this.query.set(params['q'] ?? brand);
       this.currentPage.set(+(params['page'] ?? 1));
       if (this.query()) this._search();
     });

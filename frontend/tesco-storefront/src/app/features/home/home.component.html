@@ -13,32 +13,44 @@
           }
         </div>
       } @else {
-        <div class="roundel-row">
-          @for (dept of departments(); track dept.id) {
-            <a [routerLink]="['/departments', dept.slug]" class="roundel">
-              <div class="roundel__circle">
-                @if (dept.imageUrl) {
-                  <img [src]="dept.imageUrl" [alt]="dept.name" loading="lazy" />
-                } @else {
-                  <div class="roundel__placeholder">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#005DAA" stroke-width="1.5" aria-hidden="true">
-                      <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
-                    </svg>
-                  </div>
-                }
+        <div class="roundel-scroll-wrapper">
+          <button class="roundel-scroll-btn roundel-scroll-btn--left" (click)="scrollDepts('left')" aria-label="Scroll left">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </button>
+          <div class="roundel-row" #deptScroll>
+            @for (dept of departments(); track dept.id) {
+              <a [routerLink]="['/departments', dept.slug]" class="roundel">
+                <div class="roundel__circle">
+                  @if (dept.imageUrl) {
+                    <img [src]="dept.imageUrl" [alt]="dept.name" loading="lazy" />
+                  } @else {
+                    <div class="roundel__placeholder">
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#005DAA" stroke-width="1.5" aria-hidden="true">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+                      </svg>
+                    </div>
+                  }
+                </div>
+                <span class="roundel__label">{{ dept.name }}</span>
+              </a>
+            }
+            <a routerLink="/departments" class="roundel">
+              <div class="roundel__circle roundel__circle--all">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                  <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
               </div>
-              <span class="roundel__label">{{ dept.name }}</span>
+              <span class="roundel__label">All Departments</span>
             </a>
-          }
-          <a routerLink="/departments" class="roundel">
-            <div class="roundel__circle roundel__circle--all">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-              </svg>
-            </div>
-            <span class="roundel__label">All Departments</span>
-          </a>
+          </div>
+          <button class="roundel-scroll-btn roundel-scroll-btn--right" (click)="scrollDepts('right')" aria-label="Scroll right">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </button>
         </div>
       }
     </div>
@@ -169,15 +181,37 @@
         <h2 class="section-head__title">Shop by brand</h2>
         <span class="section-head__count">{{ brandRoundels.length }} brands</span>
       </div>
-      <div class="roundel-row">
-        @for (brand of brandRoundels; track brand.slug) {
-          <a [routerLink]="['/search']" [queryParams]="{ brand: brand.slug }" class="roundel">
-            <div class="roundel__circle roundel__circle--brand">
-              <span class="roundel__brand-initial">{{ brand.name[0] }}</span>
-            </div>
-            <span class="roundel__label">{{ brand.name }}</span>
-          </a>
-        }
+      <div class="roundel-scroll-wrapper">
+        <button class="roundel-scroll-btn roundel-scroll-btn--left" (click)="scrollBrands('left')" aria-label="Scroll left">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        <div class="roundel-row" #brandScroll>
+          @for (brand of brandRoundels; track brand.slug) {
+            <a [routerLink]="['/search']" [queryParams]="{ brand: brand.name }" class="roundel">
+              <div class="roundel__circle roundel__circle--brand" [style.background]="brand.bgColor">
+                @if (brand.imageUrl && !brandImgErrors().has(brand.slug)) {
+                  <img
+                    [src]="brand.imageUrl"
+                    [alt]="brand.name"
+                    loading="lazy"
+                    class="roundel__brand-logo"
+                    (error)="onBrandImgError(brand.slug)"
+                  />
+                } @else {
+                  <span class="roundel__brand-initial">{{ brand.name[0] }}</span>
+                }
+              </div>
+              <span class="roundel__label roundel__label--brand">{{ brand.name }}</span>
+            </a>
+          }
+        </div>
+        <button class="roundel-scroll-btn roundel-scroll-btn--right" (click)="scrollBrands('right')" aria-label="Scroll right">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
       </div>
     </div>
   </section>

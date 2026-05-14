@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CatalogueService } from '../../core/services/catalogue.service';
@@ -14,10 +14,27 @@ import { Department } from '../../core/models/catalogue.model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit {
+  @ViewChild('deptScroll') private readonly _deptScroll!: ElementRef<HTMLDivElement>;
+  @ViewChild('brandScroll') private readonly _brandScroll!: ElementRef<HTMLDivElement>;
+
   private readonly _catalogue = inject(CatalogueService);
 
   protected departments = signal<Department[]>([]);
   protected loading = signal(true);
+
+  protected scrollDepts(dir: 'left' | 'right'): void {
+    this._scroll(this._deptScroll, dir);
+  }
+
+  protected scrollBrands(dir: 'left' | 'right'): void {
+    this._scroll(this._brandScroll, dir);
+  }
+
+  private _scroll(ref: ElementRef<HTMLDivElement>, dir: 'left' | 'right'): void {
+    const el = ref?.nativeElement;
+    if (!el) return;
+    el.scrollBy({ left: dir === 'left' ? -320 : 320, behavior: 'smooth' });
+  }
 
   protected newThisWeek = [
     {
@@ -126,17 +143,23 @@ export class HomeComponent implements OnInit {
   ];
 
   protected brandRoundels = [
-    { name: 'Heinz', slug: 'heinz' },
-    { name: 'Coca-Cola', slug: 'coca-cola' },
-    { name: "Kellogg's", slug: 'kelloggs' },
-    { name: 'Walkers', slug: 'walkers' },
-    { name: 'Cadbury', slug: 'cadbury' },
-    { name: 'Warburtons', slug: 'warburtons' },
-    { name: 'Andrex', slug: 'andrex' },
-    { name: 'Ariel', slug: 'ariel' },
-    { name: 'Lurpak', slug: 'lurpak' },
-    { name: 'Nestlé', slug: 'nestle' }
+    { name: 'Heinz',       slug: 'heinz',       imageUrl: 'https://logo.clearbit.com/heinz.com',        bgColor: '#ffffff' },
+    { name: 'Coca-Cola',   slug: 'coca-cola',   imageUrl: 'https://logo.clearbit.com/coca-cola.com',    bgColor: '#ffffff' },
+    { name: "Kellogg's",   slug: 'kelloggs',    imageUrl: 'https://logo.clearbit.com/kelloggs.com',     bgColor: '#C7272E' },
+    { name: 'Walkers',     slug: 'walkers',     imageUrl: 'https://logo.clearbit.com/walkers.com',      bgColor: '#003087' },
+    { name: 'Cadbury',     slug: 'cadbury',     imageUrl: 'https://logo.clearbit.com/cadbury.com',      bgColor: '#4B006E' },
+    { name: 'Warburtons',  slug: 'warburtons',  imageUrl: 'https://logo.clearbit.com/warburtons.com',   bgColor: '#E8711A' },
+    { name: 'Andrex',      slug: 'andrex',      imageUrl: 'https://logo.clearbit.com/andrex.com',       bgColor: '#5B9BD5' },
+    { name: 'Ariel',       slug: 'ariel',       imageUrl: 'https://logo.clearbit.com/ariel.com',        bgColor: '#1565C0' },
+    { name: 'Lurpak',      slug: 'lurpak',      imageUrl: 'https://logo.clearbit.com/lurpak.com',       bgColor: '#F5ECD0' },
+    { name: 'Nestlé',      slug: 'nestle',      imageUrl: 'https://logo.clearbit.com/nestle.com',       bgColor: '#ffffff' }
   ];
+
+  protected brandImgErrors = signal<Set<string>>(new Set());
+
+  protected onBrandImgError(slug: string): void {
+    this.brandImgErrors.update(prev => new Set([...prev, slug]));
+  }
 
   protected communityItems = [
     {

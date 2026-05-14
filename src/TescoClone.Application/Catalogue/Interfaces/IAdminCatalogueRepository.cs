@@ -16,5 +16,6 @@ public interface IAdminCatalogueRepository
     Task SoftDeleteCategoryAsync(int categoryId, int adminId, CancellationToken cancellationToken = default);
     Task<int> CreateDepartmentAsync(string name, int adminId, CancellationToken cancellationToken = default);
     Task UpdateDepartmentAsync(int departmentId, string name, int adminId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<AdminInventoryDto>> GetInventoryAsync(CancellationToken cancellationToken = default);
     Task AdjustInventoryAsync(int productVariantId, int quantityDelta, int adminId, CancellationToken cancellationToken = default);
 }

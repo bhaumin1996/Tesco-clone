@@ -75,6 +75,41 @@
   padding: $space-5 0;
 }
 
+.roundel-scroll-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.roundel-scroll-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid $color-border;
+  background: $color-surface;
+  color: $color-ink;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  transition: background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  z-index: 2;
+
+  &:hover {
+    background: $color-surface-alt;
+    border-color: $color-tesco-blue;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.14);
+  }
+
+  &:active { transform: scale(0.95); }
+
+  &--left  { margin-right: $space-2; }
+  &--right { margin-left: $space-2; }
+}
+
 .roundel-row {
   display: flex;
   gap: $space-3;
@@ -82,6 +117,8 @@
   padding-bottom: $space-2;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  flex: 1;
+  min-width: 0;
 
   &::-webkit-scrollbar { display: none; }
 }
@@ -135,9 +172,15 @@
   }
 
   &--brand {
-    background: $color-surface;
+    background: $color-surface; // overridden per-brand by inline style
     border: 2px solid $color-border;
   }
+}
+
+.roundel__brand-logo {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
 }
 
 .roundel__placeholder {
@@ -158,6 +201,8 @@
 
   @include respond-to(md) { max-width: 130px; font-size: $font-size-sm; }
   @include respond-to(lg) { max-width: 160px; }
+
+  &--brand { color: $color-tesco-blue; }
 }
 
 .roundel__brand-initial {

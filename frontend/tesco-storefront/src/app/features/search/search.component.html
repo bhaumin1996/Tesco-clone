@@ -1,6 +1,13 @@
 <div class="page-container page-content">
   <div class="search-header">
-    @if (query()) {
+    @if (brandFilter()) {
+      <h1 class="search-header__title">
+        Shop <em>{{ brandFilter() }}</em>
+      </h1>
+      @if (result()) {
+        <span class="search-header__count">{{ result()!.totalCount }} products found</span>
+      }
+    } @else if (query()) {
       <h1 class="search-header__title">
         Search results for <em>"{{ query() }}"</em>
       </h1>
@@ -18,7 +25,7 @@
     </div>
   </div>
 
-  @if (!query()) {
+  @if (!query() && !brandFilter()) {
     <div class="search-empty">
       <p>Enter a search term to find products.</p>
     </div>
