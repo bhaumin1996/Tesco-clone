@@ -6,7 +6,7 @@ using TescoClone.Application.Catalogue.Queries.GetDepartments;
 namespace TescoClone.API.Controllers;
 
 [ApiController]
-[Route("api/v1")]
+[Route("api/v1/catalogue")]
 public sealed class CatalogueController : ControllerBase
 {
     private readonly IMediator _mediator;
