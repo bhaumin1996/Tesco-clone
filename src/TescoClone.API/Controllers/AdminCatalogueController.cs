@@ -3,10 +3,18 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TescoClone.API.Authorization;
 using TescoClone.Application.Catalogue.Commands.AdjustInventory;
+using TescoClone.Application.Catalogue.Commands.CreateCategory;
+using TescoClone.Application.Catalogue.Commands.CreateDepartment;
 using TescoClone.Application.Catalogue.Commands.CreateProduct;
+using TescoClone.Application.Catalogue.Commands.DeleteCategory;
 using TescoClone.Application.Catalogue.Commands.DeleteProduct;
+using TescoClone.Application.Catalogue.Commands.UpdateCategory;
+using TescoClone.Application.Catalogue.Commands.UpdateDepartment;
 using TescoClone.Application.Catalogue.Commands.UpdateProduct;
 using TescoClone.Application.Catalogue.Interfaces;
+using TescoClone.Application.Catalogue.Queries.GetAdminCategories;
+using TescoClone.Application.Catalogue.Queries.GetAdminDepartments;
+using TescoClone.Application.Catalogue.Queries.GetAdminProducts;
 using TescoClone.Application.Catalogue.Queries.GetProductById;
 using TescoClone.Application.Common.Abstractions;
 
@@ -19,14 +27,94 @@ public sealed class AdminCatalogueController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly ICurrentUser _currentUser;
-    private readonly IAdminCatalogueRepository _adminCatalogueRepository;
 
-    public AdminCatalogueController(IMediator mediator, ICurrentUser currentUser, IAdminCatalogueRepository adminCatalogueRepository)
+    public AdminCatalogueController(IMediator mediator, ICurrentUser currentUser)
     {
         _mediator = mediator;
         _currentUser = currentUser;
-        _adminCatalogueRepository = adminCatalogueRepository;
     }
+
+    // ── Departments ──────────────────────────────────────────────────────────
+
+    [HttpGet("/api/v1/admin/departments")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetDepartments(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetAdminDepartmentsQuery(), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpPost("/api/v1/admin/departments")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> CreateDepartment([FromBody] CreateDepartmentRequest request, CancellationToken cancellationToken)
+    {
+        var id = await _mediator.Send(new CreateDepartmentCommand(request.Name, _currentUser.UserId), cancellationToken);
+        return StatusCode(StatusCodes.Status201Created, new { id });
+    }
+
+    [HttpPut("/api/v1/admin/departments/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateDepartment(int id, [FromBody] UpdateDepartmentRequest request, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new UpdateDepartmentCommand(id, request.Name, _currentUser.UserId), cancellationToken);
+        return NoContent();
+    }
+
+    // ── Categories ───────────────────────────────────────────────────────────
+
+    [HttpGet("/api/v1/admin/categories")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetAdminCategoriesQuery(), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpPost("/api/v1/admin/categories")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
+    {
+        var id = await _mediator.Send(new CreateCategoryCommand(request.Name, request.DepartmentId, _currentUser.UserId), cancellationToken);
+        return StatusCode(StatusCodes.Status201Created, new { id });
+    }
+
+    [HttpPut("/api/v1/admin/categories/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryRequest request, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new UpdateCategoryCommand(id, request.Name, request.DepartmentId, _currentUser.UserId), cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPatch("/api/v1/admin/categories/{id:int}/deactivate")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeactivateCategory(int id, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteCategoryCommand(id, _currentUser.UserId), cancellationToken);
+        return NoContent();
+    }
+
+    // ── Products ─────────────────────────────────────────────────────────────
 
     [HttpGet("products")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -40,7 +128,7 @@ public sealed class AdminCatalogueController : ControllerBase
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
-        var result = await _adminCatalogueRepository.GetProductsAsync(search, categoryId, departmentId, pageNumber, pageSize, cancellationToken);
+        var result = await _mediator.Send(new GetAdminProductsQuery(search, categoryId, departmentId, pageNumber, pageSize), cancellationToken);
         return Ok(result);
     }
 
@@ -107,3 +195,8 @@ public sealed record UpdateProductRequest(
     decimal BasePrice, decimal? ClubcardPrice, string? ImageUrl, bool IsAvailable);
 
 public sealed record AdjustInventoryRequest(int ProductVariantId, int QuantityDelta);
+
+public sealed record CreateDepartmentRequest(string Name);
+public sealed record UpdateDepartmentRequest(string Name);
+public sealed record CreateCategoryRequest(string Name, int DepartmentId);
+public sealed record UpdateCategoryRequest(string Name, int DepartmentId);

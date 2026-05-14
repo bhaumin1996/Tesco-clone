@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using TescoClone.Application.Catalogue.DTOs;
 using TescoClone.Application.Catalogue.Interfaces;
 using TescoClone.Infrastructure.Common;
@@ -7,32 +8,50 @@ namespace TescoClone.Infrastructure.Catalogue;
 public sealed class DepartmentRepository : IDepartmentRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;
+    private readonly ILogger<DepartmentRepository> _logger;
 
-    public DepartmentRepository(SqlConnectionFactory connectionFactory)
+    public DepartmentRepository(SqlConnectionFactory connectionFactory, ILogger<DepartmentRepository> logger)
     {
         _connectionFactory = connectionFactory;
+        _logger = logger;
     }
 
     public async Task<IReadOnlyList<DepartmentDto>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        return await SqlHelper.ExecuteReaderAsync(
-            connection,
-            "proc_Catalogue_GetDepartments",
-            MapDepartment,
-            null,
-            cancellationToken);
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            return await SqlHelper.ExecuteReaderAsync(
+                connection,
+                "proc_Catalogue_GetDepartments",
+                MapDepartment,
+                null,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetAllAsync");
+            throw;
+        }
     }
 
     public async Task<DepartmentDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        using var connection = _connectionFactory.CreateConnection();
-        return await SqlHelper.ExecuteReaderSingleAsync(
-            connection,
-            "proc_Catalogue_GetDepartmentById",
-            MapDepartment,
-            [SqlHelper.Input("@DepartmentId", id)],
-            cancellationToken);
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            return await SqlHelper.ExecuteReaderSingleAsync(
+                connection,
+                "proc_Catalogue_GetDepartmentById",
+                MapDepartment,
+                [SqlHelper.Input("@DepartmentId", id)],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetByIdAsync for departmentId: {DepartmentId}", id);
+            throw;
+        }
     }
 
     private static DepartmentDto MapDepartment(Microsoft.Data.SqlClient.SqlDataReader reader) =>

@@ -5,6 +5,8 @@ namespace TescoClone.Application.Catalogue.Interfaces;
 
 public interface IAdminCatalogueRepository
 {
+    Task<IReadOnlyList<AdminDepartmentDto>> GetDepartmentsAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<AdminCategoryDto>> GetCategoriesAsync(CancellationToken cancellationToken = default);
     Task<PaginatedResult<AdminProductDto>> GetProductsAsync(string? search, int? categoryId, int? departmentId, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     Task<int> CreateProductAsync(AdminProductDto product, int adminId, CancellationToken cancellationToken = default);
     Task UpdateProductAsync(AdminProductDto product, int adminId, CancellationToken cancellationToken = default);
