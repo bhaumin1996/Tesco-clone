@@ -4,6 +4,8 @@ public sealed record AdminCategoryDto(
     int CategoryId,
     string Name,
     string Slug,
+    int DepartmentId,
     string DepartmentName,
     int ProductCount,
-    bool IsActive);
+    bool IsActive,
+    string? ImageUrl);

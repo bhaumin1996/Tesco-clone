@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
 interface InventoryItem {
+  productVariantId: number;
   productId: number;
   productName: string;
   sku: string;
@@ -56,7 +57,7 @@ export class AdminInventoryComponent implements OnInit {
     if (this.adjustForm.invalid) { this.adjustForm.markAllAsTouched(); return; }
     const target = this.adjustTarget();
     if (!target) return;
-    const body = { ...this.adjustForm.getRawValue(), productId: target.productId };
+    const body = { ...this.adjustForm.getRawValue(), productVariantId: target.productVariantId };
     this._http.post(`${this._base}/adjust`, body).subscribe({
       next: () => {
         this.adjustTarget.set(null);

@@ -4,6 +4,10 @@
 -- Description: Admin stored procedures for order status and refund management
 -- Dependencies: V001-V007
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

@@ -4,6 +4,10 @@
 -- Description: Admin stored procedures for CMS pages and banners
 -- Dependencies: V001-V011
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

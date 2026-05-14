@@ -4,6 +4,10 @@
 -- Description: Create stored procedures for order creation, retrieval, and status management
 -- Dependencies: V001-V007
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

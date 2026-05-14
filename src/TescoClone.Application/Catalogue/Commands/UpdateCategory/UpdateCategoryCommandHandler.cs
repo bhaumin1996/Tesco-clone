@@ -18,6 +18,7 @@ public sealed class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategor
             request.CategoryId,
             request.Name,
             request.DepartmentId,
+            request.ImageUrl,
             request.AdminUserId,
             cancellationToken);
     }

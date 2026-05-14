@@ -4,6 +4,10 @@
 -- Description: Create stored procedures for the Catalogue module
 -- Dependencies: V001-V006
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

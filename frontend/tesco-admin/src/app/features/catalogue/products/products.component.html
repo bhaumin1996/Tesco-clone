@@ -1,57 +1,219 @@
 <div class="admin-page-header">
   <h1 class="admin-page-header__title">Products</h1>
+  <button class="button button--primary" (click)="openCreate()">+ New Product</button>
 </div>
 
-@if (actionMessage()) {
-  <div class="admin-alert admin-alert--success">{{ actionMessage() }}</div>
+@if (message()) {
+  <div class="admin-alert"
+       [class.admin-alert--success]="messageType() === 'success'"
+       [class.admin-alert--error]="messageType() === 'error'">
+    {{ message() }}
+  </div>
 }
 
+<!-- ── Create / Edit form ────────────────────────────────────────────────── -->
+@if (showForm()) {
+  <div class="admin-card prod-form-card">
+    <h2 class="prod-form-card__title">{{ editId() ? 'Edit Product' : 'New Product' }}</h2>
+    <form [formGroup]="form" (ngSubmit)="save()" class="prod-form">
+
+      <div class="prod-form__row prod-form__row--two">
+        <!-- Department (filter only, not submitted) -->
+        <div class="form-group">
+          <label class="form-label">Department <span class="form-label--optional">(filter categories)</span></label>
+          <select class="form-control" formControlName="formDeptId">
+            <option [value]="0">— All departments —</option>
+            @for (d of departments(); track d.departmentId) {
+              <option [value]="d.departmentId">{{ d.name }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group">
+          <label class="form-label">Category <span class="form-label--required">*</span></label>
+          <select class="form-control" formControlName="categoryId">
+            <option [value]="0">— Select category —</option>
+            @for (c of filteredFormCategories(); track c.categoryId) {
+              <option [value]="c.categoryId">{{ c.name }}</option>
+            }
+          </select>
+          @if (form.get('categoryId')!.invalid && form.get('categoryId')!.touched) {
+            <span class="form-error">Category is required.</span>
+          }
+        </div>
+      </div>
+
+      <div class="prod-form__row prod-form__row--two">
+        <!-- Name -->
+        <div class="form-group">
+          <label class="form-label">Name <span class="form-label--required">*</span></label>
+          <input class="form-control" formControlName="name" placeholder="e.g. Organic Whole Milk 2L" />
+          @if (form.get('name')!.invalid && form.get('name')!.touched) {
+            <span class="form-error">Name is required (max 300 characters).</span>
+          }
+        </div>
+
+        <!-- Slug -->
+        <div class="form-group">
+          <label class="form-label">Slug <span class="form-label--required">*</span></label>
+          <input class="form-control" formControlName="slug" placeholder="organic-whole-milk-2l" />
+          @if (form.get('slug')!.invalid && form.get('slug')!.touched) {
+            <span class="form-error">Slug is required — lowercase letters, digits and hyphens only.</span>
+          }
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label class="form-label">Description <span class="form-label--optional">(optional)</span></label>
+        <textarea class="form-control form-control--textarea" formControlName="description" rows="3" placeholder="Short product description…"></textarea>
+      </div>
+
+      <div class="prod-form__row prod-form__row--three">
+        <!-- Base Price -->
+        <div class="form-group">
+          <label class="form-label">Price (£) <span class="form-label--required">*</span></label>
+          <input class="form-control" type="number" step="0.01" min="0.01" formControlName="basePrice" placeholder="1.99" />
+          @if (form.get('basePrice')!.invalid && form.get('basePrice')!.touched) {
+            <span class="form-error">A valid price is required.</span>
+          }
+        </div>
+
+        <!-- Clubcard Price -->
+        <div class="form-group">
+          <label class="form-label">Clubcard Price (£) <span class="form-label--optional">(optional)</span></label>
+          <input class="form-control" type="number" step="0.01" min="0.01" formControlName="clubcardPrice" placeholder="1.50" />
+        </div>
+
+        <!-- Brand -->
+        <div class="form-group">
+          <label class="form-label">Brand <span class="form-label--optional">(optional)</span></label>
+          <select class="form-control" formControlName="brandId">
+            <option [value]="null">— No brand —</option>
+            @for (b of brands(); track b.brandId) {
+              <option [value]="b.brandId">{{ b.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="prod-form__row prod-form__row--two">
+        <!-- Image URL -->
+        <div class="form-group">
+          <label class="form-label">Image URL <span class="form-label--optional">(optional)</span></label>
+          <input class="form-control" formControlName="imageUrl" placeholder="https://example.com/product.jpg" />
+          @if (form.get('imageUrl')!.value) {
+            <div class="img-preview">
+              <img [src]="form.get('imageUrl')!.value!" alt="Preview" class="img-preview__img" />
+            </div>
+          }
+        </div>
+
+        <!-- Availability -->
+        <div class="form-group form-group--check">
+          <label class="form-label">Availability</label>
+          <label class="check-toggle">
+            <input type="checkbox" formControlName="isAvailable" class="check-toggle__input" />
+            <span class="check-toggle__label">Available for purchase</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="prod-form-card__actions">
+        <button type="submit" class="button button--primary" [disabled]="saving()">
+          {{ saving() ? 'Saving…' : (editId() ? 'Update Product' : 'Create Product') }}
+        </button>
+        <button type="button" class="button button--secondary" (click)="cancelForm()" [disabled]="saving()">Cancel</button>
+      </div>
+
+    </form>
+  </div>
+}
+
+<!-- ── Filters ───────────────────────────────────────────────────────────── -->
 <div class="admin-card">
   <form [formGroup]="filterForm" class="prod-filters">
-    <input class="form-control" formControlName="search" placeholder="Search by name or SKU…" />
-    <select class="form-control" formControlName="isActive">
-      <option value="">All statuses</option>
-      <option value="true">Active</option>
-      <option value="false">Inactive</option>
+    <input class="form-control" formControlName="search" placeholder="Search by name or slug…" />
+
+    <select class="form-control" (change)="onFilterDeptChange($event)">
+      <option value="">All departments</option>
+      @for (d of departments(); track d.departmentId) {
+        <option [value]="d.departmentId">{{ d.name }}</option>
+      }
+    </select>
+
+    <select class="form-control" formControlName="categoryId">
+      <option value="">All categories</option>
+      @for (c of filteredFilterCategories(); track c.categoryId) {
+        <option [value]="c.categoryId">{{ c.name }}</option>
+      }
     </select>
   </form>
 
+  <!-- ── Product table ─────────────────────────────────────────────────── -->
   @if (loading()) {
     <p class="admin-loading">Loading…</p>
   } @else {
     <table class="admin-table">
       <thead>
         <tr>
-          <th>SKU</th>
+          <th>Image</th>
           <th>Name</th>
           <th>Category</th>
+          <th>Brand</th>
           <th>Price</th>
+          <th>Clubcard</th>
           <th>Stock</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        @for (p of products(); track p.productId) {
+        @for (p of products(); track p.id) {
           <tr>
-            <td>{{ p.sku }}</td>
-            <td>{{ p.name }}</td>
+            <td class="prod-thumb-cell">
+              @if (p.imageUrl) {
+                <img [src]="p.imageUrl" [alt]="p.name" class="prod-thumb" />
+              } @else {
+                <span class="prod-thumb prod-thumb--empty">No img</span>
+              }
+            </td>
+            <td>
+              <span class="prod-name">{{ p.name }}</span>
+              <span class="prod-slug">{{ p.slug }}</span>
+            </td>
             <td>{{ p.categoryName }}</td>
-            <td>£{{ p.price | number:'1.2-2' }}</td>
+            <td>{{ p.brandName ?? '—' }}</td>
+            <td>£{{ p.basePrice | number:'1.2-2' }}</td>
+            <td>
+              @if (p.clubcardPrice) {
+                <span class="clubcard-price">£{{ p.clubcardPrice | number:'1.2-2' }}</span>
+              } @else {
+                <span class="text-muted">—</span>
+              }
+            </td>
             <td [class.low-stock]="p.stockQuantity < 10">{{ p.stockQuantity }}</td>
             <td>
-              <span class="status-badge" [class.status--active]="p.isActive" [class.status--inactive]="!p.isActive">
-                {{ p.isActive ? 'Active' : 'Inactive' }}
+              <span class="status-badge"
+                    [class.status--active]="p.isAvailable"
+                    [class.status--inactive]="!p.isAvailable">
+                {{ p.isAvailable ? 'Active' : 'Inactive' }}
               </span>
             </td>
             <td class="actions-cell">
-              <button class="table-btn" (click)="toggleActive(p)">
-                {{ p.isActive ? 'Deactivate' : 'Activate' }}
-              </button>
+              @if (deleteConfirmId() === p.id) {
+                <span class="delete-confirm">Delete?</span>
+                <button class="table-btn table-btn--danger" (click)="confirmDelete(p.id)">Yes</button>
+                <button class="table-btn" (click)="cancelDelete()">No</button>
+              } @else {
+                <button class="table-btn" (click)="openEdit(p)">Edit</button>
+                <button class="table-btn table-btn--danger" (click)="requestDelete(p.id)">Delete</button>
+              }
             </td>
           </tr>
         } @empty {
-          <tr><td colspan="7" class="admin-empty">No products found.</td></tr>
+          <tr><td colspan="9" class="admin-empty">No products found.</td></tr>
         }
       </tbody>
     </table>
@@ -62,8 +224,7 @@
           <button
             class="page-btn"
             [class.active]="page === currentPage()"
-            (click)="goTo(page)"
-          >{{ page }}</button>
+            (click)="goTo(page)">{{ page }}</button>
         }
       </div>
     }

@@ -17,6 +17,27 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         _logger = logger;
     }
 
+    public async Task<IReadOnlyList<AdminBrandDto>> GetBrandsAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            return await SqlHelper.ExecuteReaderAsync(
+                connection,
+                "proc_Admin_GetBrands",
+                reader => new AdminBrandDto(
+                    BrandId: SqlHelper.GetValue<int>(reader, "BrandId"),
+                    Name: SqlHelper.GetValue<string>(reader, "Name")),
+                null,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetBrandsAsync");
+            throw;
+        }
+    }
+
     public async Task<IReadOnlyList<AdminDepartmentDto>> GetDepartmentsAsync(CancellationToken cancellationToken = default)
     {
         try
@@ -50,9 +71,11 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                     CategoryId: SqlHelper.GetValue<int>(reader, "CategoryId"),
                     Name: SqlHelper.GetValue<string>(reader, "Name"),
                     Slug: SqlHelper.GetValue<string>(reader, "Slug"),
+                    DepartmentId: SqlHelper.GetValue<int>(reader, "DepartmentId"),
                     DepartmentName: SqlHelper.GetValue<string>(reader, "DepartmentName"),
                     ProductCount: SqlHelper.GetValue<int>(reader, "ProductCount"),
-                    IsActive: SqlHelper.GetValue<bool>(reader, "IsActive")),
+                    IsActive: SqlHelper.GetValue<bool>(reader, "IsActive"),
+                    ImageUrl: SqlHelper.GetNullableString(reader, "ImageUrl")),
                 null,
                 cancellationToken);
         }
@@ -175,7 +198,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         }
     }
 
-    public async Task<int> CreateCategoryAsync(string name, int departmentId, int adminId, CancellationToken cancellationToken = default)
+    public async Task<int> CreateCategoryAsync(string name, int departmentId, string? imageUrl, int adminId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -186,6 +209,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                 [
                     SqlHelper.Input("@Name", name),
                     SqlHelper.Input("@DepartmentId", departmentId),
+                    SqlHelper.Input("@ImageUrl", (object?)imageUrl ?? DBNull.Value),
                     SqlHelper.Input("@AdminId", adminId)
                 ],
                 cancellationToken);
@@ -197,7 +221,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         }
     }
 
-    public async Task UpdateCategoryAsync(int categoryId, string name, int departmentId, int adminId, CancellationToken cancellationToken = default)
+    public async Task UpdateCategoryAsync(int categoryId, string name, int departmentId, string? imageUrl, int adminId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -209,6 +233,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                     SqlHelper.Input("@CategoryId", categoryId),
                     SqlHelper.Input("@Name", name),
                     SqlHelper.Input("@DepartmentId", departmentId),
+                    SqlHelper.Input("@ImageUrl", (object?)imageUrl ?? DBNull.Value),
                     SqlHelper.Input("@AdminId", adminId)
                 ],
                 cancellationToken);

@@ -4,6 +4,10 @@
 -- Description: Admin 2FA table and stored procedures for admin auth and user management
 -- Dependencies: V001-V005
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

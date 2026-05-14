@@ -4,6 +4,10 @@
 -- Description: Admin stored procedures for promotion management
 -- Dependencies: V001-V010
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

@@ -4,6 +4,10 @@
 -- Description: Create stored procedures for delivery slot search and booking
 -- Dependencies: V001-V008
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

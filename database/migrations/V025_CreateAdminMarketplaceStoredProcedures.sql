@@ -4,6 +4,10 @@
 -- Description: Admin stored procedures for seller and dispute management
 -- Dependencies: V001-V012
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

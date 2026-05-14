@@ -8,9 +8,11 @@ interface Category {
   categoryId: number;
   name: string;
   slug: string;
+  departmentId: number;
   departmentName: string;
   productCount: number;
   isActive: boolean;
+  imageUrl?: string;
 }
 
 interface Department { departmentId: number; name: string; }
@@ -33,10 +35,13 @@ export class AdminCategoriesComponent implements OnInit {
   protected showForm = signal(false);
   protected editId = signal<number | null>(null);
   protected message = signal('');
+  protected messageType = signal<'success' | 'error'>('success');
+  protected saving = signal(false);
 
   protected form = this._fb.group({
     name: ['', Validators.required],
-    departmentId: [0, [Validators.required, Validators.min(1)]]
+    departmentId: [0, [Validators.required, Validators.min(1)]],
+    imageUrl: ['']
   });
 
   private get _base() { return `${environment.apiUrl}/admin`; }
@@ -54,30 +59,50 @@ export class AdminCategoriesComponent implements OnInit {
     });
   }
 
-  protected openCreate(): void { this.editId.set(null); this.form.reset({ departmentId: 0 }); this.showForm.set(true); }
+  protected openCreate(): void {
+    this.editId.set(null);
+    this.form.reset({ departmentId: 0, imageUrl: '' });
+    this.showForm.set(true);
+  }
 
   protected openEdit(cat: Category): void {
     this.editId.set(cat.categoryId);
-    this.form.patchValue({ name: cat.name, departmentId: Number(cat.departmentName) });
+    this.form.patchValue({ name: cat.name, departmentId: cat.departmentId, imageUrl: cat.imageUrl ?? '' });
     this.showForm.set(true);
   }
 
   protected save(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    const body = this.form.getRawValue();
+    this.saving.set(true);
+
+    const { name, departmentId, imageUrl } = this.form.getRawValue();
+    const body = { name, departmentId, imageUrl: imageUrl || null };
+
     const req = this.editId()
       ? this._http.put(`${this._base}/categories/${this.editId()}`, body)
       : this._http.post(`${this._base}/categories`, body);
+
     req.subscribe({
-      next: () => { this.showForm.set(false); this._loadAll(); this.message.set('Saved.'); setTimeout(() => this.message.set(''), 3000); },
-      error: () => this.message.set('Save failed.')
+      next: () => {
+        this.showForm.set(false);
+        this._loadAll();
+        this._showMessage('Category saved successfully.', 'success');
+        this.saving.set(false);
+      },
+      error: () => { this._showMessage('Save failed.', 'error'); this.saving.set(false); }
     });
   }
 
   protected deactivate(id: number): void {
     this._http.patch(`${this._base}/categories/${id}/deactivate`, {}).subscribe({
-      next: () => { this._loadAll(); this.message.set('Category deactivated.'); setTimeout(() => this.message.set(''), 3000); },
-      error: () => this.message.set('Action failed.')
+      next: () => { this._loadAll(); this._showMessage('Category deactivated.', 'success'); },
+      error: () => this._showMessage('Action failed.', 'error')
     });
+  }
+
+  private _showMessage(text: string, type: 'success' | 'error'): void {
+    this.message.set(text);
+    this.messageType.set(type);
+    setTimeout(() => this.message.set(''), 3500);
   }
 }

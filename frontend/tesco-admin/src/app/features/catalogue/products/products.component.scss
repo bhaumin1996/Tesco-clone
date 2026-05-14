@@ -1,5 +1,59 @@
 @use '../../../../styles/tokens' as *;
 
+// ── Form card ──────────────────────────────────────────────────────────────
+.prod-form-card {
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+
+  &__title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; }
+  &__actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+}
+
+.prod-form {
+  &__row {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 0;
+
+    &--two  { grid-template-columns: 1fr 1fr; }
+    &--three { grid-template-columns: 1fr 1fr 1fr; }
+  }
+}
+
+.form-control--textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-group--check { display: flex; flex-direction: column; }
+
+.check-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin-top: 0.375rem;
+
+  &__input { width: 1rem; height: 1rem; cursor: pointer; }
+  &__label { font-size: 0.9rem; }
+}
+
+.form-label--required { color: #c0392b; font-size: 0.75rem; font-weight: 600; }
+.form-label--optional  { color: $color-muted; font-size: 0.75rem; font-weight: 400; }
+
+.img-preview {
+  margin-top: 0.5rem;
+  &__img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid $color-border;
+  }
+}
+
+// ── Filters ────────────────────────────────────────────────────────────────
 .prod-filters {
   display: flex;
   gap: 1rem;
@@ -8,8 +62,50 @@
   border-bottom: 1px solid $color-border;
 }
 
+// ── Table cells ────────────────────────────────────────────────────────────
+.prod-thumb-cell { width: 56px; }
+
+.prod-thumb {
+  display: block;
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid $color-border;
+
+  &--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    color: $color-muted;
+    background: #f4f4f4;
+    width: 44px;
+    height: 44px;
+    border-radius: 4px;
+    border: 1px dashed $color-border;
+    text-align: center;
+    line-height: 1.2;
+  }
+}
+
+.prod-name  { display: block; font-weight: 600; font-size: 0.875rem; }
+.prod-slug  { display: block; font-size: 0.75rem; color: $color-muted; }
+
+.clubcard-price { color: #005698; font-weight: 600; font-size: 0.875rem; }
+.text-muted     { color: $color-muted; }
+
 .low-stock { color: #c0392b; font-weight: 700; }
-.actions-cell { white-space: nowrap; }
+
+.actions-cell {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.delete-confirm { font-size: 0.8125rem; font-weight: 600; color: #c0392b; }
+
 .table-btn {
   background: none;
   border: 1px solid $color-border;
@@ -17,5 +113,15 @@
   cursor: pointer;
   font-size: 0.8125rem;
   padding: 0.25rem 0.625rem;
+
   &:hover { border-color: $color-tesco-blue; color: $color-tesco-blue; }
+  &--danger { border-color: #e0b0b0; color: #c0392b; }
+  &--danger:hover { border-color: #c0392b; background: #fdf0f0; }
+}
+
+// ── Alert variants ────────────────────────────────────────────────────────
+.admin-alert--error {
+  background: #fdf0f0;
+  border-left: 4px solid #c0392b;
+  color: #c0392b;
 }

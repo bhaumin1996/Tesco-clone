@@ -6,4 +6,5 @@ public sealed record UpdateCategoryCommand(
     int CategoryId,
     string Name,
     int DepartmentId,
+    string? ImageUrl,
     int AdminUserId) : IRequest;

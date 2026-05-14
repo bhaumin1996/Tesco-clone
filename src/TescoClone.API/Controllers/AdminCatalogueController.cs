@@ -14,6 +14,7 @@ using TescoClone.Application.Catalogue.Commands.UpdateProduct;
 using TescoClone.Application.Catalogue.Interfaces;
 using TescoClone.Application.Catalogue.Queries.GetAdminCategories;
 using TescoClone.Application.Catalogue.Queries.GetAdminDepartments;
+using TescoClone.Application.Catalogue.Queries.GetAdminBrands;
 using TescoClone.Application.Catalogue.Queries.GetAdminInventory;
 using TescoClone.Application.Catalogue.Queries.GetAdminProducts;
 using TescoClone.Application.Catalogue.Queries.GetProductById;
@@ -69,6 +70,18 @@ public sealed class AdminCatalogueController : ControllerBase
         return NoContent();
     }
 
+    // ── Brands ───────────────────────────────────────────────────────────────
+
+    [HttpGet("/api/v1/admin/brands")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetBrands(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetAdminBrandsQuery(), cancellationToken);
+        return Ok(result);
+    }
+
     // ── Categories ───────────────────────────────────────────────────────────
 
     [HttpGet("/api/v1/admin/categories")]
@@ -88,7 +101,7 @@ public sealed class AdminCatalogueController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request, CancellationToken cancellationToken)
     {
-        var id = await _mediator.Send(new CreateCategoryCommand(request.Name, request.DepartmentId, _currentUser.UserId), cancellationToken);
+        var id = await _mediator.Send(new CreateCategoryCommand(request.Name, request.DepartmentId, request.ImageUrl, _currentUser.UserId), cancellationToken);
         return StatusCode(StatusCodes.Status201Created, new { id });
     }
 
@@ -100,7 +113,7 @@ public sealed class AdminCatalogueController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryRequest request, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new UpdateCategoryCommand(id, request.Name, request.DepartmentId, _currentUser.UserId), cancellationToken);
+        await _mediator.Send(new UpdateCategoryCommand(id, request.Name, request.DepartmentId, request.ImageUrl, _currentUser.UserId), cancellationToken);
         return NoContent();
     }
 
@@ -194,7 +207,7 @@ public sealed class AdminCatalogueController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> AdjustInventory([FromBody] AdjustInventoryRequest request, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new AdjustInventoryCommand(request.ProductId, request.Quantity, _currentUser.UserId), cancellationToken);
+        await _mediator.Send(new AdjustInventoryCommand(request.ProductVariantId, request.Quantity, _currentUser.UserId), cancellationToken);
         return NoContent();
     }
 }
@@ -207,9 +220,9 @@ public sealed record UpdateProductRequest(
     int CategoryId, int? BrandId, string Name, string? Description,
     decimal BasePrice, decimal? ClubcardPrice, string? ImageUrl, bool IsAvailable);
 
-public sealed record AdjustInventoryRequest(int ProductId, int Quantity, string? Reason);
+public sealed record AdjustInventoryRequest(int ProductVariantId, int Quantity, string? Reason);
 
 public sealed record CreateDepartmentRequest(string Name);
 public sealed record UpdateDepartmentRequest(string Name);
-public sealed record CreateCategoryRequest(string Name, int DepartmentId);
-public sealed record UpdateCategoryRequest(string Name, int DepartmentId);
+public sealed record CreateCategoryRequest(string Name, int DepartmentId, string? ImageUrl);
+public sealed record UpdateCategoryRequest(string Name, int DepartmentId, string? ImageUrl);

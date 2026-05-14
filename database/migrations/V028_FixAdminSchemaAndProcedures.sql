@@ -8,6 +8,10 @@
 --              stored procedures, and adds proc_Admin_GetInventory.
 -- Dependencies: V001–V027
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 -- =========================================================
 -- PART 1 – Create missing reference / lookup tables
 -- =========================================================

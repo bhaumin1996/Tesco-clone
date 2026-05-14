@@ -13,5 +13,5 @@ public sealed class CreateCategoryCommandHandler : IRequestHandler<CreateCategor
     }
 
     public Task<int> Handle(CreateCategoryCommand request, CancellationToken cancellationToken) =>
-        _adminCatalogueRepository.CreateCategoryAsync(request.Name, request.DepartmentId, request.AdminUserId, cancellationToken);
+        _adminCatalogueRepository.CreateCategoryAsync(request.Name, request.DepartmentId, request.ImageUrl, request.AdminUserId, cancellationToken);
 }

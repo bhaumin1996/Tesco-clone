@@ -4,6 +4,10 @@
 -- Description: Create stored procedures for Clubcard points and voucher management
 -- Dependencies: V001-V009
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

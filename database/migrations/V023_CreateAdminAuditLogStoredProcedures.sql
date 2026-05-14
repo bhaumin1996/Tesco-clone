@@ -4,6 +4,10 @@
 -- Description: Admin stored procedures for audit log and application log review
 -- Dependencies: V001-V003
 
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 
