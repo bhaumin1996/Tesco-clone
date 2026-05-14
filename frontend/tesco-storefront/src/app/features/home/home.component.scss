@@ -3,18 +3,86 @@
 
 .home { overflow-x: hidden; }
 
+// ── Section variants ──────────────────────────────────────────────────────────
+.home__section {
+  padding: $space-6 0;
+
+  &--white { background: $color-surface; }
+  &--grey  { background: $color-surface-alt; }
+  &--blue  { background: $color-tesco-blue; }
+}
+
+// ── Section header row ────────────────────────────────────────────────────────
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: $space-5;
+  gap: $space-4;
+}
+
+.section-head__title {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $color-ink;
+  margin: 0 0 $space-5;
+
+  &--white { color: $color-surface; }
+}
+
+.section-head__link {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-tesco-blue;
+  text-decoration: none;
+  flex-shrink: 0;
+
+  &:hover { text-decoration: underline; }
+}
+
+.section-head__count {
+  font-size: $font-size-xs;
+  color: $color-muted;
+  background: $color-surface-alt;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+// ── Promo grids ───────────────────────────────────────────────────────────────
+.promo-grid {
+  display: grid;
+  gap: $space-4;
+
+  &--3 {
+    grid-template-columns: 1fr;
+
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(lg) { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  &--4 {
+    grid-template-columns: repeat(2, 1fr);
+
+    @include respond-to(md) { grid-template-columns: repeat(2, 1fr); }
+    @include respond-to(lg) { grid-template-columns: repeat(4, 1fr); }
+  }
+}
+
+// ── Department roundels ───────────────────────────────────────────────────────
 .home__roundels {
   background: $color-surface;
   border-bottom: 1px solid $color-border;
-  padding: $space-4 0;
+  padding: $space-5 0;
 }
 
-.roundel-scroll {
+.roundel-row {
   display: flex;
-  gap: $space-4;
+  gap: $space-3;
   overflow-x: auto;
   padding-bottom: $space-2;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
   &::-webkit-scrollbar { display: none; }
 }
 
@@ -25,14 +93,16 @@
   gap: $space-2;
   text-decoration: none;
   flex-shrink: 0;
-  min-width: 72px;
 
-  &:hover .roundel__circle { border-color: $color-tesco-blue; }
+  &:hover .roundel__circle {
+    transform: scale(1.04);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.14);
+  }
 }
 
 .roundel__circle {
-  width: 64px;
-  height: 64px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   background: $color-surface-alt;
   border: 2px solid $color-border;
@@ -40,93 +110,249 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  transition: border-color 0.15s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.15s ease;
 
-  img { width: 100%; height: 100%; object-fit: cover; }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include respond-to(md) {
+    width: 130px;
+    height: 130px;
+  }
+
+  @include respond-to(lg) {
+    width: 160px;
+    height: 160px;
+  }
 
   &--all {
     background: $color-tesco-blue;
     color: $color-surface;
-    font-weight: 700;
-    font-size: $font-size-sm;
     border-color: $color-tesco-blue;
+  }
+
+  &--brand {
+    background: $color-surface;
+    border: 2px solid $color-border;
   }
 }
 
-.roundel__icon { font-size: 1.75rem; }
+.roundel__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
 
 .roundel__label {
   font-size: $font-size-xs;
-  font-weight: 700;
+  font-weight: 600;
   color: $color-ink;
   text-align: center;
-  line-height: 1.2;
-  max-width: 72px;
+  line-height: 1.3;
+  max-width: 90px;
+
+  @include respond-to(md) { max-width: 130px; font-size: $font-size-sm; }
+  @include respond-to(lg) { max-width: 160px; }
 }
 
-// Hero
-.home__hero { padding: $space-5 0; }
-
-.hero-grid {
-  display: grid;
-  gap: $space-4;
-
-  @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
+.roundel__brand-initial {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: $color-tesco-blue;
+  font-style: italic;
 }
 
-.hero-card {
-  border-radius: $radius-md;
+// Skeleton loader
+.roundel-skeleton {
+  display: flex;
+  gap: $space-3;
+  padding-bottom: $space-2;
+}
+
+.roundel-skeleton__item {
   display: flex;
   flex-direction: column;
-  gap: $space-3;
-  min-height: 200px;
-  padding: $space-6;
+  align-items: center;
+  gap: $space-2;
+  flex-shrink: 0;
+}
+
+.roundel-skeleton__circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, $color-border 25%, $color-surface-alt 50%, $color-border 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+
+  @include respond-to(lg) { width: 160px; height: 160px; }
+}
+
+.roundel-skeleton__label {
+  width: 70px;
+  height: 12px;
+  border-radius: $radius-sm;
+  background: linear-gradient(90deg, $color-border 25%, $color-surface-alt 50%, $color-border 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Promo cards (What's new) ──────────────────────────────────────────────────
+.promo-card {
+  display: flex;
+  flex-direction: column;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  overflow: hidden;
   text-decoration: none;
-  transition: transform 0.15s ease;
+  transition: box-shadow 0.2s ease;
 
-  &:hover { transform: translateY(-2px); }
+  &:hover { box-shadow: $shadow-hover; text-decoration: none; }
 }
 
-.hero-card__title { font-size: $font-size-xl; color: $color-ink; }
-.hero-card__subtitle { font-size: $font-size-sm; color: $color-muted; flex: 1; }
-.hero-card__cta { align-self: flex-start; }
-
-// Generic sections
-.home__section { padding: $space-6 0; }
-
-.home__section-title {
-  font-size: $font-size-xl;
-  margin-bottom: $space-5;
-  color: $color-ink;
-}
-
-.promo-grid {
-  display: grid;
-  gap: $space-4;
-
-  @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
-}
-
-.promo-tile {
+.promo-card__img {
+  height: 160px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+
+  @include respond-to(md) { height: 180px; }
+}
+
+.promo-card__img-icon { font-size: 4rem; }
+
+.promo-card__body {
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  flex: 1;
+}
+
+.promo-card__title {
+  font-size: $font-size-lg;
+  font-weight: 700;
+  color: $color-ink;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.promo-card__text {
+  font-size: $font-size-sm;
+  color: $color-muted;
+  margin: 0;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.promo-card__cta {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-tesco-blue;
+  text-decoration: underline;
+  margin-top: $space-2;
+}
+
+// ── Feature tiles (Top picks) ─────────────────────────────────────────────────
+.feature-tile {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: $space-4;
+  text-decoration: none;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  border-left: 4px solid var(--tile-color, #005DAA);
+
+  &:hover { box-shadow: $shadow-hover; text-decoration: none; }
+}
+
+.feature-tile__icon {
+  font-size: 2.25rem;
+  flex-shrink: 0;
+}
+
+.feature-tile__body { display: flex; flex-direction: column; gap: $space-1; }
+
+.feature-tile__title {
+  font-size: $font-size-md;
+  font-weight: 700;
+  color: $color-ink;
+  margin: 0;
+}
+
+.feature-tile__text {
+  font-size: $font-size-xs;
+  color: $color-muted;
+  margin: 0;
+  line-height: 1.4;
+}
+
+// ── Save tiles (Ways to save) ─────────────────────────────────────────────────
+.save-tile {
+  display: flex;
   gap: $space-4;
   background: $color-surface;
   border: 1px solid $color-border;
-  border-radius: $radius-md;
-  padding: $space-4 $space-5;
+  border-radius: $radius-sm;
+  padding: $space-4;
   text-decoration: none;
-  transition: box-shadow 0.15s ease;
+  transition: box-shadow 0.2s ease;
 
-  &:hover { box-shadow: $shadow-popover; text-decoration: none; }
-  &--blue { background: $color-surface-blue; border-color: $color-tesco-blue-light; }
+  &:hover { box-shadow: $shadow-hover; text-decoration: none; }
 }
 
-.promo-tile__icon { font-size: 2rem; flex-shrink: 0; }
-.promo-tile__title { font-size: $font-size-md; font-weight: 700; color: $color-ink; margin-bottom: $space-1; }
-.promo-tile__subtitle { font-size: $font-size-sm; color: $color-muted; }
+.save-tile__icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
 
-// Clubcard banner
+.save-tile__body { display: flex; flex-direction: column; gap: $space-1; }
+
+.save-tile__title {
+  font-size: $font-size-md;
+  font-weight: 700;
+  color: $color-ink;
+  margin: 0;
+}
+
+.save-tile__text {
+  font-size: $font-size-sm;
+  color: $color-muted;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.save-tile__link {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-tesco-blue;
+  text-decoration: underline;
+  margin-top: $space-1;
+}
+
+// ── Clubcard banner ───────────────────────────────────────────────────────────
 .home__clubcard-banner {
   background: $color-clubcard-yellow;
   padding: $space-7 0;
@@ -137,7 +363,10 @@
   align-items: center;
   gap: $space-7;
 
-  @media (max-width: $breakpoint-md) { flex-direction: column; }
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $space-6;
+  }
 }
 
 .clubcard-banner__content {
@@ -152,25 +381,210 @@
   font-weight: 700;
   color: $color-tesco-blue;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
 }
 
-.clubcard-banner__title { font-size: $font-size-2xl; color: $color-ink; }
-.clubcard-banner__text { font-size: $font-size-md; color: $color-ink; max-width: 480px; }
+.clubcard-banner__title {
+  font-size: $font-size-2xl;
+  font-weight: 700;
+  color: $color-ink;
+  margin: 0;
+  line-height: 1.2;
+}
 
-.clubcard-banner__visual { flex-shrink: 0; }
+.clubcard-banner__text {
+  font-size: $font-size-md;
+  color: $color-ink;
+  max-width: 480px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.clubcard-banner__actions {
+  display: flex;
+  gap: $space-3;
+  flex-wrap: wrap;
+}
+
+.clubcard-banner__card-wrap { flex-shrink: 0; }
 
 .clubcard-mock {
-  background: $color-tesco-blue;
-  border-radius: $radius-md;
+  background: linear-gradient(135deg, $color-clubcard-blue 0%, $color-tesco-blue 100%);
+  border-radius: 12px;
   color: $color-surface;
   padding: $space-5 $space-6;
   width: 280px;
   display: flex;
   flex-direction: column;
   gap: $space-4;
-  box-shadow: $shadow-popover;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+
+  @media (max-width: $breakpoint-sm) { width: 100%; }
 }
 
-.clubcard-mock__logo { font-size: $font-size-lg; font-weight: 900; font-style: italic; }
-.clubcard-mock__number { font-size: $font-size-md; letter-spacing: 0.15em; font-family: monospace; opacity: 0.8; }
+.clubcard-mock__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clubcard-mock__brand {
+  font-size: $font-size-xl;
+  font-weight: 900;
+  font-style: italic;
+  opacity: 0.95;
+}
+
+.clubcard-mock__label {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  background: $color-clubcard-yellow;
+  color: $color-ink;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.clubcard-mock__chip {
+  width: 38px;
+  height: 28px;
+  background: linear-gradient(135deg, #f8d56b 0%, #c8963c 100%);
+  border-radius: 4px;
+}
+
+.clubcard-mock__number {
+  font-size: $font-size-md;
+  letter-spacing: 0.18em;
+  font-family: 'Courier New', monospace;
+  opacity: 0.85;
+}
+
+.clubcard-mock__name {
+  font-size: $font-size-xs;
+  letter-spacing: 0.12em;
+  opacity: 0.65;
+  text-transform: uppercase;
+}
+
+// ── Discover cards ────────────────────────────────────────────────────────────
+.discover-card {
+  display: flex;
+  flex-direction: column;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  text-decoration: none;
+  transition: box-shadow 0.2s ease;
+
+  &:hover { box-shadow: $shadow-hover; text-decoration: none; }
+}
+
+.discover-card__img {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+
+  &--blue   { background: linear-gradient(135deg, #005DAA 0%, #003f7d 100%); }
+  &--orange { background: linear-gradient(135deg, #ff9a56 0%, #e07b20 100%); }
+  &--red    { background: linear-gradient(135deg, #EE1C2E 0%, #b5122b 100%); }
+  &--green  { background: linear-gradient(135deg, #007A33 0%, #005a25 100%); }
+}
+
+.discover-card__img-icon { filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+
+.discover-card__body {
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  flex: 1;
+}
+
+.discover-card__title {
+  font-size: $font-size-lg;
+  font-weight: 700;
+  color: $color-ink;
+  margin: 0;
+}
+
+.discover-card__text {
+  font-size: $font-size-sm;
+  color: $color-muted;
+  margin: 0;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.discover-card__cta {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-tesco-blue;
+  text-decoration: underline;
+}
+
+// ── Community cards ───────────────────────────────────────────────────────────
+.community-card {
+  display: flex;
+  gap: $space-4;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  padding: $space-5;
+}
+
+.community-card__icon { font-size: 2.25rem; flex-shrink: 0; }
+
+.community-card__title {
+  font-size: $font-size-md;
+  font-weight: 700;
+  color: $color-ink;
+  margin: 0 0 $space-2;
+}
+
+.community-card__text {
+  font-size: $font-size-sm;
+  color: $color-muted;
+  margin: 0 0 $space-2;
+  line-height: 1.4;
+}
+
+.community-card__link {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-tesco-blue;
+  text-decoration: underline;
+
+  &:hover { color: $color-tesco-blue-dark; }
+}
+
+// ── Service tiles ─────────────────────────────────────────────────────────────
+.service-tile {
+  display: flex;
+  gap: $space-3;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: $radius-sm;
+  padding: $space-4;
+  text-decoration: none;
+  transition: background 0.2s ease;
+
+  &:hover { background: rgba(255,255,255,0.18); text-decoration: none; }
+}
+
+.service-tile__icon { font-size: 2rem; flex-shrink: 0; }
+
+.service-tile__title {
+  font-size: $font-size-md;
+  font-weight: 700;
+  color: $color-surface;
+  margin: 0 0 $space-1;
+}
+
+.service-tile__text {
+  font-size: $font-size-xs;
+  color: rgba(255,255,255,0.75);
+  margin: 0;
+  line-height: 1.4;
+}

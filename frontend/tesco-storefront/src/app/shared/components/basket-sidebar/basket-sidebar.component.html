@@ -1,0 +1,64 @@
+<aside class="basket-sidebar">
+  <h2 class="basket-sidebar__heading">Basket</h2>
+
+  <div class="basket-sidebar__total-row">
+    <div class="basket-sidebar__icon-wrap" aria-hidden="true">
+      <svg class="basket-sidebar__cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+      </svg>
+    </div>
+    <div class="basket-sidebar__total-info">
+      <span class="basket-sidebar__total-amount">£{{ cart.total() | number:'1.2-2' }}</span>
+      <span class="basket-sidebar__guide-text">Guide price</span>
+    </div>
+  </div>
+
+  <a
+    routerLink="/checkout"
+    class="basket-sidebar__checkout-btn"
+    [class.basket-sidebar__checkout-btn--disabled]="cart.itemCount() === 0"
+    [attr.aria-disabled]="cart.itemCount() === 0"
+    [attr.tabindex]="cart.itemCount() === 0 ? -1 : 0"
+  >
+    Checkout
+  </a>
+
+  <div class="basket-sidebar__divider"></div>
+
+  <div class="basket-sidebar__groceries">
+    <h3 class="basket-sidebar__groceries-title">Groceries</h3>
+    <p class="basket-sidebar__groceries-text">Reserve a slot for either home delivery or collection</p>
+
+    @if (cart.itemCount() === 0) {
+      <div class="basket-sidebar__empty">
+        <div class="basket-sidebar__empty-icon-wrap" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none" stroke="#aab2bd" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="24" cy="56" r="3"/>
+            <circle cx="48" cy="56" r="3"/>
+            <path d="M4 4h8l6.5 32a5 5 0 0 0 4.9 4h23.6a5 5 0 0 0 4.9-4l4-20H16"/>
+          </svg>
+        </div>
+        <p class="basket-sidebar__empty-title">Grocery basket empty</p>
+        <p class="basket-sidebar__empty-text">Products you add to your basket will appear here</p>
+      </div>
+    } @else {
+      <div class="basket-sidebar__items">
+        @for (item of cart.cart()?.items ?? []; track item.id) {
+          <div class="basket-sidebar__item">
+            @if (item.imageUrl) {
+              <img [src]="item.imageUrl" [alt]="item.productName" class="basket-sidebar__item-img" loading="lazy" />
+            } @else {
+              <div class="basket-sidebar__item-img-placeholder" aria-hidden="true"></div>
+            }
+            <div class="basket-sidebar__item-info">
+              <p class="basket-sidebar__item-name">{{ item.productName }}</p>
+              <p class="basket-sidebar__item-qty">Qty: {{ item.quantity }}</p>
+            </div>
+            <span class="basket-sidebar__item-price">£{{ item.lineTotal | number:'1.2-2' }}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</aside>

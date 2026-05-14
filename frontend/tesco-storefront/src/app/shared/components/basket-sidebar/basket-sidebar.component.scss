@@ -1,0 +1,207 @@
+@use '../../../../styles/tokens' as *;
+
+.basket-sidebar {
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  background: $color-surface;
+  overflow: hidden;
+}
+
+.basket-sidebar__heading {
+  font-size: $font-size-lg;
+  font-weight: 700;
+  color: $color-ink;
+  padding: $space-4;
+  border-bottom: 1px solid $color-border;
+  margin: 0;
+}
+
+.basket-sidebar__total-row {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-4;
+}
+
+.basket-sidebar__icon-wrap {
+  background: $color-tesco-blue;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.basket-sidebar__cart-icon {
+  width: 22px;
+  height: 22px;
+  color: $color-surface;
+}
+
+.basket-sidebar__total-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.basket-sidebar__total-amount {
+  font-size: $font-size-xl;
+  font-weight: 700;
+  color: $color-ink;
+  line-height: 1.1;
+}
+
+.basket-sidebar__guide-text {
+  font-size: $font-size-xs;
+  color: $color-muted;
+}
+
+.basket-sidebar__checkout-btn {
+  display: block;
+  margin: 0 $space-4 $space-4;
+  padding: $space-3 $space-4;
+  background: $color-tesco-blue;
+  color: $color-surface;
+  border: none;
+  border-radius: 2rem;
+  font-size: $font-size-md;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-family: $font-family-base;
+
+  &:hover:not(.basket-sidebar__checkout-btn--disabled) {
+    background: $color-tesco-blue-dark;
+    color: $color-surface;
+  }
+
+  &--disabled {
+    background: $color-border;
+    color: $color-muted;
+    cursor: default;
+    pointer-events: none;
+  }
+}
+
+.basket-sidebar__divider {
+  height: 1px;
+  background: $color-border;
+  margin: 0;
+}
+
+.basket-sidebar__groceries {
+  padding: $space-4;
+}
+
+.basket-sidebar__groceries-title {
+  font-size: $font-size-md;
+  font-weight: 700;
+  color: $color-ink;
+  margin: 0 0 $space-2;
+}
+
+.basket-sidebar__groceries-text {
+  font-size: $font-size-sm;
+  color: $color-muted;
+  margin: 0 0 $space-4;
+  line-height: 1.45;
+}
+
+.basket-sidebar__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: $space-2;
+  padding: $space-3 0 $space-2;
+}
+
+.basket-sidebar__empty-icon-wrap {
+  width: 64px;
+  height: 64px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.basket-sidebar__empty-title {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-ink;
+  margin: 0;
+}
+
+.basket-sidebar__empty-text {
+  font-size: $font-size-xs;
+  color: $color-muted;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.basket-sidebar__items {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.basket-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding-bottom: $space-3;
+  border-bottom: 1px solid $color-border;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.basket-sidebar__item-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.basket-sidebar__item-img-placeholder {
+  width: 48px;
+  height: 48px;
+  background: $color-surface-alt;
+  flex-shrink: 0;
+  border-radius: $radius-sm;
+}
+
+.basket-sidebar__item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.basket-sidebar__item-name {
+  font-size: $font-size-xs;
+  font-weight: 600;
+  color: $color-ink;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.basket-sidebar__item-qty {
+  font-size: $font-size-xs;
+  color: $color-muted;
+  margin: 0;
+}
+
+.basket-sidebar__item-price {
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: $color-ink;
+  flex-shrink: 0;
+}

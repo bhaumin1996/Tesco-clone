@@ -6,7 +6,7 @@
   justify-content: center;
   gap: $space-2;
   border: none;
-  border-radius: $radius-md;
+  border-radius: $radius-sm;
   cursor: pointer;
   font-family: $font-family-base;
   font-weight: 700;
@@ -14,8 +14,9 @@
   min-height: 44px;
   padding: 0 $space-5;
   text-decoration: none;
-  transition: background 0.15s ease, opacity 0.15s ease;
+  transition: background 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
   white-space: nowrap;
+  line-height: 1;
 
   &:disabled {
     opacity: 0.5;
@@ -23,6 +24,7 @@
   }
 }
 
+// Primary — Tesco Blue
 .button--primary {
   background: $color-tesco-blue;
   color: $color-surface;
@@ -30,14 +32,17 @@
   &:hover:not(:disabled) { background: $color-tesco-blue-dark; }
 }
 
+// Secondary / Ghost — outlined blue
 .button--secondary {
   background: $color-surface;
   border: 2px solid $color-tesco-blue;
   color: $color-tesco-blue;
+  min-height: 42px; // account for 2px border
 
   &:hover:not(:disabled) { background: $color-tesco-blue-light; }
 }
 
+// Danger
 .button--danger {
   background: $color-tesco-red;
   color: $color-surface;
@@ -45,14 +50,34 @@
   &:hover:not(:disabled) { background: $color-tesco-red-dark; }
 }
 
+// Ghost — text only
 .button--ghost {
   background: transparent;
   color: $color-tesco-blue;
   padding: 0 $space-2;
+  min-height: auto;
 
   &:hover:not(:disabled) { text-decoration: underline; }
 }
 
+// Clubcard — pill shape, deep blue
+.button--clubcard {
+  background: $color-clubcard-blue;
+  color: $color-surface;
+  border-radius: 20px;
+
+  &:hover:not(:disabled) { background: #003d7a; }
+}
+
+// Add to basket — Tesco green
+.button--add-basket {
+  background: $color-success;
+  color: $color-surface;
+
+  &:hover:not(:disabled) { background: $color-success-dark; }
+}
+
+// Sizes
 .button--sm {
   font-size: $font-size-xs;
   min-height: 32px;

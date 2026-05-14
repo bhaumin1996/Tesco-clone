@@ -1,32 +1,63 @@
 @use '../../../../styles/tokens' as *;
 @use '../../../../styles/mixins' as *;
 
+// Skip links
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: $space-4;
+  background: $color-tesco-blue;
+  color: $color-surface;
+  padding: $space-2 $space-4;
+  border-radius: $radius-sm;
+  font-weight: 700;
+  font-size: $font-size-sm;
+  z-index: 9999;
+  text-decoration: none;
+
+  &:focus { top: $space-2; }
+}
+
 .header {
   position: sticky;
   top: 0;
   z-index: 200;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
 }
 
-// Utility bar
+// ── Utility bar (blue) ────────────────────────────────────────────────────────
 .header__utility {
-  background: $color-tesco-blue-dark;
-  padding: 4px 0;
+  background: $color-tesco-blue;
+  padding: 5px 0;
 }
 
-.header__utility-inner { display: flex; justify-content: flex-end; }
+.header__utility-inner {
+  display: flex;
+  justify-content: flex-end;
+}
 
-.header__utility-links { display: flex; gap: $space-4; }
+.header__utility-links {
+  display: flex;
+  gap: $space-5;
+
+  @media (max-width: $breakpoint-md) { display: none; }
+}
 
 .header__utility-link {
-  color: rgba(255,255,255,0.8);
-  font-size: $font-size-xs;
+  color: rgba(255,255,255,0.9);
+  font-size: 0.8125rem; // 13px
   text-decoration: none;
+  white-space: nowrap;
+
   &:hover { color: $color-surface; text-decoration: underline; }
 }
 
-// Main bar
-.header__main { background: $color-tesco-blue; padding: $space-3 0; }
+// ── Main header bar (white) ───────────────────────────────────────────────────
+.header__main {
+  background: $color-surface;
+  padding: $space-3 0;
+  border-bottom: 1px solid $color-border;
+}
 
 .header__main-inner {
   display: flex;
@@ -34,85 +65,116 @@
   gap: $space-4;
 }
 
+// Logo
 .header__logo {
   text-decoration: none;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
-.header__logo-text {
-  color: $color-surface;
-  font-size: $font-size-2xl;
-  font-weight: 900;
-  font-style: italic;
-  letter-spacing: -1px;
+.header__logo-svg {
+  width: 90px;
+  height: 32px;
+  display: block;
 }
 
 // Search
 .header__search {
   flex: 1;
   display: flex;
-  max-width: 560px;
-  background: $color-surface;
+  max-width: 600px;
+  height: 44px;
+  border: 1px solid $color-border;
   border-radius: $radius-sm;
   overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &:focus-within {
+    border-color: $color-tesco-blue;
+    box-shadow: 0 0 0 3px rgba(0, 93, 170, 0.12);
+  }
 }
 
 .header__search-input {
   flex: 1;
   border: none;
   font-size: $font-size-md;
+  font-family: $font-family-base;
   outline: none;
-  padding: $space-2 $space-3;
+  padding: 0 $space-3;
   color: $color-ink;
+  background: $color-surface;
+
+  &::placeholder { color: $color-muted; }
+
+  &::-webkit-search-cancel-button { display: none; }
 }
 
 .header__search-btn {
-  background: $color-clubcard-yellow;
+  background: $color-tesco-blue;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 $space-3;
-  color: $color-ink;
-  &:hover { background: darken($color-clubcard-yellow, 5%); }
+  padding: 0 $space-4;
+  color: $color-surface;
+  min-width: 52px;
+  transition: background 0.15s ease;
+
+  &:hover { background: $color-tesco-blue-dark; }
 }
 
-// Actions
-.header__actions { display: flex; align-items: center; gap: $space-3; margin-left: auto; }
+// Actions row
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  margin-left: auto;
+  flex-shrink: 0;
+}
 
 .header__icon {
   width: 24px;
   height: 24px;
-  color: $color-surface;
+  color: $color-ink;
 }
 
 .header__action-label {
-  color: $color-surface;
+  color: $color-ink;
   font-size: $font-size-xs;
   font-weight: 700;
   display: none;
+
   @include respond-to(md) { display: block; }
 }
 
+// Account
 .header__account {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;
   gap: 2px;
+  cursor: pointer;
+  padding: $space-1;
+  border-radius: $radius-sm;
+
+  &:hover .header__icon { color: $color-tesco-blue; }
+  &:hover .header__action-label { color: $color-tesco-blue; }
+  &:focus { outline: 2px solid $color-tesco-blue; outline-offset: 2px; }
 }
 
 .header__dropdown {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 6px);
   right: 0;
   background: $color-surface;
   border: 1px solid $color-border;
   border-radius: $radius-md;
   box-shadow: $shadow-popover;
-  min-width: 180px;
+  min-width: 200px;
   z-index: 300;
   padding: $space-2 0;
 }
@@ -120,84 +182,129 @@
 .header__dropdown-item {
   display: block;
   width: 100%;
-  padding: $space-2 $space-4;
+  padding: $space-3 $space-4;
   color: $color-ink;
   font-size: $font-size-sm;
+  font-weight: 600;
   text-decoration: none;
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
-  &:hover { background: $color-surface-alt; }
+  font-family: $font-family-base;
+  transition: background 0.1s ease;
+
+  &:hover { background: $color-surface-alt; color: $color-tesco-blue; }
+
+  &--register {
+    color: $color-tesco-blue;
+    font-weight: 700;
+  }
 }
 
-.header__dropdown-divider { border: none; border-top: 1px solid $color-border; margin: $space-1 0; }
+.header__dropdown-divider {
+  border: none;
+  border-top: 1px solid $color-border;
+  margin: $space-1 0;
+}
 
+// Clubcard
 .header__clubcard {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.header__clubcard-badge {
-  background: $color-clubcard-yellow;
-  color: $color-ink;
-  border-radius: $radius-sm;
-  font-size: $font-size-xs;
-  font-weight: 900;
-  padding: 3px 8px;
-}
-
-.header__cart {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
   text-decoration: none;
+  cursor: pointer;
+  padding: $space-1;
+  border-radius: $radius-sm;
+
+  &:hover .header__action-label { color: $color-tesco-blue; }
+  &:hover .header__clubcard-icon { color: $color-clubcard-blue; }
+}
+
+.header__clubcard-icon {
+  color: $color-ink;
+  display: flex;
+  transition: color 0.15s ease;
+}
+
+// Cart
+.header__cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-decoration: none;
+  padding: $space-1;
+  border-radius: $radius-sm;
+
+  &:hover .header__action-label { color: $color-tesco-blue; }
+  &:hover .header__icon { color: $color-tesco-blue; }
+}
+
+.header__cart-wrap {
+  position: relative;
+  display: flex;
 }
 
 .header__cart-count {
   position: absolute;
   top: -6px;
-  right: -6px;
+  right: -8px;
   background: $color-tesco-red;
   color: $color-surface;
   border-radius: 50%;
-  font-size: 0.65rem;
+  font-size: 0.625rem;
   font-weight: 700;
   min-width: 18px;
   height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid $color-surface;
+  line-height: 1;
 }
 
+// Mobile toggle
 .header__mobile-toggle {
   background: none;
   border: none;
-  color: $color-surface;
+  color: $color-ink;
   cursor: pointer;
   display: flex;
+  padding: $space-2;
+  border-radius: $radius-sm;
+
+  &:hover { background: $color-surface-alt; }
+
   @include respond-to(lg) { display: none; }
 }
 
-// Department nav
+// ── Department nav bar (light grey) ──────────────────────────────────────────
 .header__dept-nav {
-  background: $color-surface;
+  background: $color-surface-alt;
   border-bottom: 1px solid $color-border;
   overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
 
   @media (max-width: $breakpoint-lg) {
     display: none;
-    &.open { display: block; }
+
+    &.open {
+      display: block;
+      background: $color-surface;
+      border-bottom: none;
+      padding: $space-3 0;
+    }
   }
 }
 
 .header__dept-list {
   display: flex;
-  align-items: center;
-  gap: 0;
+  align-items: stretch;
   white-space: nowrap;
   list-style: none;
   margin: 0;
@@ -205,20 +312,32 @@
 }
 
 .header__dept-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: $space-1;
   padding: $space-2 $space-3;
   font-size: $font-size-sm;
-  font-weight: 700;
+  font-weight: 600;
   color: $color-ink;
   text-decoration: none;
   border-bottom: 3px solid transparent;
   white-space: nowrap;
+  transition: color 0.15s ease, border-color 0.15s ease;
 
-  &:hover, &.active {
+  &:hover,
+  &.active {
     color: $color-tesco-blue;
     border-bottom-color: $color-tesco-blue;
     text-decoration: none;
   }
 
-  &--clubcard { color: $color-tesco-blue; }
+  &--all {
+    font-weight: 700;
+    color: $color-tesco-blue;
+  }
+
+  &--clubcard {
+    color: $color-clubcard-blue;
+    font-weight: 700;
+  }
 }

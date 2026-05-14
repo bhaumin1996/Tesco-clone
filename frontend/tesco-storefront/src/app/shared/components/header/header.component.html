@@ -1,8 +1,12 @@
 <header class="header">
-  <!-- Utility bar -->
+  <!-- Skip links for accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <a href="#search-input" class="skip-link">Skip to search</a>
+
+  <!-- Utility bar — blue, right-aligned -->
   <div class="header__utility">
     <div class="page-container header__utility-inner">
-      <nav class="header__utility-links">
+      <nav class="header__utility-links" aria-label="Secondary navigation">
         <a href="#" class="header__utility-link">Tesco Bank</a>
         <a href="#" class="header__utility-link">Tesco Mobile</a>
         <a routerLink="/delivery" class="header__utility-link">Delivery Saver</a>
@@ -12,101 +16,127 @@
     </div>
   </div>
 
-  <!-- Main header bar -->
+  <!-- Main header bar — white background -->
   <div class="header__main">
     <div class="page-container header__main-inner">
+
       <!-- Logo -->
-      <a routerLink="/" class="header__logo">
-        <span class="header__logo-text">Tesco</span>
+      <a routerLink="/" class="header__logo" aria-label="Tesco home">
+        <svg class="header__logo-svg" viewBox="0 0 120 40" aria-hidden="true">
+          <text x="0" y="32" font-family="Arial" font-weight="900" font-size="36" font-style="italic" fill="#005DAA">Tesco</text>
+        </svg>
       </a>
 
       <!-- Search -->
-      <form class="header__search" (ngSubmit)="search()">
+      <form class="header__search" (ngSubmit)="search()" role="search">
         <input
+          id="search-input"
           class="header__search-input"
           type="search"
-          placeholder="Search products..."
+          placeholder="Search products, brands and more…"
           [value]="searchQuery()"
           (input)="searchQuery.set($any($event.target).value)"
-          aria-label="Search products"
+          aria-label="Search products, brands and more"
+          autocomplete="off"
         />
         <button class="header__search-btn" type="submit" aria-label="Search">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
         </button>
       </form>
 
-      <!-- Actions -->
+      <!-- Right actions -->
       <div class="header__actions">
+
         <!-- Account -->
-        <div class="header__account" (click)="toggleAccountMenu()">
-          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="header__account" (click)="toggleAccountMenu()" (keydown.enter)="toggleAccountMenu()" tabindex="0" role="button" [attr.aria-expanded]="accountMenuOpen()">
+          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
           </svg>
           <span class="header__action-label">
             @if (auth.isAuthenticated()) {
-              <span>{{ auth.user()?.firstName }}</span>
+              {{ auth.user()?.firstName }}
             } @else {
-              <span>Sign In</span>
+              Sign In
             }
           </span>
-          <!-- Account dropdown -->
+
           @if (accountMenuOpen()) {
-            <div class="header__dropdown">
+            <div class="header__dropdown" role="menu">
               @if (auth.isAuthenticated()) {
-                <a routerLink="/account" class="header__dropdown-item">My Account</a>
-                <a routerLink="/account/orders" class="header__dropdown-item">Orders</a>
-                <a routerLink="/account/clubcard" class="header__dropdown-item">Clubcard</a>
-                <a routerLink="/account/favourites" class="header__dropdown-item">Favourites</a>
+                <a routerLink="/account" class="header__dropdown-item" role="menuitem">My Account</a>
+                <a routerLink="/account/orders" class="header__dropdown-item" role="menuitem">My Orders</a>
+                <a routerLink="/account/clubcard" class="header__dropdown-item" role="menuitem">Clubcard</a>
+                <a routerLink="/account/favourites" class="header__dropdown-item" role="menuitem">Favourites</a>
                 <hr class="header__dropdown-divider" />
-                <button class="header__dropdown-item" (click)="logout()">Sign Out</button>
+                <button class="header__dropdown-item" role="menuitem" (click)="logout()">Sign Out</button>
               } @else {
-                <a routerLink="/auth/login" class="header__dropdown-item">Sign In</a>
-                <a routerLink="/auth/register" class="header__dropdown-item">Register</a>
+                <a routerLink="/auth/login" class="header__dropdown-item" role="menuitem">Sign In</a>
+                <a routerLink="/auth/register" class="header__dropdown-item header__dropdown-item--register" role="menuitem">Register</a>
               }
             </div>
           }
         </div>
 
         <!-- Clubcard -->
-        <a routerLink="/account/clubcard" class="header__clubcard">
-          <span class="header__clubcard-badge">Clubcard</span>
+        <a routerLink="/account/clubcard" class="header__clubcard" aria-label="Tesco Clubcard">
+          <div class="header__clubcard-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+          </div>
+          <span class="header__action-label">Clubcard</span>
         </a>
 
-        <!-- Cart -->
-        <a routerLink="/cart" class="header__cart">
-          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-          </svg>
-          @if (cart.itemCount() > 0) {
-            <span class="header__cart-count">{{ cart.itemCount() }}</span>
-          }
+        <!-- Cart / Basket -->
+        <a routerLink="/cart" class="header__cart" aria-label="View basket">
+          <div class="header__cart-wrap">
+            <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+            </svg>
+            @if (cart.itemCount() > 0) {
+              <span class="header__cart-count" [attr.aria-label]="cart.itemCount() + ' items in basket'">{{ cart.itemCount() }}</span>
+            }
+          </div>
           <span class="header__action-label">Basket</span>
         </a>
 
         <!-- Mobile menu toggle -->
-        <button class="header__mobile-toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
+        <button class="header__mobile-toggle" (click)="toggleMobileMenu()" [attr.aria-expanded]="mobileMenuOpen()" aria-label="Toggle navigation menu">
+          @if (mobileMenuOpen()) {
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          } @else {
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+          }
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Department nav -->
-  <nav class="header__dept-nav" [class.open]="mobileMenuOpen()">
+  <!-- Department nav bar — light grey -->
+  <nav class="header__dept-nav" [class.open]="mobileMenuOpen()" aria-label="Department navigation">
     <div class="page-container">
-      <ul class="header__dept-list">
-        <li><a routerLink="/departments" class="header__dept-link">All Departments</a></li>
-        <li><a routerLink="/offers" class="header__dept-link">Offers</a></li>
-        <li><a routerLink="/account/clubcard" class="header__dept-link header__dept-link--clubcard">Clubcard</a></li>
-        <li><a routerLink="/recipes" class="header__dept-link">Recipes</a></li>
+      <ul class="header__dept-list" role="list">
+        <li><a routerLink="/departments" class="header__dept-link header__dept-link--all" routerLinkActive="active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+          All Departments
+        </a></li>
+        <li><a routerLink="/offers" class="header__dept-link" routerLinkActive="active">Special Offers</a></li>
+        <li><a routerLink="/account/clubcard" class="header__dept-link header__dept-link--clubcard" routerLinkActive="active">Clubcard</a></li>
+        <li><a routerLink="/departments/clothing" class="header__dept-link" routerLinkActive="active">F&amp;F Clothing</a></li>
         @for (dept of departments; track dept.slug) {
-          <li><a [routerLink]="['/departments', dept.slug]" class="header__dept-link">{{ dept.name }}</a></li>
+          <li><a [routerLink]="['/departments', dept.slug]" class="header__dept-link" routerLinkActive="active">{{ dept.name }}</a></li>
         }
+        <li><a routerLink="/recipes" class="header__dept-link" routerLinkActive="active">Recipes</a></li>
       </ul>
     </div>
   </nav>

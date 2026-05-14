@@ -1,56 +1,66 @@
-// Brand colours
-$color-tesco-blue: #00539f;
+// Brand colours — exact Tesco.com values
+$color-tesco-blue: #005DAA;
 $color-tesco-blue-dark: #003f7d;
 $color-tesco-blue-light: #e8f2fc;
-$color-tesco-red: #e31837;
+$color-tesco-red: #EE1C2E;
 $color-tesco-red-dark: #b5122b;
 $color-tesco-red-light: #fde8ec;
 $color-clubcard-yellow: #ffdd00;
 $color-clubcard-yellow-soft: #fff7bf;
+$color-clubcard-blue: #004F9F;
 
 // Semantic colours
-$color-success: #007a3d;
+$color-success: #007A33;
+$color-success-dark: #005a25;
 $color-warning: #b36b00;
 $color-warning-light: #fff3cd;
 $color-error: #b00020;
-$color-info: #00539f;
+$color-info: #005DAA;
 
 // Neutrals
-$color-ink: #1f1f1f;
-$color-muted: #5f6368;
-$color-border: #d8dde6;
+$color-ink: #1A1A1A;
+$color-muted: #555555;
+$color-border: #D8D8D8;
 $color-surface: #ffffff;
-$color-surface-alt: #f5f7fa;
+$color-surface-alt: #F2F2F2;
 $color-surface-blue: #f1f7fd;
 
-// Typography
-$font-family-base: Arial, Helvetica, sans-serif;
-$font-size-xs: 0.75rem;
-$font-size-sm: 0.875rem;
-$font-size-md: 1rem;
-$font-size-lg: 1.125rem;
-$font-size-xl: 1.5rem;
-$font-size-2xl: 2rem;
+// Footer
+$color-footer-bg: #1C1C1C;
+$color-footer-copyright: #000000;
+$color-footer-text: #CCCCCC;
 
-// Spacing
-$space-1: 0.25rem;
-$space-2: 0.5rem;
-$space-3: 0.75rem;
-$space-4: 1rem;
-$space-5: 1.5rem;
-$space-6: 2rem;
-$space-7: 3rem;
+// Typography
+$font-family-base: "Tesco Modern", Arial, Helvetica, sans-serif;
+$font-size-xs: 0.75rem;    // 12px
+$font-size-sm: 0.875rem;   // 14px
+$font-size-md: 1rem;       // 16px
+$font-size-lg: 1.125rem;   // 18px
+$font-size-xl: 1.375rem;   // 22px
+$font-size-2xl: 1.75rem;   // 28px
+
+// Spacing (8px base unit)
+$space-1: 0.25rem;   // 4px
+$space-2: 0.5rem;    // 8px
+$space-3: 0.75rem;   // 12px
+$space-4: 1rem;      // 16px
+$space-5: 1.5rem;    // 24px
+$space-6: 2rem;      // 32px
+$space-7: 3rem;      // 48px
+$space-8: 4rem;      // 64px
 
 // Layout
 $container-max: 1280px;
-$header-height: 72px;
+$header-height: 64px;
 $sidebar-width: 240px;
 
 // Borders & shadows
 $radius-sm: 4px;
 $radius-md: 8px;
-$shadow-card: 0 1px 3px rgba(31, 31, 31, 0.16);
-$shadow-popover: 0 8px 24px rgba(31, 31, 31, 0.18);
+$radius-lg: 12px;
+$shadow-card: 0 1px 3px rgba(0,0,0,0.10);
+$shadow-hover: 0 4px 12px rgba(0,0,0,0.12);
+$shadow-popover: 0 8px 24px rgba(0,0,0,0.18);
 
 // Breakpoints
 $breakpoint-sm: 480px;

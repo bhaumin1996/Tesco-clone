@@ -1,56 +1,91 @@
 <div class="page-container page-content">
   <app-breadcrumb [items]="breadcrumb" />
 
-  <div class="cat-layout">
-    <!-- Filters sidebar -->
-    <aside class="cat-filters card">
-      <div class="card__header">Filters</div>
-      <div class="card__body">
-        <div class="filter-group">
-          <h3 class="filter-group__title">Price range</h3>
-          <div class="filter-group__options">
-            <label class="filter-option"><input type="checkbox" /> Under £5</label>
-            <label class="filter-option"><input type="checkbox" /> £5 – £10</label>
-            <label class="filter-option"><input type="checkbox" /> £10 – £20</label>
-            <label class="filter-option"><input type="checkbox" /> Over £20</label>
-          </div>
-        </div>
-        <div class="filter-group">
-          <h3 class="filter-group__title">Offers</h3>
-          <label class="filter-option"><input type="checkbox" /> Clubcard prices only</label>
-          <label class="filter-option"><input type="checkbox" /> Special offers</label>
-        </div>
-        <div class="filter-group">
-          <h3 class="filter-group__title">Dietary</h3>
-          <div class="filter-group__options">
-            <label class="filter-option"><input type="checkbox" /> Vegan</label>
-            <label class="filter-option"><input type="checkbox" /> Vegetarian</label>
-            <label class="filter-option"><input type="checkbox" /> Gluten Free</label>
-            <label class="filter-option"><input type="checkbox" /> Organic</label>
-          </div>
-        </div>
-      </div>
-    </aside>
+  <div class="cat-page-layout">
 
-    <!-- Product grid -->
-    <main class="cat-main">
-      <div class="cat-toolbar">
-        <h1 class="cat-toolbar__title" style="text-transform: capitalize">{{ categoryName() }}</h1>
-        @if (result()) {
-          <span class="cat-toolbar__count">{{ result()!.totalCount }} products</span>
-        }
-        <div class="cat-toolbar__sort">
-          <label for="sort" class="cat-toolbar__sort-label">Sort by</label>
-          <select id="sort" class="form-control" style="width: auto" [value]="sortBy()" (change)="sortBy.set($any($event.target).value)">
-            @for (opt of sortOptions; track opt.value) {
-              <option [value]="opt.value">{{ opt.label }}</option>
+    <!-- ── Main content ──────────────────────────────────────────────────── -->
+    <main class="cat-content" id="main-content">
+
+      <h1 class="cat-content__title">{{ categoryName() }}</h1>
+
+      <!-- Sub-category chip strip -->
+      @if (categories().length > 0) {
+        <div class="cat-chips-wrap" role="navigation" aria-label="Sub-category filters">
+          <div class="cat-chips">
+            @for (cat of categories(); track cat.id) {
+              <button
+                class="cat-chip"
+                [class.cat-chip--active]="cat.id === categoryId()"
+                (click)="selectCategory(cat)"
+                [attr.aria-pressed]="cat.id === categoryId()"
+                [attr.aria-label]="cat.name"
+              >
+                @if (cat.imageUrl) {
+                  <img [src]="cat.imageUrl" [alt]="" class="cat-chip__img" aria-hidden="true" loading="lazy" />
+                } @else {
+                  <div class="cat-chip__img-placeholder" aria-hidden="true"></div>
+                }
+                <span class="cat-chip__name">{{ cat.name }}</span>
+              </button>
             }
-          </select>
+          </div>
         </div>
+      }
+
+      <!-- Filter + Sort bar -->
+      <div class="cat-bar" role="toolbar" aria-label="Filter and sort products">
+
+        <button
+          class="cat-bar__filter-btn"
+          (click)="filterOpen.set(true)"
+          aria-label="Open product filters"
+          aria-haspopup="dialog"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+            <line x1="4" y1="6" x2="20" y2="6"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+            <line x1="11" y1="18" x2="13" y2="18"/>
+          </svg>
+          Filter
+          @if (activeFilterCount > 0) {
+            <span class="cat-bar__filter-badge">{{ activeFilterCount }}</span>
+          }
+        </button>
+
+        <div class="cat-bar__sort">
+          <label class="cat-bar__sort-label" for="cat-sort">Sort by</label>
+          <div class="cat-bar__sort-wrap">
+            <select
+              id="cat-sort"
+              class="cat-bar__sort-select"
+              [value]="sortBy()"
+              (change)="onSortChange($any($event.target).value)"
+            >
+              @for (opt of sortOptions; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+            <svg class="cat-bar__sort-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+        </div>
+
+        @if (result()) {
+          <p class="cat-bar__count" aria-live="polite" aria-atomic="true">
+            Showing <strong>{{ fromItem }} to {{ toItem }}</strong> of <strong>{{ result()!.totalCount }} items</strong>
+          </p>
+        }
       </div>
 
+      <!-- Product grid -->
       @if (loading()) {
-        <div class="cat-loading"><app-spinner size="lg" /></div>
+        <div class="cat-loading" aria-busy="true"><app-spinner size="lg" /></div>
+      } @else if (!categoryId()) {
+        <div class="cat-empty">
+          <p>Select a category above to browse products.</p>
+          <a routerLink="/departments" class="button button--secondary">Browse all departments</a>
+        </div>
       } @else if (result()?.items?.length === 0) {
         <div class="cat-empty">
           <p>No products found in this category.</p>
@@ -71,5 +106,96 @@
         </div>
       }
     </main>
+
+    <!-- ── Basket sidebar ────────────────────────────────────────────────── -->
+    <div class="cat-basket-col">
+      <app-basket-sidebar />
+    </div>
+
   </div>
 </div>
+
+<!-- ── Filter backdrop ─────────────────────────────────────────────────────── -->
+@if (filterOpen()) {
+  <div
+    class="filter-backdrop"
+    (click)="filterOpen.set(false)"
+    aria-hidden="true"
+  ></div>
+
+  <!-- ── Filter panel ──────────────────────────────────────────────────────── -->
+  <aside
+    class="filter-panel"
+    role="dialog"
+    aria-label="Product filters"
+    aria-modal="true"
+  >
+    <div class="filter-panel__header">
+      <h2 class="filter-panel__title">Filter</h2>
+      <button
+        class="filter-panel__close"
+        (click)="filterOpen.set(false)"
+        aria-label="Close filters"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="filter-panel__body">
+      @for (section of filterSections(); track section.title; let i = $index) {
+        <div class="accordion-section">
+          <button
+            class="accordion-section__header"
+            (click)="toggleFilterSection(i)"
+            [attr.aria-expanded]="section.open"
+            [attr.aria-controls]="'filter-section-' + i"
+          >
+            <span class="accordion-section__title">{{ section.title }}</span>
+            @if (section.selected.length > 0) {
+              <span class="accordion-section__count">{{ section.selected.length }}</span>
+            }
+            <svg
+              class="accordion-section__chevron"
+              [class.accordion-section__chevron--open]="section.open"
+              width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+
+          <div
+            [id]="'filter-section-' + i"
+            class="accordion-section__body"
+            [class.accordion-section__body--open]="section.open"
+            role="region"
+            [attr.aria-label]="section.title + ' filters'"
+          >
+            @if (section.open) {
+              <div class="accordion-section__options">
+                @for (opt of section.options; track opt) {
+                  <label class="filter-option">
+                    <input
+                      type="checkbox"
+                      class="filter-option__checkbox"
+                      [checked]="section.selected.includes(opt)"
+                      (change)="toggleFilterOption(i, opt)"
+                    />
+                    <span class="filter-option__label">{{ opt }}</span>
+                  </label>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="filter-panel__footer">
+      <button class="filter-panel__clear-btn" (click)="clearFilters()">Clear all</button>
+      <button class="filter-panel__apply-btn" (click)="filterOpen.set(false)">Show results</button>
+    </div>
+  </aside>
+}

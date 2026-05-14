@@ -1,56 +1,290 @@
-<div class="auth-page">
-  <div class="auth-card card">
-    <div class="card__header">
-      <h1>Create your account</h1>
-    </div>
-    <div class="card__body">
-      <p class="auth-card__intro">Join Tesco today. It's free and you can start earning Clubcard points right away.</p>
+<div class="reg-page">
+  <div class="reg-wrap">
 
-      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-        <div class="auth-card__name-row">
+    <!-- Page heading -->
+    <div class="reg-heading">
+      <h1 class="reg-heading__title">Create a Tesco account</h1>
+      <p class="reg-heading__sub">It's quick and free. Start earning Clubcard points on every shop.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="reg-form">
+
+      <!-- ── Section 1: Personal details ─────────────────────────── -->
+      <section class="reg-section">
+        <h2 class="reg-section__title">Personal details</h2>
+
+        <!-- Title -->
+        <div class="form-group">
+          <label class="form-label" for="title">Title <span class="reg-optional">(optional)</span></label>
+          <select id="title" class="form-control reg-select" formControlName="title">
+            <option value="">Please select</option>
+            @for (t of titles; track t) {
+              <option [value]="t">{{ t }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- First / Last name -->
+        <div class="reg-name-row">
           <div class="form-group">
             <label class="form-label" for="firstName">First name</label>
-            <input id="firstName" type="text" class="form-control" [class.is-invalid]="fieldError('firstName')" formControlName="firstName" autocomplete="given-name" />
-            @if (fieldError('firstName')) { <p class="form-error">{{ fieldError('firstName') }}</p> }
+            <input
+              id="firstName"
+              type="text"
+              class="form-control"
+              [class.is-invalid]="fieldError('firstName')"
+              formControlName="firstName"
+              autocomplete="given-name"
+              placeholder="e.g. Jane"
+            />
+            @if (fieldError('firstName')) {
+              <p class="form-error" role="alert">{{ fieldError('firstName') }}</p>
+            }
           </div>
           <div class="form-group">
             <label class="form-label" for="lastName">Last name</label>
-            <input id="lastName" type="text" class="form-control" [class.is-invalid]="fieldError('lastName')" formControlName="lastName" autocomplete="family-name" />
-            @if (fieldError('lastName')) { <p class="form-error">{{ fieldError('lastName') }}</p> }
+            <input
+              id="lastName"
+              type="text"
+              class="form-control"
+              [class.is-invalid]="fieldError('lastName')"
+              formControlName="lastName"
+              autocomplete="family-name"
+              placeholder="e.g. Smith"
+            />
+            @if (fieldError('lastName')) {
+              <p class="form-error" role="alert">{{ fieldError('lastName') }}</p>
+            }
           </div>
         </div>
 
+        <!-- Date of birth -->
+        <div class="form-group">
+          <label class="form-label">Date of birth <span class="reg-optional">(optional)</span></label>
+          <p class="form-hint">Helps us personalise your Clubcard offers.</p>
+          <div class="reg-dob-row">
+            <div class="reg-dob-field">
+              <label class="reg-dob-label" for="dobDay">Day</label>
+              <select id="dobDay" class="form-control reg-select" formControlName="dobDay">
+                <option value="">DD</option>
+                @for (d of days; track d) {
+                  <option [value]="d">{{ d }}</option>
+                }
+              </select>
+            </div>
+            <div class="reg-dob-field reg-dob-field--month">
+              <label class="reg-dob-label" for="dobMonth">Month</label>
+              <select id="dobMonth" class="form-control reg-select" formControlName="dobMonth">
+                <option value="">Month</option>
+                @for (m of months; track m; let i = $index) {
+                  <option [value]="i + 1">{{ m }}</option>
+                }
+              </select>
+            </div>
+            <div class="reg-dob-field">
+              <label class="reg-dob-label" for="dobYear">Year</label>
+              <select id="dobYear" class="form-control reg-select" formControlName="dobYear">
+                <option value="">YYYY</option>
+                @for (y of years; track y) {
+                  <option [value]="y">{{ y }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Section 2: Contact details ──────────────────────────── -->
+      <section class="reg-section">
+        <h2 class="reg-section__title">Contact details</h2>
+
         <div class="form-group">
           <label class="form-label" for="email">Email address</label>
-          <input id="email" type="email" class="form-control" [class.is-invalid]="fieldError('email')" formControlName="email" autocomplete="email" />
-          @if (fieldError('email')) { <p class="form-error">{{ fieldError('email') }}</p> }
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            [class.is-invalid]="fieldError('email')"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="your@email.com"
+          />
+          @if (fieldError('email')) {
+            <p class="form-error" role="alert">{{ fieldError('email') }}</p>
+          }
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="password">Password</label>
-          <input id="password" type="password" class="form-control" [class.is-invalid]="fieldError('password')" formControlName="password" autocomplete="new-password" />
-          @if (fieldError('password')) { <p class="form-error">{{ fieldError('password') }}</p> }
-          <p class="form-hint">At least 8 characters</p>
+          <label class="form-label" for="confirmEmail">Confirm email address</label>
+          <input
+            id="confirmEmail"
+            type="email"
+            class="form-control"
+            [class.is-invalid]="confirmEmailError"
+            formControlName="confirmEmail"
+            autocomplete="email"
+            placeholder="your@email.com"
+          />
+          @if (confirmEmailError) {
+            <p class="form-error" role="alert">{{ confirmEmailError }}</p>
+          }
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="confirmPassword">Confirm password</label>
-          <input id="confirmPassword" type="password" class="form-control" [class.is-invalid]="confirmError" formControlName="confirmPassword" autocomplete="new-password" />
-          @if (confirmError) { <p class="form-error">{{ confirmError }}</p> }
+          <label class="form-label" for="mobileNumber">
+            Mobile number <span class="reg-optional">(optional)</span>
+          </label>
+          <p class="form-hint">We'll only contact you about your orders.</p>
+          <input
+            id="mobileNumber"
+            type="tel"
+            class="form-control"
+            [class.is-invalid]="fieldError('mobileNumber')"
+            formControlName="mobileNumber"
+            autocomplete="tel"
+            placeholder="e.g. 07700 900000"
+          />
+          @if (fieldError('mobileNumber')) {
+            <p class="form-error" role="alert">{{ fieldError('mobileNumber') }}</p>
+          }
         </div>
+      </section>
 
-        <p class="auth-card__terms">
-          By creating an account you agree to our <a href="#" target="_blank">Terms & Conditions</a> and <a href="#" target="_blank">Privacy Policy</a>.
+      <!-- ── Section 3: Password ──────────────────────────────────── -->
+      <section class="reg-section">
+        <h2 class="reg-section__title">Password</h2>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Create a password</label>
+          <div class="reg-pw-wrap">
+            <input
+              id="password"
+              [type]="showPassword() ? 'text' : 'password'"
+              class="form-control"
+              [class.is-invalid]="fieldError('password')"
+              formControlName="password"
+              autocomplete="new-password"
+            />
+            <button type="button" class="reg-pw-toggle" (click)="togglePassword()" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+              {{ showPassword() ? 'Hide' : 'Show' }}
+            </button>
+          </div>
+          @if (fieldError('password')) {
+            <p class="form-error" role="alert">{{ fieldError('password') }}</p>
+          }
+
+          <!-- Password rules -->
+          <ul class="reg-pw-rules">
+            <li [class.reg-pw-rules__item--met]="(form.get('password')?.value?.length ?? 0) >= 8">
+              <span class="reg-pw-rules__icon">{{ (form.get('password')?.value?.length ?? 0) >= 8 ? '✓' : '○' }}</span>
+              At least 8 characters
+            </li>
+            <li [class.reg-pw-rules__item--met]="passwordStrengthLevel() >= 2">
+              <span class="reg-pw-rules__icon">{{ passwordStrengthLevel() >= 2 ? '✓' : '○' }}</span>
+              Contains letters and numbers
+            </li>
+          </ul>
+
+          <!-- Strength bar -->
+          @if ((form.get('password')?.value?.length ?? 0) > 0) {
+            <div class="reg-strength" [attr.aria-label]="'Password strength: ' + strengthLabel()">
+              <div class="reg-strength__bar">
+                <div
+                  class="reg-strength__fill"
+                  [class.reg-strength__fill--weak]="passwordStrengthLevel() === 1"
+                  [class.reg-strength__fill--fair]="passwordStrengthLevel() === 2"
+                  [class.reg-strength__fill--strong]="passwordStrengthLevel() === 3"
+                  [style.width.%]="passwordStrengthLevel() * 33.3"
+                ></div>
+              </div>
+              <span class="reg-strength__label"
+                [class.reg-strength__label--weak]="passwordStrengthLevel() === 1"
+                [class.reg-strength__label--fair]="passwordStrengthLevel() === 2"
+                [class.reg-strength__label--strong]="passwordStrengthLevel() === 3"
+              >{{ strengthLabel() }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- ── Section 4: Contact preferences ─────────────────────── -->
+      <section class="reg-section">
+        <h2 class="reg-section__title">Contact preferences</h2>
+        <p class="reg-section__desc">
+          Would you like to hear about great deals, Clubcard offers, and competitions from Tesco?
+          You can unsubscribe at any time.
         </p>
+        <div class="reg-prefs">
+          <label class="reg-pref-item">
+            <input type="checkbox" class="reg-pref-item__checkbox" formControlName="marketingEmail" />
+            <span class="reg-pref-item__box"></span>
+            <div>
+              <span class="reg-pref-item__name">Email</span>
+            </div>
+          </label>
+          <label class="reg-pref-item">
+            <input type="checkbox" class="reg-pref-item__checkbox" formControlName="marketingPost" />
+            <span class="reg-pref-item__box"></span>
+            <div>
+              <span class="reg-pref-item__name">Post</span>
+            </div>
+          </label>
+          <label class="reg-pref-item">
+            <input type="checkbox" class="reg-pref-item__checkbox" formControlName="marketingPhone" />
+            <span class="reg-pref-item__box"></span>
+            <div>
+              <span class="reg-pref-item__name">Phone</span>
+            </div>
+          </label>
+          <label class="reg-pref-item">
+            <input type="checkbox" class="reg-pref-item__checkbox" formControlName="marketingSms" />
+            <span class="reg-pref-item__box"></span>
+            <div>
+              <span class="reg-pref-item__name">SMS / Text message</span>
+            </div>
+          </label>
+        </div>
+      </section>
 
-        <button type="submit" class="button button--primary button--full button--lg" [disabled]="loading()">
-          @if (loading()) { Creating account... } @else { Create account }
+      <!-- ── Terms ───────────────────────────────────────────────── -->
+      <section class="reg-section reg-section--terms">
+        <label class="reg-terms-check" [class.reg-terms-check--error]="termsError">
+          <input type="checkbox" class="reg-terms-check__input" formControlName="termsAccepted" />
+          <span class="reg-terms-check__box"></span>
+          <span class="reg-terms-check__text">
+            I agree to the Tesco
+            <a href="#" target="_blank" rel="noopener noreferrer">Terms &amp; Conditions</a>
+            and
+            <a href="#" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+            I understand my data will be used to manage my account and personalise my experience.
+          </span>
+        </label>
+        @if (termsError) {
+          <p class="form-error" role="alert">You must agree to the Terms &amp; Conditions to create an account.</p>
+        }
+
+        <p class="reg-clubcard-note">
+          You'll be able to add or apply for a
+          <strong>Clubcard</strong> once your account is created.
+        </p>
+      </section>
+
+      <!-- ── Submit ──────────────────────────────────────────────── -->
+      <div class="reg-actions">
+        <button
+          type="submit"
+          class="button button--primary button--full button--lg"
+          [disabled]="loading()"
+        >
+          @if (loading()) { Creating your account&hellip; } @else { Create account }
         </button>
-      </form>
 
-      <p class="auth-card__signin">
-        Already have an account? <a routerLink="/auth/login">Sign in</a>
-      </p>
-    </div>
+        <p class="reg-actions__signin">
+          Already have an account?
+          <a routerLink="/auth/login">Sign in</a>
+        </p>
+      </div>
+
+    </form>
   </div>
 </div>

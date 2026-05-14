@@ -1,18 +1,30 @@
-<main class="home">
-  <!-- Department Roundels -->
-  <section class="home__roundels">
+<main class="home" id="main-content">
+
+  <!-- ── Department Roundels ─────────────────────────────────────────────── -->
+  <section class="home__roundels" aria-label="Shop by department">
     <div class="page-container">
       @if (loading()) {
-        <app-spinner />
+        <div class="roundel-skeleton">
+          @for (n of [1,2,3,4,5,6,7,8]; track n) {
+            <div class="roundel-skeleton__item">
+              <div class="roundel-skeleton__circle"></div>
+              <div class="roundel-skeleton__label"></div>
+            </div>
+          }
+        </div>
       } @else {
-        <div class="roundel-scroll">
+        <div class="roundel-row">
           @for (dept of departments(); track dept.id) {
             <a [routerLink]="['/departments', dept.slug]" class="roundel">
               <div class="roundel__circle">
                 @if (dept.imageUrl) {
                   <img [src]="dept.imageUrl" [alt]="dept.name" loading="lazy" />
                 } @else {
-                  <span class="roundel__icon">🛒</span>
+                  <div class="roundel__placeholder">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#005DAA" stroke-width="1.5" aria-hidden="true">
+                      <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+                    </svg>
+                  </div>
                 }
               </div>
               <span class="roundel__label">{{ dept.name }}</span>
@@ -20,7 +32,10 @@
           }
           <a routerLink="/departments" class="roundel">
             <div class="roundel__circle roundel__circle--all">
-              <span>All</span>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+              </svg>
             </div>
             <span class="roundel__label">All Departments</span>
           </a>
@@ -29,32 +44,23 @@
     </div>
   </section>
 
-  <!-- Hero banners -->
-  <section class="home__hero">
+  <!-- ── What's new this week? (3-col promo cards) ──────────────────────── -->
+  <section class="home__section home__section--white">
     <div class="page-container">
-      <div class="hero-grid">
-        @for (banner of heroBanners; track banner.title) {
-          <a [routerLink]="banner.url" class="hero-card" [style.background]="banner.bg">
-            <h2 class="hero-card__title">{{ banner.title }}</h2>
-            <p class="hero-card__subtitle">{{ banner.subtitle }}</p>
-            <span class="hero-card__cta button button--primary">{{ banner.cta }}</span>
-          </a>
-        }
+      <div class="section-head">
+        <h2 class="section-head__title">What's new this week?</h2>
+        <a routerLink="/departments" class="section-head__link">Explore the range</a>
       </div>
-    </div>
-  </section>
-
-  <!-- Ways to save -->
-  <section class="home__section">
-    <div class="page-container">
-      <h2 class="home__section-title">Ways to shop and save</h2>
-      <div class="promo-grid">
-        @for (item of waysToSave; track item.title) {
-          <a [routerLink]="item.url" class="promo-tile">
-            <span class="promo-tile__icon">{{ item.icon }}</span>
-            <div>
-              <h3 class="promo-tile__title">{{ item.title }}</h3>
-              <p class="promo-tile__subtitle">{{ item.subtitle }}</p>
+      <div class="promo-grid promo-grid--3">
+        @for (card of newThisWeek; track card.title) {
+          <a [routerLink]="card.url" class="promo-card">
+            <div class="promo-card__img" [style.background]="card.bg">
+              <span class="promo-card__img-icon" aria-hidden="true">{{ card.icon }}</span>
+            </div>
+            <div class="promo-card__body">
+              <h3 class="promo-card__title">{{ card.title }}</h3>
+              <p class="promo-card__text">{{ card.text }}</p>
+              <span class="promo-card__cta">Shop now</span>
             </div>
           </a>
         }
@@ -62,41 +68,155 @@
     </div>
   </section>
 
-  <!-- Clubcard banner -->
-  <section class="home__clubcard-banner">
+  <!-- ── Top picks for you (4-col feature tiles) ────────────────────────── -->
+  <section class="home__section home__section--grey">
+    <div class="page-container">
+      <div class="section-head">
+        <h2 class="section-head__title">Top picks for you</h2>
+        <a routerLink="/departments" class="section-head__link">See all</a>
+      </div>
+      <div class="promo-grid promo-grid--4">
+        @for (card of topPicks; track card.title) {
+          <a [routerLink]="card.url" class="feature-tile" [style.--tile-color]="card.color">
+            <div class="feature-tile__icon" aria-hidden="true">{{ card.icon }}</div>
+            <div class="feature-tile__body">
+              <h3 class="feature-tile__title">{{ card.title }}</h3>
+              <p class="feature-tile__text">{{ card.text }}</p>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Ways to shop and save (3-col) ─────────────────────────────────── -->
+  <section class="home__section home__section--white">
+    <div class="page-container">
+      <h2 class="section-head__title">Ways to shop and save</h2>
+      <div class="promo-grid promo-grid--3">
+        @for (item of waysToSave; track item.title) {
+          <a [routerLink]="item.url" class="save-tile">
+            <div class="save-tile__icon-wrap" [style.background]="item.color" aria-hidden="true">
+              {{ item.icon }}
+            </div>
+            <div class="save-tile__body">
+              <h3 class="save-tile__title">{{ item.title }}</h3>
+              <p class="save-tile__text">{{ item.text }}</p>
+              <span class="save-tile__link">Find out more</span>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Clubcard banner ───────────────────────────────────────────────── -->
+  <section class="home__clubcard-banner" aria-label="Tesco Clubcard promotion">
     <div class="page-container">
       <div class="clubcard-banner">
         <div class="clubcard-banner__content">
           <span class="clubcard-banner__eyebrow">Tesco Clubcard</span>
           <h2 class="clubcard-banner__title">Earn points on every shop</h2>
-          <p class="clubcard-banner__text">Get 1 point for every £1 you spend. Collect points, get vouchers and enjoy Clubcard Prices.</p>
-          <a routerLink="/auth/register" class="button button--primary">Join Clubcard – it's free</a>
+          <p class="clubcard-banner__text">
+            Get 1 point for every £1 you spend. Collect points, get vouchers and unlock
+            exclusive Clubcard Prices throughout the store.
+          </p>
+          <div class="clubcard-banner__actions">
+            <a routerLink="/auth/register" class="button button--primary">Join for free</a>
+            <a routerLink="/account/clubcard" class="button button--secondary">Find out more</a>
+          </div>
         </div>
-        <div class="clubcard-banner__visual">
+        <div class="clubcard-banner__card-wrap" aria-hidden="true">
           <div class="clubcard-mock">
-            <span class="clubcard-mock__logo">Tesco Clubcard</span>
+            <div class="clubcard-mock__top">
+              <span class="clubcard-mock__brand">Tesco</span>
+              <span class="clubcard-mock__label">Clubcard</span>
+            </div>
+            <div class="clubcard-mock__chip"></div>
             <span class="clubcard-mock__number">**** **** **** 1234</span>
+            <span class="clubcard-mock__name">YOUR NAME</span>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Discover more -->
-  <section class="home__section">
+  <!-- ── Discover more from Tesco (3-col) ──────────────────────────────── -->
+  <section class="home__section home__section--grey">
     <div class="page-container">
-      <h2 class="home__section-title">Discover more</h2>
-      <div class="promo-grid">
+      <h2 class="section-head__title">Discover more from Tesco</h2>
+      <div class="promo-grid promo-grid--3">
         @for (item of discoverMore; track item.title) {
-          <a [routerLink]="item.url" class="promo-tile promo-tile--blue">
-            <span class="promo-tile__icon">{{ item.icon }}</span>
-            <div>
-              <h3 class="promo-tile__title">{{ item.title }}</h3>
-              <p class="promo-tile__subtitle">{{ item.subtitle }}</p>
+          <a [routerLink]="item.url" class="discover-card">
+            <div class="discover-card__img discover-card__img--{{ item.theme }}" aria-hidden="true">
+              <span class="discover-card__img-icon">{{ item.icon }}</span>
+            </div>
+            <div class="discover-card__body">
+              <h3 class="discover-card__title">{{ item.title }}</h3>
+              <p class="discover-card__text">{{ item.text }}</p>
+              <span class="discover-card__cta">{{ item.cta }}</span>
             </div>
           </a>
         }
       </div>
     </div>
   </section>
+
+  <!-- ── Shop by brand (horizontal scroll roundels) ────────────────────── -->
+  <section class="home__section home__section--white" aria-label="Shop by brand">
+    <div class="page-container">
+      <div class="section-head">
+        <h2 class="section-head__title">Shop by brand</h2>
+        <span class="section-head__count">{{ brandRoundels.length }} brands</span>
+      </div>
+      <div class="roundel-row">
+        @for (brand of brandRoundels; track brand.slug) {
+          <a [routerLink]="['/search']" [queryParams]="{ brand: brand.slug }" class="roundel">
+            <div class="roundel__circle roundel__circle--brand">
+              <span class="roundel__brand-initial">{{ brand.name[0] }}</span>
+            </div>
+            <span class="roundel__label">{{ brand.name }}</span>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Community / CSR row (3-col) ───────────────────────────────────── -->
+  <section class="home__section home__section--grey" aria-label="Tesco community initiatives">
+    <div class="page-container">
+      <h2 class="section-head__title">We're here to help</h2>
+      <div class="promo-grid promo-grid--3">
+        @for (item of communityItems; track item.title) {
+          <div class="community-card">
+            <span class="community-card__icon" aria-hidden="true">{{ item.icon }}</span>
+            <div>
+              <h3 class="community-card__title">{{ item.title }}</h3>
+              <p class="community-card__text">{{ item.text }}</p>
+              <a [routerLink]="item.url" class="community-card__link">{{ item.cta }}</a>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Services row (4-col: Bank, Insurance, Travel, Gift Cards) ──────── -->
+  <section class="home__section home__section--blue" aria-label="Tesco financial services">
+    <div class="page-container">
+      <h2 class="section-head__title section-head__title--white">Even more to explore</h2>
+      <div class="promo-grid promo-grid--4">
+        @for (svc of services; track svc.title) {
+          <a [href]="svc.url" class="service-tile">
+            <span class="service-tile__icon" aria-hidden="true">{{ svc.icon }}</span>
+            <div>
+              <h3 class="service-tile__title">{{ svc.title }}</h3>
+              <p class="service-tile__text">{{ svc.text }}</p>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
 </main>

@@ -1,27 +1,430 @@
 @use '../../../../styles/tokens' as *;
 
-.auth-page {
-  min-height: 60vh;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: $space-6 $space-4;
+// ── Page layout ───────────────────────────────────────────────────────────────
+
+.reg-page {
+  min-height: 100vh;
   background: $color-surface-alt;
+  padding: $space-6 $space-4 $space-7;
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 520px;
+.reg-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+}
 
-  &__intro { font-size: $font-size-sm; color: $color-muted; margin-bottom: $space-5; }
+// ── Page heading ──────────────────────────────────────────────────────────────
 
-  &__name-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: $space-4;
+.reg-heading {
+  margin-bottom: $space-5;
+  text-align: center;
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: $color-ink;
+    margin-bottom: $space-2;
   }
 
-  &__terms { font-size: $font-size-xs; color: $color-muted; margin-bottom: $space-4; }
+  &__sub {
+    font-size: $font-size-sm;
+    color: $color-muted;
+  }
+}
 
-  &__signin { text-align: center; font-size: $font-size-sm; margin-top: $space-4; color: $color-muted; }
+// ── Form card shell ───────────────────────────────────────────────────────────
+
+.reg-form {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+// ── Sections ──────────────────────────────────────────────────────────────────
+
+.reg-section {
+  padding: $space-5 $space-6;
+  border-bottom: 1px solid $color-border;
+
+  &--terms {
+    background: $color-surface-alt;
+    border-bottom: none;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: 700;
+    color: $color-tesco-blue;
+    margin-bottom: $space-4;
+    padding-bottom: $space-2;
+    border-bottom: 2px solid $color-tesco-blue-light;
+  }
+
+  &__desc {
+    font-size: $font-size-sm;
+    color: $color-muted;
+    margin-bottom: $space-4;
+    line-height: 1.5;
+  }
+}
+
+// ── Optional label ────────────────────────────────────────────────────────────
+
+.reg-optional {
+  font-weight: 400;
+  color: $color-muted;
+  font-size: $font-size-xs;
+}
+
+// ── Name row ─────────────────────────────────────────────────────────────────
+
+.reg-name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-4;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+// ── Select override ───────────────────────────────────────────────────────────
+
+.reg-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235f6368' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $space-3 center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+// ── Date of birth ─────────────────────────────────────────────────────────────
+
+.reg-dob-row {
+  display: flex;
+  gap: $space-3;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+    gap: $space-2;
+  }
+}
+
+.reg-dob-field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+  flex: 1;
+
+  &--month { flex: 2; }
+}
+
+.reg-dob-label {
+  font-size: $font-size-xs;
+  font-weight: 700;
+  color: $color-muted;
+}
+
+// ── Password wrap ─────────────────────────────────────────────────────────────
+
+.reg-pw-wrap {
+  position: relative;
+  display: flex;
+
+  .form-control {
+    padding-right: 5rem;
+  }
+}
+
+.reg-pw-toggle {
+  position: absolute;
+  right: $space-3;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: $color-tesco-blue;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  cursor: pointer;
+  padding: $space-1 $space-2;
+  border-radius: $radius-sm;
+  text-decoration: underline;
+
+  &:hover { color: $color-tesco-blue-dark; }
+  &:focus-visible {
+    outline: 2px solid $color-tesco-blue;
+    outline-offset: 2px;
+    text-decoration: none;
+  }
+}
+
+// ── Password rules ────────────────────────────────────────────────────────────
+
+.reg-pw-rules {
+  list-style: none;
+  padding: 0;
+  margin: $space-2 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+
+  li {
+    font-size: $font-size-xs;
+    color: $color-muted;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__icon {
+    font-size: 0.7rem;
+    width: 16px;
+    text-align: center;
+  }
+
+  &__item--met {
+    color: $color-success;
+  }
+}
+
+// ── Password strength bar ─────────────────────────────────────────────────────
+
+.reg-strength {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin-top: $space-3;
+
+  &__bar {
+    flex: 1;
+    height: 4px;
+    background: $color-border;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.25s ease, background 0.25s ease;
+    background: $color-border;
+
+    &--weak  { background: $color-tesco-red; }
+    &--fair  { background: $color-warning; }
+    &--strong { background: $color-success; }
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    min-width: 3.5rem;
+    text-align: right;
+    color: $color-muted;
+
+    &--weak   { color: $color-tesco-red; }
+    &--fair   { color: $color-warning; }
+    &--strong { color: $color-success; }
+  }
+}
+
+// ── Marketing preferences ─────────────────────────────────────────────────────
+
+.reg-prefs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3;
+
+  @media (max-width: $breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reg-pref-item {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    border-color: $color-tesco-blue;
+    background: $color-surface-blue;
+  }
+
+  &__checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .reg-pref-item__box {
+      background: $color-tesco-blue;
+      border-color: $color-tesco-blue;
+
+      &::after { opacity: 1; }
+    }
+
+    &:focus-visible + .reg-pref-item__box {
+      outline: 2px solid $color-tesco-blue;
+      outline-offset: 2px;
+    }
+  }
+
+  &__box {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid $color-border;
+    border-radius: $radius-sm;
+    background: $color-surface;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 5px;
+      width: 6px;
+      height: 10px;
+      border: 2px solid $color-surface;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.1s ease;
+    }
+  }
+
+  &__name {
+    font-size: $font-size-sm;
+    font-weight: 700;
+    color: $color-ink;
+  }
+}
+
+// ── Terms ─────────────────────────────────────────────────────────────────────
+
+.reg-terms-check {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  cursor: pointer;
+  margin-bottom: $space-3;
+
+  &--error .reg-terms-check__box {
+    border-color: $color-tesco-red;
+  }
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .reg-terms-check__box {
+      background: $color-tesco-blue;
+      border-color: $color-tesco-blue;
+
+      &::after { opacity: 1; }
+    }
+
+    &:focus-visible + .reg-terms-check__box {
+      outline: 2px solid $color-tesco-blue;
+      outline-offset: 2px;
+    }
+  }
+
+  &__box {
+    flex-shrink: 0;
+    margin-top: 2px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid $color-border;
+    border-radius: $radius-sm;
+    background: $color-surface;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 5px;
+      width: 6px;
+      height: 10px;
+      border: 2px solid $color-surface;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+      opacity: 0;
+      transition: opacity 0.1s ease;
+    }
+  }
+
+  &__text {
+    font-size: $font-size-sm;
+    color: $color-ink;
+    line-height: 1.5;
+
+    a {
+      color: $color-tesco-blue;
+      font-weight: 700;
+      text-decoration: underline;
+
+      &:hover { color: $color-tesco-blue-dark; }
+    }
+  }
+}
+
+.reg-clubcard-note {
+  font-size: $font-size-xs;
+  color: $color-muted;
+  background: $color-clubcard-yellow-soft;
+  border-left: 3px solid $color-clubcard-yellow;
+  padding: $space-2 $space-3;
+  border-radius: 0 $radius-sm $radius-sm 0;
+  margin-top: $space-4;
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+
+.reg-actions {
+  padding: $space-5 $space-6;
+  background: $color-surface;
+
+  &__signin {
+    text-align: center;
+    font-size: $font-size-sm;
+    color: $color-muted;
+    margin-top: $space-4;
+
+    a {
+      color: $color-tesco-blue;
+      font-weight: 700;
+      text-decoration: underline;
+
+      &:hover { color: $color-tesco-blue-dark; }
+    }
+  }
+}
+
+// ── Responsive padding ────────────────────────────────────────────────────────
+
+@media (max-width: $breakpoint-sm) {
+  .reg-section {
+    padding: $space-4;
+  }
+
+  .reg-actions {
+    padding: $space-4;
+  }
 }
