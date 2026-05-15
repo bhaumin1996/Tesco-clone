@@ -124,6 +124,19 @@ public sealed class AdminUserRepository : IAdminUserRepository
             cancellationToken);
     }
 
+    public async Task ClearRolesAsync(int userId, int adminId, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await SqlHelper.ExecuteNonQueryAsync(
+            connection,
+            "proc_Admin_ClearRoles",
+            [
+                SqlHelper.Input("@UserId", userId),
+                SqlHelper.Input("@AdminId", adminId)
+            ],
+            cancellationToken);
+    }
+
     public async Task SaveTwoFactorCodeAsync(int userId, string codeHash, DateTime expiresAt, CancellationToken cancellationToken = default)
     {
         using var connection = _connectionFactory.CreateConnection();
@@ -165,8 +178,14 @@ public sealed class AdminUserRepository : IAdminUserRepository
             cancellationToken);
     }
 
-    private static AdminUserDto MapAdminUser(SqlDataReader reader) =>
-        new(
+    private static AdminUserDto MapAdminUser(SqlDataReader reader)
+    {
+        var roleNames = SqlHelper.GetNullableString(reader, "RoleNames");
+        var roles = string.IsNullOrWhiteSpace(roleNames) 
+            ? Array.Empty<string>() 
+            : roleNames.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+        return new AdminUserDto(
             Id: SqlHelper.GetValue<int>(reader, "Id"),
             FirstName: SqlHelper.GetValue<string>(reader, "FirstName"),
             LastName: SqlHelper.GetValue<string>(reader, "LastName"),
@@ -175,7 +194,8 @@ public sealed class AdminUserRepository : IAdminUserRepository
             StatusName: SqlHelper.GetValue<string>(reader, "StatusName"),
             FailedLoginAttempts: SqlHelper.GetValue<byte>(reader, "FailedLoginAttempts"),
             LockedUntil: SqlHelper.GetNullableValue<DateTime>(reader, "LockedUntil"),
-            Roles: Array.Empty<string>(),
+            Roles: roles,
             CreatedOn: SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
             ModifiedOn: SqlHelper.GetNullableValue<DateTime>(reader, "ModifiedOn"));
+    }
 }

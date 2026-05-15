@@ -20,6 +20,8 @@ public sealed class AssignRoleCommandHandler : IRequestHandler<AssignRoleCommand
         var user = await _userRepository.GetByIdAsync(request.TargetUserId, cancellationToken)
             ?? throw new NotFoundException(nameof(Domain.Identity.User), request.TargetUserId.ToString());
 
+        // For admin dashboard role change, we typically want to replace roles
+        await _adminUserRepository.ClearRolesAsync(request.TargetUserId, request.AdminUserId, cancellationToken);
         await _adminUserRepository.AssignRoleAsync(request.TargetUserId, request.RoleId, request.AdminUserId, cancellationToken);
     }
 }

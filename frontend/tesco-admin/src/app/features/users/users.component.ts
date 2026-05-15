@@ -15,6 +15,16 @@ interface UserRow {
   createdOn: string;
 }
 
+interface AdminUserDto {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  statusName: string;
+  roles: string[];
+  createdOn: string;
+}
+
 interface PagedResult<T> { items: T[]; totalPages: number; }
 
 @Component({
@@ -37,6 +47,7 @@ export class AdminUsersComponent implements OnInit {
 
   protected filterForm = this._fb.group({ search: [''], role: [''] });
   protected readonly roles = ['Customer', 'Admin', 'SuperAdmin'];
+  private readonly _roleIds: Record<string, number> = { 'Admin': 1, 'Customer': 2, 'SuperAdmin': 4 };
 
   private get _base() { return `${environment.apiUrl}/admin/users`; }
 
@@ -53,8 +64,22 @@ export class AdminUsersComponent implements OnInit {
     const params: Record<string, string> = { pageNumber: String(this.currentPage()), pageSize: '20' };
     if (search) params['search'] = search;
     if (role) params['role'] = role;
-    this._http.get<PagedResult<UserRow>>(this._base, { params }).subscribe({
-      next: r => { this.users.set(r.items); this.totalPages.set(r.totalPages); this.loading.set(false); },
+
+    this._http.get<PagedResult<AdminUserDto>>(this._base, { params }).subscribe({
+      next: r => {
+        const mapped = r.items.map(dto => ({
+          userId: dto.id,
+          firstName: dto.firstName,
+          lastName: dto.lastName,
+          email: dto.email,
+          role: dto.roles && dto.roles.length > 0 ? dto.roles[0] : 'Customer',
+          isLocked: dto.statusName === 'Locked',
+          createdOn: dto.createdOn
+        }));
+        this.users.set(mapped);
+        this.totalPages.set(r.totalPages);
+        this.loading.set(false);
+      },
       error: () => this.loading.set(false)
     });
   }
@@ -63,7 +88,7 @@ export class AdminUsersComponent implements OnInit {
 
   protected toggleLock(user: UserRow): void {
     const action = user.isLocked ? 'unlock' : 'lock';
-    this._http.patch(`${this._base}/${user.userId}/${action}`, {}).subscribe({
+    this._http.post(`${this._base}/${user.userId}/${action}`, {}).subscribe({
       next: () => {
         this.users.update(list => list.map(u => u.userId === user.userId ? { ...u, isLocked: !u.isLocked } : u));
         this.message.set(`User ${user.isLocked ? 'unlocked' : 'locked'}.`);
@@ -74,7 +99,10 @@ export class AdminUsersComponent implements OnInit {
   }
 
   protected assignRole(userId: number, role: string): void {
-    this._http.patch(`${this._base}/${userId}/role`, { role }).subscribe({
+    const roleId = this._roleIds[role];
+    if (!roleId) return;
+
+    this._http.post(`${this._base}/${userId}/roles`, { roleId }).subscribe({
       next: () => {
         this.users.update(list => list.map(u => u.userId === userId ? { ...u, role } : u));
         this.message.set('Role updated.');

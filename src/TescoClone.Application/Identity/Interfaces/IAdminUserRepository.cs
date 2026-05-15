@@ -11,6 +11,7 @@ public interface IAdminUserRepository
     Task UnlockUserAsync(int userId, int adminId, CancellationToken cancellationToken = default);
     Task AssignRoleAsync(int userId, int roleId, int adminId, CancellationToken cancellationToken = default);
     Task RemoveRoleAsync(int userId, int roleId, int adminId, CancellationToken cancellationToken = default);
+    Task ClearRolesAsync(int userId, int adminId, CancellationToken cancellationToken = default);
     Task SaveTwoFactorCodeAsync(int userId, string codeHash, DateTime expiresAt, CancellationToken cancellationToken = default);
     Task<bool> ValidateTwoFactorCodeAsync(int userId, string codeHash, CancellationToken cancellationToken = default);
     Task ConsumeTwoFactorCodeAsync(int userId, string codeHash, CancellationToken cancellationToken = default);
