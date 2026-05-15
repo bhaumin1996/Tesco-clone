@@ -1,56 +1,84 @@
 <div class="admin-page-header">
-  <h1 class="admin-page-header__title">Users</h1>
+  <div>
+    <h1 class="admin-page-header__title">Users</h1>
+    <p class="admin-page-header__subtitle">Manage customer accounts and admin roles.</p>
+  </div>
 </div>
 
 @if (message()) {
-  <div class="admin-alert admin-alert--success">{{ message() }}</div>
+  <div class="admin-alert admin-alert--success">
+    <i class="bi bi-check-circle"></i>
+    {{ message() }}
+  </div>
 }
 
 <div class="admin-card">
-  <form [formGroup]="filterForm" class="users-filters">
-    <input class="form-control" formControlName="search" placeholder="Search by name or email…" />
-    <select class="form-control" formControlName="role">
-      <option value="">All roles</option>
-      @for (r of roles; track r) { <option [value]="r">{{ r }}</option> }
-    </select>
-  </form>
+  <div class="filter-bar">
+    <form [formGroup]="filterForm" class="d-flex gap-3 flex-wrap w-100">
+      <input class="form-control" style="max-width:300px" formControlName="search" placeholder="Search by name or email…" />
+      <select class="form-control" style="max-width:200px" formControlName="role">
+        <option value="">All roles</option>
+        @for (r of roles; track r) { <option [value]="r">{{ r }}</option> }
+      </select>
+    </form>
+  </div>
 
   @if (loading()) {
-    <p class="admin-loading">Loading…</p>
+    <p class="admin-loading">Loading users…</p>
   } @else {
-    <table class="admin-table">
-      <thead>
-        <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
-      </thead>
-      <tbody>
-        @for (u of users(); track u.userId) {
+    <div class="admin-table-wrap">
+      <table class="admin-table table table-hover align-middle mb-0">
+        <thead>
           <tr>
-            <td>{{ u.firstName }} {{ u.lastName }}</td>
-            <td>{{ u.email }}</td>
-            <td>
-              <select class="role-select" [value]="u.role" (change)="assignRole(u.userId, $any($event.target).value)">
-                @for (r of roles; track r) {
-                  <option [value]="r" [selected]="r === u.role">{{ r }}</option>
-                }
-              </select>
-            </td>
-            <td>
-              <span class="status-badge" [class.status--active]="!u.isLocked" [class.status--error]="u.isLocked">
-                {{ u.isLocked ? 'Locked' : 'Active' }}
-              </span>
-            </td>
-            <td>{{ u.createdOn | date:'dd MMM yyyy' }}</td>
-            <td>
-              <button class="table-btn" [class.table-btn--danger]="!u.isLocked" (click)="toggleLock(u)">
-                {{ u.isLocked ? 'Unlock' : 'Lock' }}
-              </button>
-            </td>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Actions</th>
           </tr>
-        } @empty {
-          <tr><td colspan="6" class="admin-empty">No users found.</td></tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (u of users(); track u.userId) {
+            <tr>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="user-avatar-sm">{{ u.firstName.charAt(0) }}{{ u.lastName.charAt(0) }}</div>
+                  <span class="fw-semibold">{{ u.firstName }} {{ u.lastName }}</span>
+                </div>
+              </td>
+              <td class="text-secondary-color">{{ u.email }}</td>
+              <td>
+                <select class="form-control" style="min-width:120px;font-size:0.8125rem;padding:0.25rem 0.5rem"
+                        [value]="u.role"
+                        (change)="assignRole(u.userId, $any($event.target).value)">
+                  @for (r of roles; track r) {
+                    <option [value]="r" [selected]="r === u.role">{{ r }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <span class="status-badge"
+                      [class.status--active]="!u.isLocked"
+                      [class.status--error]="u.isLocked">
+                  <i class="bi me-1" [class.bi-check-circle-fill]="!u.isLocked" [class.bi-lock-fill]="u.isLocked"></i>
+                  {{ u.isLocked ? 'Locked' : 'Active' }}
+                </span>
+              </td>
+              <td class="text-secondary-color">{{ u.createdOn | date:'dd MMM yyyy' }}</td>
+              <td>
+                <button class="table-btn" [class.table-btn--danger]="!u.isLocked" (click)="toggleLock(u)">
+                  <i class="bi me-1" [class.bi-lock]="!u.isLocked" [class.bi-unlock]="u.isLocked"></i>
+                  {{ u.isLocked ? 'Unlock' : 'Lock' }}
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="admin-empty">No users found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
     @if (totalPages() > 1) {
       <div class="admin-pagination">

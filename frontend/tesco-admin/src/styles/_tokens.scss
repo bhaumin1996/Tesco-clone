@@ -1,39 +1,52 @@
-// Brand colours
-$color-tesco-blue: #00539f;
-$color-tesco-blue-dark: #003f7d;
+// ── Brand colours ─────────────────────────────────────────────────────────
+$color-tesco-blue:       #00539f;
+$color-tesco-blue-dark:  #003f7d;
 $color-tesco-blue-light: #e8f2fc;
-$color-tesco-red: #e31837;
-$color-tesco-red-dark: #b5122b;
-$color-clubcard-yellow: #ffdd00;
+$color-tesco-red:        #e31837;
+$color-tesco-red-dark:   #b5122b;
+$color-clubcard-yellow:  #ffdd00;
 
-// Semantic colours
-$color-success: #007a3d;
-$color-success-light: #e6f4ed;
-$color-warning: #b36b00;
-$color-warning-light: #fff3e0;
-$color-error: #b00020;
-$color-error-light: #fde8ec;
-$color-info: #00539f;
-$color-info-light: #e8f2fc;
+// ── App accent ─────────────────────────────────────────────────────────────
+$color-accent:       #6366f1;
+$color-accent-hover: #4f46e5;
+$color-accent-light: #eef2ff;
 
-// Neutrals
-$color-ink: #1f1f1f;
-$color-text-primary: #1f1f1f;
-$color-muted: #5f6368;
-$color-border: #d8dde6;
-$color-surface: #ffffff;
-$color-surface-alt: #f5f7fa;
+// ── Semantic colours ───────────────────────────────────────────────────────
+$color-success:       #059669;
+$color-success-light: #d1fae5;
+$color-warning:       #d97706;
+$color-warning-light: #fef3c7;
+$color-error:         #dc2626;
+$color-error-light:   #fee2e2;
+$color-info:          #0284c7;
+$color-info-light:    #e0f2fe;
 
-// Typography
-$font-family-base: Arial, Helvetica, sans-serif;
-$font-size-xs: 0.75rem;
-$font-size-sm: 0.875rem;
-$font-size-md: 1rem;
-$font-size-lg: 1.125rem;
-$font-size-xl: 1.5rem;
+// ── Neutrals (Slate scale) ─────────────────────────────────────────────────
+$color-ink:           #0f172a;
+$color-text-primary:  #0f172a;
+$color-text-secondary:#475569;
+$color-muted:         #94a3b8;
+$color-border:        #e2e8f0;
+$color-surface:       #ffffff;
+$color-surface-alt:   #f8fafc;
+
+// ── Sidebar ────────────────────────────────────────────────────────────────
+$color-sidebar-bg:          #0f172a;
+$color-sidebar-text:        #94a3b8;
+$color-sidebar-active-bg:   rgba(99, 102, 241, 0.15);
+$color-sidebar-active-text: #a5b4fc;
+$color-sidebar-hover-bg:    rgba(255, 255, 255, 0.05);
+
+// ── Typography ─────────────────────────────────────────────────────────────
+$font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+$font-size-xs:  0.75rem;
+$font-size-sm:  0.875rem;
+$font-size-md:  1rem;
+$font-size-lg:  1.125rem;
+$font-size-xl:  1.5rem;
 $font-size-2xl: 2rem;
 
-// Spacing
+// ── Spacing ────────────────────────────────────────────────────────────────
 $space-1: 0.25rem;
 $space-2: 0.5rem;
 $space-3: 0.75rem;
@@ -42,17 +55,19 @@ $space-5: 1.5rem;
 $space-6: 2rem;
 $space-7: 3rem;
 
-// Layout
-$container-max: 1280px;
-$sidebar-width: 240px;
-$topbar-height: 64px;
+// ── Layout ─────────────────────────────────────────────────────────────────
+$container-max:  1400px;
+$sidebar-width:  260px;
+$topbar-height:  64px;
 
-// Borders & shadows
-$radius-sm: 4px;
-$radius-md: 8px;
-$shadow-card: 0 1px 3px rgba(31, 31, 31, 0.12);
-$shadow-popover: 0 4px 16px rgba(31, 31, 31, 0.16);
+// ── Borders & shadows ──────────────────────────────────────────────────────
+$radius-sm:     6px;
+$radius-md:     10px;
+$radius-lg:     16px;
+$shadow-card:   0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+$shadow-hover:  0 4px 16px rgba(15, 23, 42, 0.1);
+$shadow-popover:0 10px 40px rgba(15, 23, 42, 0.16);
 
-// Breakpoints
+// ── Breakpoints ────────────────────────────────────────────────────────────
 $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;

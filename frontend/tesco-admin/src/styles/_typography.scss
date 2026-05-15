@@ -1,13 +1,39 @@
 @use 'tokens' as *;
 
-.text-xs  { font-size: $font-size-xs; }
-.text-sm  { font-size: $font-size-sm; }
-.text-md  { font-size: $font-size-md; }
-.text-lg  { font-size: $font-size-lg; }
-.text-bold { font-weight: 700; }
+// Page heading scale
+.admin-page-header__title {
+  font-size: 1.625rem;
+  font-weight: 700;
+  color: $color-ink;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.admin-page-header__subtitle {
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  margin-top: 0.25rem;
+  font-weight: 400;
+}
+
+.admin-page-header__actions {
+  display: flex;
+  gap: $space-3;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+// Heading defaults (override Bootstrap where needed)
+h1 { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+h2 { font-size: 1.25rem;  font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.0625rem; font-weight: 600; }
+
+// Utility text classes
+.text-xs    { font-size: $font-size-xs; }
+.text-sm    { font-size: $font-size-sm; }
+.text-md    { font-size: $font-size-md; }
+.text-bold  { font-weight: 700; }
 .text-muted { color: $color-muted; }
 .text-center { text-align: center; }
-
-h1 { font-size: $font-size-xl; font-weight: 700; }
-h2 { font-size: $font-size-lg; font-weight: 700; }
-h3 { font-size: $font-size-md; font-weight: 700; }
+.text-secondary-color { color: $color-text-secondary; }

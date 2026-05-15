@@ -1,92 +1,131 @@
 <div class="admin-page-header">
-  <h1 class="admin-page-header__title">Categories</h1>
-  <button class="button button--primary" (click)="openCreate()">+ New Category</button>
+  <div>
+    <h1 class="admin-page-header__title">Categories</h1>
+    <p class="admin-page-header__subtitle">Manage product categories and their departments.</p>
+  </div>
+  <button class="button button--primary" (click)="openCreate()">
+    <i class="bi bi-plus-lg"></i> New Category
+  </button>
 </div>
 
 @if (message()) {
   <div class="admin-alert" [class.admin-alert--success]="messageType() === 'success'" [class.admin-alert--error]="messageType() === 'error'">
+    <i class="bi" [class.bi-check-circle]="messageType() === 'success'" [class.bi-exclamation-circle]="messageType() === 'error'"></i>
     {{ message() }}
   </div>
 }
 
 @if (showForm()) {
-  <div class="admin-card cat-form-card">
-    <h2 class="cat-form-card__title">{{ editId() ? 'Edit Category' : 'New Category' }}</h2>
-    <form [formGroup]="form" (ngSubmit)="save()">
+  <div class="admin-card mb-4">
+    <div class="admin-card__header">
+      <span>
+        <i class="bi me-2" [class.bi-pencil]="editId()" [class.bi-plus-circle]="!editId()"></i>
+        {{ editId() ? 'Edit Category' : 'New Category' }}
+      </span>
+    </div>
+    <div class="admin-card__body">
+      <form [formGroup]="form" (ngSubmit)="save()">
 
-      <div class="form-group">
-        <label class="form-label">Name</label>
-        <input class="form-control" formControlName="name" placeholder="e.g. Fresh Fruit" />
-        @if (form.get('name')!.invalid && form.get('name')!.touched) {
-          <span class="form-error">Name is required.</span>
-        }
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Department</label>
-        <select class="form-control" formControlName="departmentId">
-          <option [value]="0">— Select department —</option>
-          @for (d of departments(); track d.departmentId) {
-            <option [value]="d.departmentId">{{ d.name }}</option>
-          }
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Image URL <span class="form-label--optional">(optional)</span></label>
-        <input class="form-control" formControlName="imageUrl" placeholder="https://example.com/image.jpg" />
-        @if (form.get('imageUrl')!.value) {
-          <div class="img-preview">
-            <img [src]="form.get('imageUrl')!.value!" alt="Preview" class="img-preview__img" />
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Name <span class="text-danger">*</span></label>
+              <input class="form-control" formControlName="name" placeholder="e.g. Fresh Fruit" />
+              @if (form.get('name')!.invalid && form.get('name')!.touched) {
+                <span class="form-error">Name is required.</span>
+              }
+            </div>
           </div>
-        }
-      </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Department <span class="text-danger">*</span></label>
+              <select class="form-control" formControlName="departmentId">
+                <option [value]="0">— Select department —</option>
+                @for (d of departments(); track d.departmentId) {
+                  <option [value]="d.departmentId">{{ d.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </div>
 
-      <div class="cat-form-card__actions">
-        <button type="submit" class="button button--primary" [disabled]="saving()">
-          {{ saving() ? 'Saving…' : 'Save' }}
-        </button>
-        <button type="button" class="button button--secondary" (click)="showForm.set(false)" [disabled]="saving()">Cancel</button>
-      </div>
+        <div class="form-group">
+          <label class="form-label">Image URL <span class="text-muted fw-normal">(optional)</span></label>
+          <input class="form-control" formControlName="imageUrl" placeholder="https://example.com/image.jpg" />
+          @if (form.get('imageUrl')!.value) {
+            <div class="img-preview mt-2">
+              <img [src]="form.get('imageUrl')!.value!" alt="Preview" class="img-preview__img" />
+            </div>
+          }
+        </div>
 
-    </form>
+        <div class="d-flex gap-2">
+          <button type="submit" class="button button--primary" [disabled]="saving()">
+            <i class="bi bi-floppy"></i>
+            {{ saving() ? 'Saving…' : 'Save Category' }}
+          </button>
+          <button type="button" class="button button--secondary" (click)="showForm.set(false)" [disabled]="saving()">Cancel</button>
+        </div>
+
+      </form>
+    </div>
   </div>
 }
 
 <div class="admin-card">
   @if (loading()) {
-    <p class="admin-loading">Loading…</p>
+    <p class="admin-loading">Loading categories…</p>
   } @else {
-    <table class="admin-table">
-      <thead>
-        <tr><th>Image</th><th>Name</th><th>Slug</th><th>Department</th><th>Products</th><th>Status</th><th>Actions</th></tr>
-      </thead>
-      <tbody>
-        @for (cat of categories(); track cat.categoryId) {
+    <div class="admin-table-wrap">
+      <table class="admin-table table table-hover align-middle mb-0">
+        <thead>
           <tr>
-            <td class="cat-thumb-cell">
-              @if (cat.imageUrl) {
-                <img [src]="cat.imageUrl" [alt]="cat.name" class="cat-thumb" />
-              } @else {
-                <span class="cat-thumb cat-thumb--empty">No image</span>
-              }
-            </td>
-            <td>{{ cat.name }}</td>
-            <td>{{ cat.slug }}</td>
-            <td>{{ cat.departmentName }}</td>
-            <td>{{ cat.productCount }}</td>
-            <td><span class="status-badge" [class.status--active]="cat.isActive" [class.status--inactive]="!cat.isActive">{{ cat.isActive ? 'Active' : 'Inactive' }}</span></td>
-            <td class="actions-cell">
-              <button class="table-btn" (click)="openEdit(cat)">Edit</button>
-              @if (cat.isActive) {
-                <button class="table-btn table-btn--danger" (click)="deactivate(cat.categoryId)">Deactivate</button>
-              }
-            </td>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Slug</th>
+            <th>Department</th>
+            <th>Products</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
-        } @empty {
-          <tr><td colspan="7" class="admin-empty">No categories found.</td></tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (cat of categories(); track cat.categoryId) {
+            <tr>
+              <td class="cat-thumb-cell">
+                @if (cat.imageUrl) {
+                  <img [src]="cat.imageUrl" [alt]="cat.name" class="cat-thumb" />
+                } @else {
+                  <span class="cat-thumb cat-thumb--empty">No image</span>
+                }
+              </td>
+              <td><span class="fw-semibold">{{ cat.name }}</span></td>
+              <td><code class="text-muted" style="font-size:0.8125rem">{{ cat.slug }}</code></td>
+              <td>{{ cat.departmentName }}</td>
+              <td>
+                <span class="badge rounded-pill bg-light text-secondary border">{{ cat.productCount }}</span>
+              </td>
+              <td>
+                <span class="status-badge" [class.status--active]="cat.isActive" [class.status--inactive]="!cat.isActive">
+                  {{ cat.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button class="table-btn" (click)="openEdit(cat)">
+                  <i class="bi bi-pencil me-1"></i>Edit
+                </button>
+                @if (cat.isActive) {
+                  <button class="table-btn table-btn--danger" (click)="deactivate(cat.categoryId)">
+                    <i class="bi bi-slash-circle me-1"></i>Deactivate
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="admin-empty">No categories found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
 </div>

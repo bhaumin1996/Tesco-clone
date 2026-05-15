@@ -1,10 +1,7 @@
 @use 'tokens' as *;
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+// Minimal reset — Bootstrap handles the heavy lifting
+*, *::before, *::after { box-sizing: border-box; }
 
 html { font-size: 16px; }
 
@@ -13,17 +10,18 @@ body {
   font-size: $font-size-sm;
   color: $color-ink;
   background: $color-surface-alt;
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a { color: $color-tesco-blue; text-decoration: none; }
 img { max-width: 100%; display: block; }
 button { font-family: inherit; cursor: pointer; }
-ul, ol { list-style: none; }
+ul, ol { list-style: none; padding: 0; margin: 0; }
 input, select, textarea, button { font: inherit; }
 
 :focus-visible {
-  outline: 3px solid $color-tesco-blue;
+  outline: 2px solid $color-accent;
   outline-offset: 2px;
 }

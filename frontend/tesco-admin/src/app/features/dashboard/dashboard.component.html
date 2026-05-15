@@ -1,76 +1,164 @@
 <div class="admin-page-header">
-  <h1 class="admin-page-header__title">Dashboard</h1>
-  <p class="admin-page-header__subtitle">Welcome back — here's what's happening today.</p>
+  <div>
+    <h1 class="admin-page-header__title">Dashboard</h1>
+    <p class="admin-page-header__subtitle">Welcome back — here's what's happening today.</p>
+  </div>
 </div>
 
 @if (loading()) {
-  <p class="dash-loading">Loading…</p>
+  <div class="admin-loading">
+    <div class="spinner-border text-primary" role="status" style="width:1.5rem;height:1.5rem;">
+      <span class="visually-hidden">Loading…</span>
+    </div>
+    <span class="ms-2">Loading dashboard…</span>
+  </div>
 } @else {
-  <div class="dash-stats">
-    <div class="admin-card dash-stat">
-      <p class="dash-stat__label">Orders today</p>
-      <p class="dash-stat__value">{{ stats()?.totalOrdersToday ?? 0 }}</p>
-      <a routerLink="/orders" class="dash-stat__link">View orders →</a>
+
+  <!-- KPI cards -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card admin-card p-4">
+        <div class="kpi-card__header">
+          <p class="kpi-card__label">Orders today</p>
+          <div class="kpi-card__icon kpi-card__icon--blue">
+            <i class="bi bi-cart3"></i>
+          </div>
+        </div>
+        <h3 class="kpi-card__value">{{ stats()?.totalOrdersToday ?? 0 }}</h3>
+        <div class="kpi-card__footer">
+          <a routerLink="/orders" class="kpi-card__link">
+            View orders <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
     </div>
-    <div class="admin-card dash-stat">
-      <p class="dash-stat__label">Revenue today</p>
-      <p class="dash-stat__value">£{{ (stats()?.totalRevenueToday ?? 0) | number:'1.2-2' }}</p>
-      <a routerLink="/analytics" class="dash-stat__link">View analytics →</a>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card admin-card p-4">
+        <div class="kpi-card__header">
+          <p class="kpi-card__label">Revenue today</p>
+          <div class="kpi-card__icon kpi-card__icon--orange">
+            <i class="bi bi-currency-pound"></i>
+          </div>
+        </div>
+        <h3 class="kpi-card__value">£{{ (stats()?.totalRevenueToday ?? 0) | number:'1.2-2' }}</h3>
+        <div class="kpi-card__footer">
+          <a routerLink="/analytics" class="kpi-card__link">
+            View analytics <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
     </div>
-    <div class="admin-card dash-stat">
-      <p class="dash-stat__label">New customers</p>
-      <p class="dash-stat__value">{{ stats()?.newCustomersToday ?? 0 }}</p>
-      <a routerLink="/users" class="dash-stat__link">View users →</a>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card admin-card p-4">
+        <div class="kpi-card__header">
+          <p class="kpi-card__label">New customers</p>
+          <div class="kpi-card__icon kpi-card__icon--teal">
+            <i class="bi bi-people"></i>
+          </div>
+        </div>
+        <h3 class="kpi-card__value">{{ stats()?.newCustomersToday ?? 0 }}</h3>
+        <div class="kpi-card__footer">
+          <a routerLink="/users" class="kpi-card__link">
+            View users <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
     </div>
-    <div class="admin-card dash-stat">
-      <p class="dash-stat__label">Pending orders</p>
-      <p class="dash-stat__value dash-stat__value--warn">{{ stats()?.pendingOrders ?? 0 }}</p>
-      <a routerLink="/orders" class="dash-stat__link">Manage →</a>
-    </div>
-    <div class="admin-card dash-stat">
-      <p class="dash-stat__label">Low stock items</p>
-      <p class="dash-stat__value dash-stat__value--warn">{{ stats()?.lowStockProducts ?? 0 }}</p>
-      <a routerLink="/catalogue/inventory" class="dash-stat__link">View inventory →</a>
-    </div>
-    <div class="admin-card dash-stat">
-      <p class="dash-stat__label">Open disputes</p>
-      <p class="dash-stat__value dash-stat__value--err">{{ stats()?.openDisputes ?? 0 }}</p>
-      <a routerLink="/marketplace" class="dash-stat__link">View disputes →</a>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card admin-card p-4">
+        <div class="kpi-card__header">
+          <p class="kpi-card__label">Pending orders</p>
+          <div class="kpi-card__icon kpi-card__icon--yellow">
+            <i class="bi bi-clock-history"></i>
+          </div>
+        </div>
+        <h3 class="kpi-card__value kpi-card__value--warn">{{ stats()?.pendingOrders ?? 0 }}</h3>
+        <div class="kpi-card__footer">
+          <a routerLink="/orders" class="kpi-card__link">
+            Manage orders <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="admin-card dash-recent">
-    <h2 class="dash-recent__title">Recent Orders</h2>
-    @if (recentOrders().length === 0) {
-      <p class="dash-empty">No recent orders found.</p>
-    } @else {
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Order #</th>
-            <th>Customer</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (order of recentOrders(); track order.orderId) {
-            <tr>
-              <td>#{{ order.orderId }}</td>
-              <td>{{ order.customerName }}</td>
-              <td>£{{ order.total | number:'1.2-2' }}</td>
-              <td><span class="status-badge status--{{ order.status | lowercase }}">{{ order.status }}</span></td>
-              <td>{{ order.createdOn | date:'dd MMM yyyy' }}</td>
-              <td><a [routerLink]="['/orders', order.orderId]" class="dash-link">View</a></td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    }
-    <div class="dash-recent__footer">
-      <a routerLink="/orders" class="button button--secondary">View all orders</a>
+  <!-- Secondary KPI row -->
+  <div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6">
+      <div class="kpi-card kpi-card--sm admin-card p-3 d-flex align-items-center gap-3">
+        <div class="kpi-card__icon kpi-card__icon--red">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <div>
+          <p class="kpi-card__label mb-0">Low stock items</p>
+          <p class="kpi-card__value kpi-card__value--warn mb-0" style="font-size:1.5rem">{{ stats()?.lowStockProducts ?? 0 }}</p>
+        </div>
+        <a routerLink="/catalogue/inventory" class="ms-auto kpi-card__link">
+          View inventory <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
     </div>
+    <div class="col-12 col-sm-6">
+      <div class="kpi-card kpi-card--sm admin-card p-3 d-flex align-items-center gap-3">
+        <div class="kpi-card__icon kpi-card__icon--red">
+          <i class="bi bi-flag"></i>
+        </div>
+        <div>
+          <p class="kpi-card__label mb-0">Open disputes</p>
+          <p class="kpi-card__value kpi-card__value--err mb-0" style="font-size:1.5rem">{{ stats()?.openDisputes ?? 0 }}</p>
+        </div>
+        <a routerLink="/marketplace" class="ms-auto kpi-card__link">
+          View disputes <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent orders table -->
+  <div class="admin-card">
+    <div class="admin-card__header">
+      <span><i class="bi bi-receipt me-2"></i>Recent Orders</span>
+      <a routerLink="/orders" class="button button--sm button--secondary">View all</a>
+    </div>
+
+    @if (recentOrders().length === 0) {
+      <p class="admin-empty">No recent orders found.</p>
+    } @else {
+      <div class="admin-table-wrap">
+        <table class="admin-table table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Order #</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of recentOrders(); track order.orderId) {
+              <tr>
+                <td><span class="fw-semibold">#{{ order.orderId }}</span></td>
+                <td>{{ order.customerName }}</td>
+                <td class="fw-semibold">£{{ order.total | number:'1.2-2' }}</td>
+                <td>
+                  <span class="status-badge status--{{ order.status | lowercase }}">{{ order.status }}</span>
+                </td>
+                <td class="text-secondary-color">{{ order.createdOn | date:'dd MMM yyyy' }}</td>
+                <td>
+                  <a [routerLink]="['/orders', order.orderId]" class="table-btn">
+                    <i class="bi bi-eye me-1"></i>View
+                  </a>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </div>
 }

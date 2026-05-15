@@ -1,40 +1,24 @@
 @use '../../../../styles/tokens' as *;
 
-.cat-form-card {
-  padding: 1.5rem;
-  margin-bottom: 1.25rem;
-  &__title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
-  &__actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
-}
-
-.form-label--optional {
-  font-size: 0.75rem;
-  color: $color-muted;
-  font-weight: 400;
-}
-
 .img-preview {
-  margin-top: 0.5rem;
-
   &__img {
-    display: block;
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid $color-border;
+    border-radius: 8px;
+    border: 1.5px solid $color-border;
   }
 }
 
-.cat-thumb-cell { width: 64px; }
+.cat-thumb-cell { width: 68px; }
 
 .cat-thumb {
   display: block;
   width: 48px;
   height: 48px;
   object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid $color-border;
+  border-radius: 6px;
+  border: 1.5px solid $color-border;
 
   &--empty {
     display: flex;
@@ -42,27 +26,14 @@
     justify-content: center;
     font-size: 0.625rem;
     color: $color-muted;
-    background: #f0f0f0;
+    background: $color-surface-alt;
     width: 48px;
     height: 48px;
-    border-radius: 4px;
-    border: 1px dashed $color-border;
+    border-radius: 6px;
+    border: 1.5px dashed $color-border;
     text-align: center;
     line-height: 1.2;
   }
 }
 
-.actions-cell { display: flex; gap: 0.5rem; }
-
-.table-btn {
-  background: none; border: 1px solid $color-border; border-radius: 4px; cursor: pointer;
-  font-size: 0.8125rem; padding: 0.25rem 0.625rem;
-  &:hover { border-color: $color-tesco-blue; color: $color-tesco-blue; }
-  &--danger:hover { border-color: #c0392b; color: #c0392b; }
-}
-
-.admin-alert--error {
-  background: #fdf0f0;
-  border-left: 4px solid #c0392b;
-  color: #c0392b;
-}
+.actions-cell { display: flex; gap: 0.5rem; align-items: center; }

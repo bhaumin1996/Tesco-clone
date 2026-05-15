@@ -1,55 +1,77 @@
 <div class="admin-page-header">
-  <h1 class="admin-page-header__title">Orders</h1>
+  <div>
+    <h1 class="admin-page-header__title">Orders</h1>
+    <p class="admin-page-header__subtitle">View and manage customer orders.</p>
+  </div>
 </div>
 
 @if (message()) {
-  <div class="admin-alert admin-alert--success">{{ message() }}</div>
+  <div class="admin-alert admin-alert--success">
+    <i class="bi bi-check-circle"></i>
+    {{ message() }}
+  </div>
 }
 
 <div class="admin-card">
-  <form [formGroup]="filterForm" class="orders-filters">
-    <input class="form-control" formControlName="search" placeholder="Search by customer or order #…" />
-    <select class="form-control" formControlName="status">
-      <option value="">All statuses</option>
-      @for (s of statuses; track s) {
-        <option [value]="s">{{ s }}</option>
-      }
-    </select>
-  </form>
+  <div class="filter-bar">
+    <form [formGroup]="filterForm" class="d-flex gap-3 flex-wrap w-100">
+      <input class="form-control" style="max-width:300px" formControlName="search" placeholder="Search by customer or order #…" />
+      <select class="form-control" style="max-width:200px" formControlName="status">
+        <option value="">All statuses</option>
+        @for (s of statuses; track s) {
+          <option [value]="s">{{ s }}</option>
+        }
+      </select>
+    </form>
+  </div>
 
   @if (loading()) {
-    <p class="admin-loading">Loading…</p>
+    <p class="admin-loading">Loading orders…</p>
   } @else {
-    <table class="admin-table">
-      <thead>
-        <tr><th>Order #</th><th>Customer</th><th>Email</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr>
-      </thead>
-      <tbody>
-        @for (o of orders(); track o.orderId) {
+    <div class="admin-table-wrap">
+      <table class="admin-table table table-hover align-middle mb-0">
+        <thead>
           <tr>
-            <td>#{{ o.orderId }}</td>
-            <td>{{ o.customerName }}</td>
-            <td>{{ o.customerEmail }}</td>
-            <td>£{{ o.total | number:'1.2-2' }}</td>
-            <td>
-              <select class="status-select" [value]="o.status" (change)="updateStatus(o.orderId, $any($event.target).value)">
-                @for (s of statuses; track s) {
-                  <option [value]="s" [selected]="s === o.status">{{ s }}</option>
-                }
-              </select>
-            </td>
-            <td>{{ o.createdOn | date:'dd MMM yyyy' }}</td>
-            <td>
-              @if (o.status !== 'Refunded' && o.status !== 'Cancelled') {
-                <button class="table-btn table-btn--danger" (click)="refund(o.orderId)">Refund</button>
-              }
-            </td>
+            <th>Order #</th>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
           </tr>
-        } @empty {
-          <tr><td colspan="7" class="admin-empty">No orders found.</td></tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (o of orders(); track o.orderId) {
+            <tr>
+              <td><span class="fw-semibold">#{{ o.orderId }}</span></td>
+              <td>{{ o.customerName }}</td>
+              <td class="text-secondary-color">{{ o.customerEmail }}</td>
+              <td class="fw-semibold">£{{ o.total | number:'1.2-2' }}</td>
+              <td>
+                <select class="form-control" style="min-width:130px;font-size:0.8125rem;padding:0.25rem 0.5rem"
+                        [value]="o.status"
+                        (change)="updateStatus(o.orderId, $any($event.target).value)">
+                  @for (s of statuses; track s) {
+                    <option [value]="s" [selected]="s === o.status">{{ s }}</option>
+                  }
+                </select>
+              </td>
+              <td class="text-secondary-color">{{ o.createdOn | date:'dd MMM yyyy' }}</td>
+              <td>
+                @if (o.status !== 'Refunded' && o.status !== 'Cancelled') {
+                  <button class="table-btn table-btn--danger" (click)="refund(o.orderId)">
+                    <i class="bi bi-arrow-counterclockwise me-1"></i>Refund
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="admin-empty">No orders found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
     @if (totalPages() > 1) {
       <div class="admin-pagination">
