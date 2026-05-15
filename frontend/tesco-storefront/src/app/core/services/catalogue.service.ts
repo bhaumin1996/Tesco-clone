@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Department, Category, ProductDetail, ProductVariant, PagedResult, ProductSummary, SearchRequest } from '../models/catalogue.model';
+import { Department, Category, Brand, ProductDetail, ProductVariant, PagedResult, ProductSummary, SearchRequest } from '../models/catalogue.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -17,6 +17,10 @@ export class CatalogueService {
     let params = new HttpParams();
     if (departmentId) params = params.set('departmentId', departmentId);
     return this._http.get<Category[]>(`${this.baseUrl}/catalogue/categories`, { params });
+  }
+
+  getBrands() {
+    return this._http.get<Brand[]>(`${this.baseUrl}/catalogue/brands`);
   }
 
   getProducts(categoryId: number, pageNumber = 1, pageSize = 24, filters: any = {}) {

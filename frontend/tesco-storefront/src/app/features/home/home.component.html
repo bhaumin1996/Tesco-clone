@@ -255,7 +255,7 @@
           <span class="section-eyebrow">🏆 Top brands</span>
           <h2 class="section-head__title">Shop by brand</h2>
         </div>
-        <span class="section-head__count">{{ brandRoundels.length }} brands</span>
+        <span class="section-head__count">{{ brands().length }} brands</span>
       </div>
       <div class="roundel-scroll-wrapper">
         <button class="roundel-scroll-btn roundel-scroll-btn--left" (click)="scrollBrands('left')" aria-label="Scroll left">
@@ -264,11 +264,11 @@
           </svg>
         </button>
         <div class="roundel-row" #brandScroll>
-          @for (brand of brandRoundels; track brand.slug) {
+          @for (brand of brands(); track brand.id) {
             <a [routerLink]="['/search']" [queryParams]="{ brand: brand.name }" class="roundel">
-              <div class="roundel__circle roundel__circle--brand" [style.background]="brand.bgColor">
-                @if (brand.imageUrl && !brandImgErrors().has(brand.slug)) {
-                  <img [src]="brand.imageUrl" [alt]="brand.name" loading="lazy" class="roundel__brand-logo" (error)="onBrandImgError(brand.slug)" />
+              <div class="roundel__circle roundel__circle--brand">
+                @if (brand.logoUrl && !brandImgErrors().has(brand.slug)) {
+                  <img [src]="brand.logoUrl" [alt]="brand.name" loading="lazy" class="roundel__brand-logo" (error)="onBrandImgError(brand.slug)" />
                 } @else {
                   <span class="roundel__brand-initial">{{ brand.name[0] }}</span>
                 }

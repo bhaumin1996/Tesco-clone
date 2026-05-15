@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TescoClone.Application.Catalogue.Queries.GetBrands;
 using TescoClone.Application.Catalogue.Queries.GetCategories;
 using TescoClone.Application.Catalogue.Queries.GetDepartments;
 
@@ -29,6 +30,14 @@ public sealed class CatalogueController : ControllerBase
     public async Task<IActionResult> GetCategories([FromQuery] int? departmentId, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetCategoriesQuery(departmentId), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("brands")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetBrands(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetBrandsQuery(), cancellationToken);
         return Ok(result);
     }
 }

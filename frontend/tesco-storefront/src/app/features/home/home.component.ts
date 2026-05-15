@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CatalogueService } from '../../core/services/catalogue.service';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
-import { Department } from '../../core/models/catalogue.model';
+import { Department, Brand } from '../../core/models/catalogue.model';
 
 @Component({
   selector: 'app-home',
@@ -20,6 +20,7 @@ export class HomeComponent implements OnInit {
   private readonly _catalogue = inject(CatalogueService);
 
   protected departments = signal<Department[]>([]);
+  protected brands = signal<Brand[]>([]);
   protected loading = signal(true);
 
   protected scrollDepts(dir: 'left' | 'right'): void {
@@ -142,19 +143,6 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  protected brandRoundels = [
-    { name: 'Heinz',       slug: 'heinz',       imageUrl: 'https://logo.clearbit.com/heinz.com',        bgColor: '#ffffff' },
-    { name: 'Coca-Cola',   slug: 'coca-cola',   imageUrl: 'https://logo.clearbit.com/coca-cola.com',    bgColor: '#ffffff' },
-    { name: "Kellogg's",   slug: 'kelloggs',    imageUrl: 'https://logo.clearbit.com/kelloggs.com',     bgColor: '#C7272E' },
-    { name: 'Walkers',     slug: 'walkers',     imageUrl: 'https://logo.clearbit.com/walkers.com',      bgColor: '#003087' },
-    { name: 'Cadbury',     slug: 'cadbury',     imageUrl: 'https://logo.clearbit.com/cadbury.com',      bgColor: '#4B006E' },
-    { name: 'Warburtons',  slug: 'warburtons',  imageUrl: 'https://logo.clearbit.com/warburtons.com',   bgColor: '#E8711A' },
-    { name: 'Andrex',      slug: 'andrex',      imageUrl: 'https://logo.clearbit.com/andrex.com',       bgColor: '#5B9BD5' },
-    { name: 'Ariel',       slug: 'ariel',       imageUrl: 'https://logo.clearbit.com/ariel.com',        bgColor: '#1565C0' },
-    { name: 'Lurpak',      slug: 'lurpak',      imageUrl: 'https://logo.clearbit.com/lurpak.com',       bgColor: '#F5ECD0' },
-    { name: 'Nestlé',      slug: 'nestle',      imageUrl: 'https://logo.clearbit.com/nestle.com',       bgColor: '#ffffff' }
-  ];
-
   protected brandImgErrors = signal<Set<string>>(new Set());
 
   protected onBrandImgError(slug: string): void {
@@ -214,7 +202,12 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this._catalogue.getDepartments().subscribe({
-      next: d => { this.departments.set(d); this.loading.set(false); },
+      next: d => { this.departments.set(d); },
+      error: () => {}
+    });
+
+    this._catalogue.getBrands().subscribe({
+      next: b => { this.brands.set(b); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
   }

@@ -6,6 +6,13 @@ export interface Department {
   categoryCount: number;
 }
 
+export interface Brand {
+  id: number;
+  name: string;
+  slug: string;
+  logoUrl?: string;
+}
+
 export interface Category {
   id: number;
   departmentId: number;

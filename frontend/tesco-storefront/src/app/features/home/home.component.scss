@@ -368,7 +368,10 @@
     border-color: $color-tesco-blue;
   }
 
-  &--brand { border: 2px solid $color-border; }
+  &--brand { 
+    background: $color-surface;
+    border: 2px solid $color-border; 
+  }
 }
 
 .roundel__brand-logo    { width: 68%; height: 68%; object-fit: contain; }
