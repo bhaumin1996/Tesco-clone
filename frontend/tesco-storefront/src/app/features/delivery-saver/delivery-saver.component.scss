@@ -1,0 +1,564 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+.delivery-saver-container {
+  padding: 0;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 1rem;
+  background: white;
+  min-height: 60vh;
+
+  .loader {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(0, 93, 170, 0.1);
+    border-radius: 50%;
+    border-top-color: $color-tesco-blue;
+    animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+:host ::ng-deep {
+  .delivery-saver-page {
+    line-height: 1.6;
+    color: #1e293b;
+
+    // Hero Section
+    .hero-banner {
+      background: linear-gradient(135deg, #005DAA 0%, #003f7d 100%);
+      color: white;
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 3rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -10%;
+        right: -5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      @include respond-to(md) {
+        flex-direction: row;
+        align-items: center;
+        padding: 5rem 10%;
+        min-height: 500px;
+      }
+
+      .banner-content {
+        flex: 1.2;
+        z-index: 2;
+        animation: fadeInUp 0.8s ease-out;
+
+        h1 {
+          font-size: 2.25rem;
+          font-weight: 800;
+          margin-bottom: 1.5rem;
+          line-height: 1.1;
+          letter-spacing: -0.02em;
+
+          @include respond-to(md) {
+            font-size: 4rem;
+          }
+        }
+
+        p {
+          font-size: 1.2rem;
+          margin-bottom: 2.5rem;
+          opacity: 0.9;
+          max-width: 580px;
+          line-height: 1.5;
+        }
+
+        .info-badge {
+          display: inline-flex;
+          align-items: center;
+          background: rgba(255, 255, 255, 0.15);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          color: white;
+          padding: 0.75rem 1.5rem;
+          border-radius: 3rem;
+          font-weight: 700;
+          font-size: 0.95rem;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          
+          &::before {
+            content: '★';
+            margin-right: 0.75rem;
+            color: #fbbf24;
+          }
+        }
+      }
+
+      .banner-image {
+        flex: 0.8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 3rem;
+        z-index: 1;
+
+        @include respond-to(md) {
+          margin-bottom: 0;
+          justify-content: flex-end;
+        }
+
+        img {
+          max-width: 110%;
+          height: auto;
+          filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+          animation: float 6s ease-in-out infinite;
+        }
+      }
+    }
+
+    // Common Section Styles
+    section {
+      padding: 5rem 1.5rem;
+      max-width: 1280px;
+      margin: 0 auto;
+
+      h2 {
+        text-align: center;
+        font-size: 2.25rem;
+        font-weight: 800;
+        margin-bottom: 4rem;
+        color: #0f172a;
+        letter-spacing: -0.01em;
+      }
+    }
+
+    // Plan Selection
+    .plan-selection {
+      background-color: #f8fafc;
+    }
+
+    .tab-header {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 4rem;
+      background: #e2e8f0;
+      padding: 0.4rem;
+      border-radius: 1rem;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+
+      .tab-btn {
+        padding: 0.85rem 2.5rem;
+        border: none;
+        background: transparent;
+        font-weight: 700;
+        cursor: pointer;
+        border-radius: 0.75rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: #64748b;
+        font-size: 1rem;
+
+        &:hover {
+          color: #1e293b;
+        }
+
+        &.active {
+          background: white;
+          color: $color-tesco-blue;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+      }
+    }
+
+    .plan-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+      padding-bottom: 2rem;
+
+      @include respond-to(md) {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: stretch;
+      }
+    }
+
+    .plan-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      border: 1px solid #f1f5f9;
+
+      &:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        border-color: #e2e8f0;
+      }
+
+      &.featured {
+        border: 2px solid $color-tesco-blue;
+        background: linear-gradient(to bottom, #ffffff, #f0f9ff);
+        
+        .promo-tag {
+          position: absolute;
+          top: -16px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: $color-tesco-red;
+          color: white;
+          padding: 0.4rem 1.5rem;
+          border-radius: 2rem;
+          font-size: 0.85rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          box-shadow: 0 4px 12px rgba(238, 28, 46, 0.3);
+          letter-spacing: 0.05em;
+        }
+
+        .cta-btn {
+          background: $color-tesco-red;
+          &:hover { background: darken($color-tesco-red, 10%); }
+        }
+      }
+
+      .plan-info {
+        text-align: center;
+        margin-bottom: 2.5rem;
+
+        h3 {
+          font-size: 1.75rem;
+          font-weight: 800;
+          margin-bottom: 1.5rem;
+          color: #0f172a;
+        }
+
+        .price {
+          margin-bottom: 0.75rem;
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+
+          .amount {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: $color-tesco-blue;
+            line-height: 1;
+          }
+
+          .freq {
+            font-size: 1rem;
+            color: #64748b;
+            font-weight: 600;
+          }
+
+          .original-price {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            text-decoration: line-through;
+            font-weight: 600;
+          }
+        }
+
+        .total {
+          font-weight: 700;
+          color: #334155;
+          margin-bottom: 1rem;
+          font-size: 1.1rem;
+          background: #f1f5f9;
+          display: inline-block;
+          padding: 0.25rem 1rem;
+          border-radius: 0.5rem;
+        }
+
+        .savings-text {
+          color: #059669;
+          font-weight: 700;
+          font-size: 1rem;
+          margin-bottom: 1.5rem;
+          padding: 0.5rem;
+          border-radius: 0.5rem;
+          background: #ecfdf5;
+        }
+
+        .tagline {
+          font-size: 1rem;
+          color: #475569;
+          margin-bottom: 2rem;
+          min-height: 3rem;
+          font-weight: 500;
+        }
+
+        .cta-btn {
+          display: block;
+          background: $color-tesco-blue;
+          color: white;
+          padding: 1rem 2rem;
+          border-radius: 1rem;
+          text-decoration: none;
+          font-weight: 800;
+          font-size: 1.1rem;
+          transition: all 0.3s;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+
+          &:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+          }
+        }
+      }
+
+      .benefits {
+        border-top: 1px solid #f1f5f9;
+        padding-top: 2rem;
+        flex-grow: 1;
+
+        h4 {
+          font-weight: 800;
+          margin-bottom: 1.5rem;
+          font-size: 1.1rem;
+          color: #0f172a;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          text-align: left;
+
+          li {
+            padding-left: 2.25rem;
+            position: relative;
+            margin-bottom: 1.25rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #334155;
+            font-weight: 500;
+
+            &::before {
+              content: '';
+              position: absolute;
+              left: 0;
+              top: 0.2rem;
+              width: 1.25rem;
+              height: 1.25rem;
+              background-color: #dcfce7;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2315803d'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd' /%3E%3C/svg%3E");
+              background-size: 0.8rem;
+              background-repeat: no-repeat;
+              background-position: center;
+            }
+          }
+        }
+
+        .disclaimer {
+          font-size: 0.8rem;
+          color: #64748b;
+          margin-top: 1.5rem;
+          font-style: italic;
+        }
+      }
+    }
+
+    // Benefits Section
+    .benefits-grid {
+      background: white;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4rem;
+
+        @include respond-to(md) {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        @include respond-to(lg) {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .benefit-item {
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: white;
+        padding: 2.5rem 1.5rem;
+        border-radius: 1.5rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+
+        &:hover {
+          transform: translateY(-8px);
+          border-color: $color-tesco-blue;
+          box-shadow: 0 10px 25px -5px rgba(0, 93, 170, 0.2);
+          
+          .icon-container {
+            background: $color-tesco-blue-light;
+            transform: scale(1.1) rotate(5deg);
+          }
+        }
+
+        .icon-container {
+          width: 80px;
+          height: 80px;
+          margin: 0 auto 2rem;
+          background: #f8fafc;
+          border-radius: 1.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+          img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+          }
+        }
+
+        h3 {
+          font-size: 1.4rem;
+          font-weight: 800;
+          margin-bottom: 1.25rem;
+          color: #0f172a;
+        }
+
+        p {
+          font-size: 1rem;
+          color: #64748b;
+          line-height: 1.7;
+          font-weight: 500;
+        }
+      }
+    }
+
+    // Footer Info
+    .footer-info {
+      text-align: center;
+      padding-bottom: 8rem;
+      background: #f8fafc;
+
+      p {
+        max-width: 800px;
+        margin: 0 auto 2rem;
+        color: #475569;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+
+      .tc-link {
+        color: $color-tesco-blue;
+        text-decoration: none;
+        font-weight: 700;
+        border-bottom: 2px solid rgba(0, 93, 170, 0.2);
+        transition: all 0.2s;
+
+        &:hover {
+          border-bottom-color: $color-tesco-blue;
+          background: rgba(0, 93, 170, 0.05);
+        }
+      }
+
+      h2 {
+        margin-top: 4rem;
+        font-size: 2rem;
+      }
+
+      .contact-options {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2.5rem;
+
+        .contact-card {
+          background: white;
+          padding: 1.5rem 2.5rem;
+          border-radius: 1.25rem;
+          text-decoration: none;
+          color: #1e293b;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+          transition: all 0.3s;
+          border: 1px solid #f1f5f9;
+
+          &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+            border-color: #e2e8f0;
+          }
+
+          svg {
+            width: 24px;
+            height: 24px;
+            color: #25d366; // WhatsApp green
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}

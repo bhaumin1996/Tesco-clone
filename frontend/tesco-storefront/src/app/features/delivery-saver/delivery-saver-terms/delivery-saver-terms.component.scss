@@ -1,0 +1,206 @@
+@use '../../../../styles/tokens' as *;
+@use '../../../../styles/mixins' as *;
+
+.terms-container {
+  padding: 4rem 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  min-height: 80vh;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10rem 0;
+  
+  .loader {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 93, 170, 0.1);
+    border-top-color: $color-tesco-blue;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+:host ::ng-deep {
+  .terms-page {
+    color: #1e293b;
+    line-height: 1.7;
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .intro {
+      font-size: 1.125rem;
+      color: #64748b;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin: 3rem 0 1.5rem;
+      color: #0f172a;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: $color-tesco-blue;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+    }
+
+    a {
+      color: $color-tesco-blue;
+      text-decoration: underline;
+      font-weight: 600;
+      &:hover { color: $color-tesco-red; }
+    }
+
+    .info-card {
+      background: #f8fafc;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 1.5rem;
+
+      &.warning {
+        background: #fff7ed;
+        border-color: #ffedd5;
+        color: #9a3412;
+      }
+    }
+
+    .definition-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+
+      @include respond-to(md) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .def-item {
+        background: white;
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+        border: 1px solid #f1f5f9;
+        font-size: 0.95rem;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+
+        strong {
+          color: $color-tesco-blue;
+          display: block;
+          margin-bottom: 0.25rem;
+        }
+      }
+    }
+
+    // Accordion Styles
+    .accordions {
+      margin-top: 4rem;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .accordion-item {
+      border-bottom: 1px solid #e2e8f0;
+
+      &.active {
+        .accordion-trigger svg {
+          transform: rotate(180deg);
+        }
+        .accordion-content {
+          max-height: 2000px;
+          opacity: 1;
+          padding-bottom: 2rem;
+        }
+      }
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #0f172a;
+      transition: all 0.2s;
+
+      &:hover {
+        color: $color-tesco-blue;
+      }
+
+      svg {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        color: #64748b;
+      }
+    }
+
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+      .content-padding {
+        color: #475569;
+        font-size: 1rem;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 1.5rem 0;
+
+        li {
+          padding-left: 1.75rem;
+          position: relative;
+          margin-bottom: 1rem;
+
+          &::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: $color-tesco-blue;
+            font-weight: bold;
+            font-size: 1.5rem;
+            line-height: 1;
+          }
+        }
+      }
+
+      .sub-plan {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        margin-top: 2rem;
+        border: 1px solid #f1f5f9;
+      }
+    }
+  }
+}

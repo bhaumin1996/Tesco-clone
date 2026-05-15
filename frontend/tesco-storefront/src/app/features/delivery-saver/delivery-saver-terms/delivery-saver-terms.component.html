@@ -1,0 +1,16 @@
+<div class="terms-container">
+  @if (loading()) {
+    <div class="loader-container">
+      <div class="loader"></div>
+      <p>Loading terms and conditions...</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-container">
+      <div class="error-icon">!</div>
+      <p>{{ error() }}</p>
+      <button (click)="ngOnInit()">Retry</button>
+    </div>
+  } @else if (page()) {
+    <div [innerHTML]="safeContent()"></div>
+  }
+</div>

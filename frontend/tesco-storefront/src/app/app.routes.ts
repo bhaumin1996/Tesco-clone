@@ -127,6 +127,19 @@ export const routes: Routes = [
     loadComponent: () => import('./features/ratings-reviews-policy/ratings-reviews-policy.component').then(m => m.RatingsReviewsPolicyComponent)
   },
   {
+    path: 'delivery-saver',
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/delivery-saver/delivery-saver.component').then(m => m.DeliverySaverComponent)
+      },
+      {
+        path: 'terms',
+        loadComponent: () => import('./features/delivery-saver/delivery-saver-terms/delivery-saver-terms.component').then(m => m.DeliverySaverTermsComponent)
+      }
+    ]
+  },
+  {
     path: '**',
     redirectTo: ''
   }
