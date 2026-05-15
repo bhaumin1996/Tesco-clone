@@ -126,5 +126,6 @@ public sealed class ProductRepository : IProductRepository
             SqlHelper.GetValue<decimal>(reader, "BasePrice"),
             SqlHelper.GetNullableValue<decimal>(reader, "ClubcardPrice"),
             SqlHelper.GetNullableString(reader, "ImageUrl"),
-            SqlHelper.GetValue<bool>(reader, "IsAvailable"));
+            SqlHelper.GetValue<bool>(reader, "IsAvailable"),
+            SqlHelper.GetValue<bool>(reader, "IsInStock"));
 }

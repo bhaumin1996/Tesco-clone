@@ -12,4 +12,5 @@ public sealed record ProductDto(
     decimal BasePrice,
     decimal? ClubcardPrice,
     string? ImageUrl,
-    bool IsAvailable);
+    bool IsAvailable,
+    bool IsInStock);

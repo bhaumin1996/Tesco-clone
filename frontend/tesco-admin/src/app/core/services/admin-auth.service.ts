@@ -73,6 +73,14 @@ export class AdminAuthService {
     );
   }
 
+  requestPasswordReset(email: string) {
+    return this._http.post<void>(`${this.baseUrl}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(email: string, code: string, newPassword: string) {
+    return this._http.post<void>(`${this.baseUrl}/auth/reset-password`, { email, code, newPassword });
+  }
+
   logout() {
     localStorage.removeItem('admin_token');
     localStorage.removeItem('admin_refresh');
