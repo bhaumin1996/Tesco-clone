@@ -27,13 +27,16 @@ public sealed class ProductsController : ControllerBase
         [FromQuery] decimal? minPrice,
         [FromQuery] decimal? maxPrice,
         [FromQuery] bool? inStockOnly,
+        [FromQuery] bool? clubcardOnly,
+        [FromQuery] string[]? brands,
+        [FromQuery] string[]? dietary,
         [FromQuery] string? sortBy,
         [FromQuery] string? sortDirection,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
-        var query = new SearchProductsQuery(searchTerm, categoryId, brandId, minPrice, maxPrice, inStockOnly, sortBy, sortDirection, pageNumber, pageSize);
+        var query = new SearchProductsQuery(searchTerm, categoryId, brandId, minPrice, maxPrice, inStockOnly, clubcardOnly, brands, dietary, sortBy, sortDirection, pageNumber, pageSize);
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
@@ -48,13 +51,16 @@ public sealed class ProductsController : ControllerBase
         [FromQuery] decimal? minPrice,
         [FromQuery] decimal? maxPrice,
         [FromQuery] bool? inStockOnly,
+        [FromQuery] bool? clubcardOnly,
+        [FromQuery] string[]? brands,
+        [FromQuery] string[]? dietary,
         [FromQuery] string? sortBy,
         [FromQuery] string? sortDirection,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 20,
         CancellationToken cancellationToken = default)
     {
-        var query = new SearchProductsQuery(searchTerm, categoryId, brandId, minPrice, maxPrice, inStockOnly, sortBy, sortDirection, pageNumber, pageSize);
+        var query = new SearchProductsQuery(searchTerm, categoryId, brandId, minPrice, maxPrice, inStockOnly, clubcardOnly, brands, dietary, sortBy, sortDirection, pageNumber, pageSize);
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }

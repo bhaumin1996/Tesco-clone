@@ -31,9 +31,12 @@ public sealed class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, 
         if (!product.IsAvailable)
             throw new ConflictException("Product is currently unavailable.");
 
+        if (product.DefaultVariantId is null)
+            throw new ConflictException("Product has no available variants.");
+
         await _cartRepository.UpsertItemAsync(
             _currentUser.UserId,
-            request.ProductId,
+            product.DefaultVariantId.Value,
             product.Name,
             product.Price,
             request.Quantity,

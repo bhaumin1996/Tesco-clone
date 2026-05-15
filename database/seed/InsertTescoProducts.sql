@@ -18,12 +18,14 @@ END
 SELECT @DepartmentId = Id FROM m.tblDepartment WHERE Slug = 'fresh-food';
 
 -- 2. Ensure Category exists
-IF NOT EXISTS (SELECT 1 FROM m.tblCategory WHERE Slug = 'fresh-food-all')
+IF NOT EXISTS (SELECT 1 FROM m.tblCategory WHERE Slug = 'fruit-vegetables')
 BEGIN
+    -- This should already exist from the main seed script, but we ensure it here if running separately
     INSERT INTO m.tblCategory (DepartmentId, Name, Slug, DisplayOrder, RecordStatusId, CreatedBy)
-    VALUES (@DepartmentId, 'Fresh Food All', 'fresh-food-all', 1, 1, @AdminId);
+    SELECT Id, 'Fruit & Vegetables', 'fruit-vegetables', 1, 1, @AdminId FROM m.tblDepartment WHERE Slug = 'fresh-food'
+    WHERE NOT EXISTS (SELECT 1 FROM m.tblCategory WHERE Slug = 'fruit-vegetables');
 END
-SELECT @CategoryId = Id FROM m.tblCategory WHERE Slug = 'fresh-food-all';
+SELECT @CategoryId = Id FROM m.tblCategory WHERE Slug = 'fruit-vegetables';
 
 -- 3. Function-like logic for Brand and Product insertion
 -- We will use a temporary table to hold the scraped data for cleaner insertion

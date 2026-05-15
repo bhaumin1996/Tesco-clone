@@ -59,9 +59,11 @@ export class ProductDetailComponent implements OnInit {
         this.adding.set(false);
         this._notifications.success(`${this.product()!.name} added to basket`);
       },
-      error: () => {
+      error: (err) => {
         this.adding.set(false);
-        this._notifications.error('Could not add to basket');
+        if (err.status !== 401) {
+          this._notifications.error('Could not add to basket');
+        }
       }
     });
   }

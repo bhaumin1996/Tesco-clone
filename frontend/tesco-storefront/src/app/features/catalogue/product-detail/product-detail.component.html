@@ -1,201 +1,222 @@
 <div class="page-container page-content">
   @if (loading()) {
-    <div class="pdp-loading"><app-spinner size="lg" /></div>
+  <div class="pdp-loading"><app-spinner size="lg" /></div>
   } @else if (error() || !product()) {
-    <div class="pdp-error">
-      <h1>Product not found</h1>
-      <a routerLink="/departments" class="button button--primary">Browse products</a>
-    </div>
+  <div class="pdp-error">
+    <h1>Product not found</h1>
+    <a routerLink="/departments" class="button button--primary">Browse products</a>
+  </div>
   } @else {
-    @let p = product()!;
-    <app-breadcrumb [items]="breadcrumb" />
+  @let p = product()!;
+  <app-breadcrumb [items]="breadcrumb" />
 
-    <div class="pdp-layout">
+  <div class="pdp-layout">
 
-      <!-- ── Gallery ── -->
-      <div class="pdp-gallery">
-        <div class="pdp-gallery__main">
-          @if (p.images && p.images.length > 0) {
-            <img [src]="p.images[selectedImage()]" [alt]="p.name" class="pdp-gallery__img" />
-          } @else if (p.imageUrl) {
-            <img [src]="p.imageUrl" [alt]="p.name" class="pdp-gallery__img" />
-          } @else {
-            <div class="pdp-gallery__placeholder">
-              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#d8dde6" stroke-width="1">
-                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-              </svg>
-            </div>
-          }
+    <!-- ── Gallery ── -->
+    <div class="pdp-gallery">
+      <div class="pdp-gallery__main">
+        @if (p.images && p.images.length > 0) {
+        <img [src]="p.images[selectedImage()]" [alt]="p.name" class="pdp-gallery__img" />
+        } @else if (p.imageUrl) {
+        <img [src]="p.imageUrl" [alt]="p.name" class="pdp-gallery__img" />
+        } @else {
+        <div class="pdp-gallery__placeholder">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#d8dde6" stroke-width="1">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
         </div>
-        @if (p.images && p.images.length > 1) {
-          <div class="pdp-gallery__thumbs">
-            @for (img of p.images; track img; let i = $index) {
-              <button class="pdp-gallery__thumb" [class.active]="i === selectedImage()" (click)="selectedImage.set(i)">
-                <img [src]="img" [alt]="p.name + ' ' + (i + 1)" loading="lazy" />
-              </button>
-            }
-          </div>
         }
       </div>
-
-      <!-- ── Info ── -->
-      <div class="pdp-info">
-
-        <!-- Brand + title -->
-        @if (p.brand) {
-          <p class="pdp-info__brand">{{ p.brand }}</p>
+      @if (p.images && p.images.length > 1) {
+      <div class="pdp-gallery__thumbs">
+        @for (img of p.images; track img; let i = $index) {
+        <button class="pdp-gallery__thumb" [class.active]="i === selectedImage()" (click)="selectedImage.set(i)">
+          <img [src]="img" [alt]="p.name + ' ' + (i + 1)" loading="lazy" />
+        </button>
         }
-        <h1 class="pdp-info__title">{{ p.name }}</h1>
+      </div>
+      }
+    </div>
 
-        <!-- Dietary tags -->
-        @if (p.dietaryTags && p.dietaryTags.length > 0) {
-          <div class="pdp-info__tags">
-            @for (tag of p.dietaryTags; track tag) {
-              <span class="badge badge--outline-blue">{{ tag }}</span>
-            }
+    <!-- ── Info ── -->
+    <div class="pdp-info">
+
+      <!-- Brand + title -->
+      @if (p.brand) {
+      <p class="pdp-info__brand">{{ p.brand }}</p>
+      }
+      <h1 class="pdp-info__title">{{ p.name }}</h1>
+
+      <!-- Dietary tags -->
+      @if (p.dietaryTags && p.dietaryTags.length > 0) {
+      <div class="pdp-info__tags">
+        @for (tag of p.dietaryTags; track tag) {
+        <span class="badge badge--outline-blue">{{ tag }}</span>
+        }
+      </div>
+      }
+
+      <!-- Star rating -->
+      @if (p.averageRating && p.averageRating > 0) {
+      <div class="pdp-info__rating">
+        <div class="star-rating" [attr.aria-label]="p.averageRating + ' out of 5 stars'">
+          <span class="star-rating__empty" aria-hidden="true">★★★★★</span>
+          <span class="star-rating__filled" aria-hidden="true"
+            [style.width.%]="(p.averageRating / 5) * 100">★★★★★</span>
+        </div>
+        <span class="pdp-rating-score">{{ p.averageRating | number:'1.1-1' }}</span>
+        <span class="pdp-rating-count">{{ p.reviewCount }} reviews</span>
+      </div>
+      }
+
+      <!-- Clubcard / pricing block -->
+      <div class="pdp-pricing">
+        @if (p.clubcardPrice) {
+        <div class="pdp-clubcard-row">
+          <div class="cc-label">
+            <span>Clubcard<br>Price</span>
           </div>
-        }
-
-        <!-- Star rating -->
-        @if (p.averageRating && p.averageRating > 0) {
-          <div class="pdp-info__rating">
-            <div class="star-rating" [attr.aria-label]="p.averageRating + ' out of 5 stars'">
-              <span class="star-rating__empty" aria-hidden="true">★★★★★</span>
-              <span class="star-rating__filled" aria-hidden="true" [style.width.%]="(p.averageRating / 5) * 100">★★★★★</span>
-            </div>
-            <span class="pdp-rating-score">{{ p.averageRating | number:'1.1-1' }}</span>
-            <span class="pdp-rating-count">{{ p.reviewCount }} reviews</span>
-          </div>
-        }
-
-        <!-- Clubcard / pricing block -->
-        <div class="pdp-pricing">
-          @if (p.clubcardPrice) {
-            <div class="pdp-clubcard-row">
-              <div class="cc-label">
-                <span>Clubcard<br>Price</span>
-              </div>
-              <div class="cc-promo">
-                @if (p.promotionLabel) {
-                  <span class="cc-promo__text">{{ p.promotionLabel }}</span>
-                } @else {
-                  <span class="cc-promo__text">Clubcard Price £{{ p.clubcardPrice | number:'1.2-2' }}</span>
-                }
-                <svg class="cc-promo__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
-                  <polyline points="9 18 15 12 9 6"/>
-                </svg>
-              </div>
-            </div>
-            <div class="pdp-pricing__prices">
-              <span class="pdp-pricing__price">£{{ p.price | number:'1.2-2' }}</span>
-              <span class="pdp-pricing__rrp">Normal price: £{{ p.price | number:'1.2-2' }}</span>
-            </div>
-          } @else {
+          <div class="cc-promo">
             @if (p.promotionLabel) {
-              <div class="pdp-promo-badge">{{ p.promotionLabel }}</div>
+            <span class="cc-promo__text">{{ p.promotionLabel }}</span>
+            } @else {
+            <span class="cc-promo__text">Clubcard Price £{{ p.clubcardPrice | number:'1.2-2' }}</span>
             }
-            <span class="pdp-pricing__price">£{{ p.price | number:'1.2-2' }}</span>
-          }
-          @if (p.unitPrice) {
-            <p class="pdp-pricing__unit">{{ p.unitPrice }}</p>
-          }
-        </div>
-
-        <!-- Variants -->
-        @if (p.variants && p.variants.length > 0) {
-          <div class="pdp-variants">
-            <p class="pdp-variants__label">Size</p>
-            <div class="pdp-variants__options">
-              @for (v of p.variants; track v.id) {
-                <button class="pdp-variants__chip" [class.active]="true" [disabled]="!v.isInStock">
-                  {{ v.variantName || v.sku }}
-                </button>
-              }
-            </div>
+            <svg class="cc-promo__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </div>
-        }
-
-        <!-- Out of stock notice -->
-        @if (!p.isInStock) {
-          <div class="pdp-oos-banner">Currently unavailable</div>
-        }
-
-        <!-- Add to basket row -->
-        <div class="pdp-add-row">
-          <app-quantity-stepper
-            [quantity]="quantity()"
-            (quantityChange)="quantity.set($event)"
-          />
-          <button
-            class="pdp-add-btn"
-            [disabled]="!p.isInStock || adding()"
-            (click)="addToCart()"
-          >
-            @if (adding()) { Adding... } @else { Add to basket }
-          </button>
         </div>
-
-        <!-- Country of origin -->
-        @if (p.countryOfOrigin) {
-          <p class="pdp-meta">Country of origin: <strong>{{ p.countryOfOrigin }}</strong></p>
+        <div class="pdp-pricing__prices">
+          <span class="pdp-pricing__price">£{{ p.price | number:'1.2-2' }}</span>
+          <span class="pdp-pricing__rrp">Normal price: £{{ p.price | number:'1.2-2' }}</span>
+        </div>
+        } @else {
+        @if (p.promotionLabel) {
+        <div class="pdp-promo-badge">{{ p.promotionLabel }}</div>
+        }
+        <span class="pdp-pricing__price">£{{ p.price | number:'1.2-2' }}</span>
+        }
+        @if (p.unitPrice) {
+        <p class="pdp-pricing__unit">{{ p.unitPrice }}</p>
         }
       </div>
-    </div>
 
-    <!-- ── Tabs ── -->
-    <div class="pdp-tabs">
-      <div class="pdp-tabs__nav">
-        <button class="pdp-tabs__btn" [class.active]="selectedTab() === 'description'" (click)="selectedTab.set('description')">Description</button>
-        @if (p.nutritionalInfo) {
-          <button class="pdp-tabs__btn" [class.active]="selectedTab() === 'nutrition'" (click)="selectedTab.set('nutrition')">Nutrition</button>
-        }
-        <button class="pdp-tabs__btn" [class.active]="selectedTab() === 'reviews'" (click)="selectedTab.set('reviews')">Reviews ({{ p.reviewCount }})</button>
-      </div>
-
-      <div class="pdp-tabs__content">
-        @if (selectedTab() === 'description') {
-          <p>{{ p.description }}</p>
-          @if (p.ingredients) { <p><strong>Ingredients:</strong> {{ p.ingredients }}</p> }
-          @if (p.allergens) { <p><strong>Allergens:</strong> {{ p.allergens }}</p> }
-          @if (p.storageInstructions) { <p><strong>Storage:</strong> {{ p.storageInstructions }}</p> }
-        }
-        @if (selectedTab() === 'nutrition' && p.nutritionalInfo) {
-          <table class="nutrition-table">
-            <thead>
-              <tr>
-                <th>Nutrient</th>
-                <th>Per 100g</th>
-                @if (p.nutritionalInfo.perServing) { <th>Per serving</th> }
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td>Energy</td><td>{{ p.nutritionalInfo.per100g.calories }} kcal</td>@if (p.nutritionalInfo.perServing) {<td>{{ p.nutritionalInfo.perServing.calories }} kcal</td>}</tr>
-              <tr><td>Fat</td><td>{{ p.nutritionalInfo.per100g.fat }}g</td>@if (p.nutritionalInfo.perServing) {<td>{{ p.nutritionalInfo.perServing.fat }}g</td>}</tr>
-              <tr><td>Carbohydrates</td><td>{{ p.nutritionalInfo.per100g.carbohydrates }}g</td>@if (p.nutritionalInfo.perServing) {<td>{{ p.nutritionalInfo.perServing.carbohydrates }}g</td>}</tr>
-              <tr><td>Protein</td><td>{{ p.nutritionalInfo.per100g.protein }}g</td>@if (p.nutritionalInfo.perServing) {<td>{{ p.nutritionalInfo.perServing.protein }}g</td>}</tr>
-              <tr><td>Salt</td><td>{{ p.nutritionalInfo.per100g.salt }}g</td>@if (p.nutritionalInfo.perServing) {<td>{{ p.nutritionalInfo.perServing.salt }}g</td>}</tr>
-            </tbody>
-          </table>
-        }
-        @if (selectedTab() === 'reviews') {
-          @if (p.reviewCount === 0) {
-            <p>No reviews yet. Be the first to review this product.</p>
-          } @else {
-            <div class="pdp-reviews-summary">
-              <div class="pdp-reviews-rating-block">
-                <span class="pdp-reviews-score">{{ p.averageRating | number:'1.1-1' }}</span>
-                <div class="pdp-reviews-stars">
-                  <div class="star-rating star-rating--lg" [attr.aria-label]="p.averageRating + ' out of 5 stars'">
-                    <span class="star-rating__empty" aria-hidden="true">★★★★★</span>
-                    <span class="star-rating__filled" aria-hidden="true" [style.width.%]="(p.averageRating / 5) * 100">★★★★★</span>
-                  </div>
-                  <span class="pdp-reviews-count">{{ p.reviewCount }} reviews</span>
-                </div>
-              </div>
-            </div>
+      <!-- Variants -->
+      @if (p.variants && p.variants.length > 0) {
+      <div class="pdp-variants">
+        <p class="pdp-variants__label">Size</p>
+        <div class="pdp-variants__options">
+          @for (v of p.variants; track v.id) {
+          <button class="pdp-variants__chip" [class.active]="true" [disabled]="!v.isInStock">
+            {{ v.variantName || v.sku }}
+          </button>
           }
-        }
+        </div>
       </div>
+      }
+
+      <!-- Out of stock notice -->
+      @if (!p.isInStock) {
+      <div class="pdp-oos-banner">Currently unavailable</div>
+      }
+
+      <!-- Add to basket row -->
+      <div class="pdp-add-row">
+        <app-quantity-stepper [quantity]="quantity()" (quantityChange)="quantity.set($event)" />
+        <button class="pdp-add-btn" [disabled]="!p.isInStock || adding()" (click)="addToCart()">
+          @if (adding()) { Adding... } @else { Add to basket }
+        </button>
+      </div>
+
+      <!-- Country of origin -->
+      @if (p.countryOfOrigin) {
+      <p class="pdp-meta">Country of origin: <strong>{{ p.countryOfOrigin }}</strong></p>
+      }
     </div>
+  </div>
+
+  <!-- ── Tabs ── -->
+  <div class="pdp-tabs">
+    <div class="pdp-tabs__nav">
+      <button class="pdp-tabs__btn" [class.active]="selectedTab() === 'description'"
+        (click)="selectedTab.set('description')">Description</button>
+      @if (p.nutritionalInfo) {
+      <button class="pdp-tabs__btn" [class.active]="selectedTab() === 'nutrition'"
+        (click)="selectedTab.set('nutrition')">Nutrition</button>
+      }
+      <button class="pdp-tabs__btn" [class.active]="selectedTab() === 'reviews'"
+        (click)="selectedTab.set('reviews')">Reviews ({{ p.reviewCount }})</button>
+    </div>
+
+    <div class="pdp-tabs__content">
+      @if (selectedTab() === 'description') {
+      <p>{{ p.description }}</p>
+      @if (p.ingredients) { <p><strong>Ingredients:</strong> {{ p.ingredients }}</p> }
+      @if (p.allergens) { <p><strong>Allergens:</strong> {{ p.allergens }}</p> }
+      @if (p.storageInstructions) { <p><strong>Storage:</strong> {{ p.storageInstructions }}</p> }
+      }
+      @if (selectedTab() === 'nutrition' && p.nutritionalInfo) {
+      <table class="nutrition-table">
+        <thead>
+          <tr>
+            <th>Nutrient</th>
+            <th>Per 100g</th>
+            @if (p.nutritionalInfo.perServing) { <th>Per serving</th> }
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Energy</td>
+            <td>{{ p.nutritionalInfo.per100g.calories }} kcal</td>@if (p.nutritionalInfo.perServing) {<td>{{
+              p.nutritionalInfo.perServing.calories }} kcal</td>}
+          </tr>
+          <tr>
+            <td>Fat</td>
+            <td>{{ p.nutritionalInfo.per100g.fat }}g</td>@if (p.nutritionalInfo.perServing) {<td>{{
+              p.nutritionalInfo.perServing.fat }}g</td>}
+          </tr>
+          <tr>
+            <td>Carbohydrates</td>
+            <td>{{ p.nutritionalInfo.per100g.carbohydrates }}g</td>@if (p.nutritionalInfo.perServing) {<td>{{
+              p.nutritionalInfo.perServing.carbohydrates }}g</td>}
+          </tr>
+          <tr>
+            <td>Protein</td>
+            <td>{{ p.nutritionalInfo.per100g.protein }}g</td>@if (p.nutritionalInfo.perServing) {<td>{{
+              p.nutritionalInfo.perServing.protein }}g</td>}
+          </tr>
+          <tr>
+            <td>Salt</td>
+            <td>{{ p.nutritionalInfo.per100g.salt }}g</td>@if (p.nutritionalInfo.perServing) {<td>{{
+              p.nutritionalInfo.perServing.salt }}g</td>}
+          </tr>
+        </tbody>
+      </table>
+      }
+      @if (selectedTab() === 'reviews') {
+      @if (p.reviewCount === 0) {
+      <p>No reviews yet. Be the first to review this product.</p>
+      } @else {
+      <div class="pdp-reviews-summary">
+        <div class="pdp-reviews-rating-block">
+          <span class="pdp-reviews-score">{{ p.averageRating | number:'1.1-1' }}</span>
+          <div class="pdp-reviews-stars">
+            <div class="star-rating star-rating--lg" [attr.aria-label]="p.averageRating + ' out of 5 stars'">
+              <span class="star-rating__empty" aria-hidden="true">★★★★★</span>
+              <span class="star-rating__filled" aria-hidden="true"
+                [style.width.%]="(p.averageRating / 5) * 100">★★★★★</span>
+            </div>
+            <span class="pdp-reviews-count">{{ p.reviewCount }} reviews</span>
+          </div>
+        </div>
+      </div>
+      }
+      }
+    </div>
+  </div>
   }
 </div>

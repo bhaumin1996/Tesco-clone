@@ -30,13 +30,15 @@ export class AuthService {
     );
   }
 
-  logout() {
+  logout(returnUrl?: string) {
     const token = localStorage.getItem('refresh_token');
     if (token) {
       this._http.post(`${this.baseUrl}/revoke`, { refreshToken: token }).subscribe();
     }
     this._clearSession();
-    this._router.navigate(['/auth/login']);
+    this._router.navigate(['/auth/login'], { 
+      queryParams: returnUrl ? { returnUrl } : {} 
+    });
   }
 
   refreshToken() {

@@ -43,7 +43,9 @@
   margin-bottom: $space-4;
   padding-bottom: 2px;
 
-  &::-webkit-scrollbar { display: none; }
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .cat-chips {
@@ -210,7 +212,9 @@
   margin: 0;
   margin-left: auto;
 
-  strong { color: $color-ink; }
+  strong {
+    color: $color-ink;
+  }
 }
 
 // ── Product grid ──────────────────────────────────────────────────────────────
@@ -219,8 +223,13 @@
   grid-template-columns: repeat(2, 1fr);
   gap: $space-4;
 
-  @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
-  @include respond-to(lg) { grid-template-columns: repeat(4, 1fr); }
+  @include respond-to(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .cat-loading {
@@ -254,8 +263,13 @@
 }
 
 @keyframes backdrop-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 // ── Filter panel (slide-in from left) ────────────────────────────────────────
@@ -275,8 +289,13 @@
 }
 
 @keyframes panel-in {
-  from { transform: translateX(-100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 .filter-panel__header {
@@ -307,8 +326,14 @@
   justify-content: center;
   transition: background 0.15s ease;
 
-  &:hover { background: $color-surface-alt; }
-  &:focus-visible { outline: 2px solid $color-tesco-blue; outline-offset: 2px; }
+  &:hover {
+    background: $color-surface-alt;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-tesco-blue;
+    outline-offset: 2px;
+  }
 }
 
 .filter-panel__body {
@@ -337,8 +362,14 @@
   gap: $space-2;
   transition: background 0.15s ease;
 
-  &:hover { background: $color-surface-alt; }
-  &:focus-visible { outline: 2px solid $color-tesco-blue; outline-offset: -2px; }
+  &:hover {
+    background: $color-surface-alt;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-tesco-blue;
+    outline-offset: -2px;
+  }
 }
 
 .accordion-section__title {
@@ -389,8 +420,15 @@
 }
 
 @keyframes opts-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .filter-option {
@@ -399,7 +437,9 @@
   gap: $space-3;
   cursor: pointer;
 
-  &:hover .filter-option__label { color: $color-tesco-blue; }
+  &:hover .filter-option__label {
+    color: $color-tesco-blue;
+  }
 }
 
 .filter-option__checkbox {
@@ -458,5 +498,7 @@
   cursor: pointer;
   transition: background 0.15s ease;
 
-  &:hover { background: $color-tesco-blue-dark; }
+  &:hover {
+    background: $color-tesco-blue-dark;
+  }
 }

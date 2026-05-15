@@ -13,4 +13,7 @@ public sealed record ProductDto(
     decimal? ClubcardPrice,
     string? ImageUrl,
     bool IsAvailable,
-    bool IsInStock);
+    bool IsInStock,
+    decimal AverageRating = 0,
+    int ReviewCount = 0,
+    int? DefaultVariantId = null);

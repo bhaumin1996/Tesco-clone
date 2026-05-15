@@ -119,10 +119,74 @@ export class CategoryComponent implements OnInit {
       return;
     }
     this.loading.set(true);
-    this._catalogue.getProducts(this.categoryId(), this.currentPage(), 24).subscribe({
+
+    const filters = this._getFilterParams();
+    
+    this._catalogue.getProducts(this.categoryId(), this.currentPage(), 24, filters).subscribe({
       next: r => { this.result.set(r); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
+  }
+
+  private _getFilterParams(): any {
+    const sortVal = this.sortBy();
+    const params: any = {
+      sortBy: sortVal.includes('_') ? sortVal.split('_')[0] : sortVal,
+      sortDirection: sortVal.includes('_desc') ? 'desc' : 'asc'
+    };
+
+    // Map Price Range
+    const priceSection = this.filterSections().find(s => s.title === 'Price range');
+    if (priceSection && priceSection.selected.length > 0) {
+      const selected = priceSection.selected;
+      let min: number | undefined;
+      let max: number | undefined;
+
+      if (selected.includes('Under £5')) max = 5;
+      if (selected.includes('£5 – £10')) {
+        min = min === undefined ? 5 : Math.min(min, 5);
+        max = max === undefined ? 10 : Math.max(max, 10);
+      }
+      if (selected.includes('£10 – £20')) {
+        min = min === undefined ? 10 : Math.min(min, 10);
+        max = max === undefined ? 20 : Math.max(max, 20);
+      }
+      if (selected.includes('Over £20')) {
+        min = min === undefined ? 20 : Math.min(min, 20);
+      }
+
+      if (min !== undefined) params.minPrice = min;
+      if (max !== undefined) params.maxPrice = max;
+    }
+
+    // Map Offers (Clubcard / Special offers)
+    const offersSection = this.filterSections().find(s => s.title === 'Offers');
+    if (offersSection && offersSection.selected.length > 0) {
+       // Both "Clubcard prices only" and "Special offers" currently map to clubcardPrice filter
+       if (offersSection.selected.some(o => o === 'Clubcard prices only' || o === 'Special offers')) {
+         params.clubcardOnly = true;
+       }
+    }
+
+    // Map Dietary
+    const dietarySection = this.filterSections().find(s => s.title === 'Dietary');
+    if (dietarySection && dietarySection.selected.length > 0) {
+      params.dietary = dietarySection.selected;
+    }
+
+    // Map Brand
+    const brandSection = this.filterSections().find(s => s.title === 'Brand');
+    if (brandSection && brandSection.selected.length > 0) {
+      params.brands = brandSection.selected;
+    }
+
+    return params;
+  }
+
+  protected applyFilters(): void {
+    this.filterOpen.set(false);
+    this.currentPage.set(1);
+    this.loadProducts();
   }
 
   protected selectCategory(cat: Category): void {

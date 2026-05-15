@@ -19,11 +19,27 @@ export class CatalogueService {
     return this._http.get<Category[]>(`${this.baseUrl}/catalogue/categories`, { params });
   }
 
-  getProducts(categoryId: number, pageNumber = 1, pageSize = 24) {
-    const params = new HttpParams()
+  getProducts(categoryId: number, pageNumber = 1, pageSize = 24, filters: any = {}) {
+    let params = new HttpParams()
       .set('categoryId', categoryId)
       .set('pageNumber', pageNumber)
       .set('pageSize', pageSize);
+
+    if (filters.minPrice !== undefined) params = params.set('minPrice', filters.minPrice);
+    if (filters.maxPrice !== undefined) params = params.set('maxPrice', filters.maxPrice);
+    if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
+    if (filters.sortDirection) params = params.set('sortDirection', filters.sortDirection);
+    if (filters.inStockOnly !== undefined) params = params.set('inStockOnly', filters.inStockOnly);
+    if (filters.clubcardOnly !== undefined) params = params.set('clubcardOnly', filters.clubcardOnly);
+    
+    if (filters.brands && filters.brands.length > 0) {
+      filters.brands.forEach((b: string) => params = params.append('brands', b));
+    }
+    
+    if (filters.dietary && filters.dietary.length > 0) {
+      filters.dietary.forEach((d: string) => params = params.append('dietary', d));
+    }
+
     return this._http.get<PagedResult<ProductSummary>>(`${this.baseUrl}/products`, { params });
   }
 

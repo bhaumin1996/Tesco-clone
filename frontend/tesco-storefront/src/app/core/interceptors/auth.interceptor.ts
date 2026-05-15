@@ -1,10 +1,12 @@
 import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const authService = inject(AuthService);
+  const router = inject(Router);
   const token = authService.getAccessToken();
 
   const authReq = token
@@ -19,7 +21,10 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
             const retried = req.clone({ setHeaders: { Authorization: `Bearer ${r.token.accessToken}` } });
             return next(retried);
           }),
-          catchError(() => throwError(() => err))
+          catchError(() => {
+            authService.logout(router.url);
+            return throwError(() => err);
+          })
         );
       }
       return throwError(() => err);

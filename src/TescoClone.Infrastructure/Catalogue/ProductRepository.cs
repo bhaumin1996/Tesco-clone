@@ -43,6 +43,9 @@ public sealed class ProductRepository : IProductRepository
         decimal? minPrice,
         decimal? maxPrice,
         bool? inStockOnly,
+        bool? clubcardOnly,
+        IEnumerable<string>? brands,
+        IEnumerable<string>? dietary,
         string? sortBy,
         string? sortDirection,
         int pageNumber,
@@ -51,6 +54,10 @@ public sealed class ProductRepository : IProductRepository
     {
         try
         {
+            var brandList = brands != null ? string.Join(",", brands) : null;
+            brandList = (brandList == "" ? null : brandList);
+            var dietaryList = dietary != null ? string.Join(",", dietary) : null;
+
             using var connection = _connectionFactory.CreateConnection();
             var items = await SqlHelper.ExecuteReaderAsync(
                 connection,
@@ -67,6 +74,9 @@ public sealed class ProductRepository : IProductRepository
                     SqlHelper.InputNullable("@MinPrice", minPrice),
                     SqlHelper.InputNullable("@MaxPrice", maxPrice),
                     SqlHelper.InputNullable("@InStockOnly", inStockOnly),
+                    SqlHelper.InputNullable("@ClubcardOnly", clubcardOnly),
+                    SqlHelper.Input("@BrandNames", brandList),
+                    SqlHelper.Input("@DietaryFlags", dietaryList),
                     SqlHelper.Input("@SortBy", sortBy ?? "relevance"),
                     SqlHelper.Input("@SortDirection", sortDirection ?? "asc"),
                     SqlHelper.Input("@PageNumber", pageNumber),
@@ -127,5 +137,8 @@ public sealed class ProductRepository : IProductRepository
             SqlHelper.GetNullableValue<decimal>(reader, "ClubcardPrice"),
             SqlHelper.GetNullableString(reader, "ImageUrl"),
             SqlHelper.GetValue<bool>(reader, "IsAvailable"),
-            SqlHelper.GetValue<bool>(reader, "IsInStock"));
+            SqlHelper.GetValue<bool>(reader, "IsInStock"),
+            SqlHelper.GetValue<decimal>(reader, "AverageRating"),
+            SqlHelper.GetValue<int>(reader, "ReviewCount"),
+            SqlHelper.GetNullableValue<int>(reader, "DefaultVariantId"));
 }

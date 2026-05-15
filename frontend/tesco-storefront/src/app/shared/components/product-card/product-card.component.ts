@@ -32,9 +32,11 @@ export class ProductCardComponent {
         this._notifications.success(`${this.product.name} added to basket`);
         this.addedToCart.emit();
       },
-      error: () => {
+      error: (err) => {
         this.adding = false;
-        this._notifications.error('Could not add item to basket');
+        if (err.status !== 401) {
+          this._notifications.error('Could not add item to basket');
+        }
       }
     });
   }
