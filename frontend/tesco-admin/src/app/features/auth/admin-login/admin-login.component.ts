@@ -23,6 +23,7 @@ export class AdminLoginComponent {
   protected error = signal('');
   protected devCode = signal('');
   protected readonly isDev = !environment.production;
+  protected readonly currentYear = new Date().getFullYear();
 
   protected loginForm = this._fb.group({
     email: ['', [Validators.required, Validators.email]],
