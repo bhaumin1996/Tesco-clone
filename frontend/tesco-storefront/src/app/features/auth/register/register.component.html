@@ -1,8 +1,11 @@
 <div class="reg-page">
   <div class="reg-wrap">
 
-    <!-- Page heading -->
+    <!-- Logo + page title -->
     <div class="reg-heading">
+      <div class="reg-heading__logo">
+        <span class="reg-heading__logo-text">Tesco</span>
+      </div>
       <h1 class="reg-heading__title">Create a Tesco account</h1>
       <p class="reg-heading__sub">It's quick and free. Start earning Clubcard points on every shop.</p>
     </div>
@@ -11,9 +14,13 @@
 
       <!-- ── Section 1: Personal details ─────────────────────────── -->
       <section class="reg-section">
-        <h2 class="reg-section__title">Personal details</h2>
+        <h2 class="reg-section__title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          Personal details
+        </h2>
 
-        <!-- Title -->
         <div class="form-group">
           <label class="form-label" for="title">Title <span class="reg-optional">(optional)</span></label>
           <select id="title" class="form-control reg-select" formControlName="title">
@@ -24,7 +31,6 @@
           </select>
         </div>
 
-        <!-- First / Last name -->
         <div class="reg-name-row">
           <div class="form-group">
             <label class="form-label" for="firstName">First name</label>
@@ -38,7 +44,7 @@
               placeholder="e.g. Jane"
             />
             @if (fieldError('firstName')) {
-              <p class="form-error" role="alert">{{ fieldError('firstName') }}</p>
+              <span class="form-error" role="alert">{{ fieldError('firstName') }}</span>
             }
           </div>
           <div class="form-group">
@@ -53,12 +59,11 @@
               placeholder="e.g. Smith"
             />
             @if (fieldError('lastName')) {
-              <p class="form-error" role="alert">{{ fieldError('lastName') }}</p>
+              <span class="form-error" role="alert">{{ fieldError('lastName') }}</span>
             }
           </div>
         </div>
 
-        <!-- Date of birth -->
         <div class="form-group">
           <label class="form-label">Date of birth <span class="reg-optional">(optional)</span></label>
           <p class="form-hint">Helps us personalise your Clubcard offers.</p>
@@ -96,37 +101,52 @@
 
       <!-- ── Section 2: Contact details ──────────────────────────── -->
       <section class="reg-section">
-        <h2 class="reg-section__title">Contact details</h2>
+        <h2 class="reg-section__title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+          </svg>
+          Contact details
+        </h2>
 
         <div class="form-group">
           <label class="form-label" for="email">Email address</label>
-          <input
-            id="email"
-            type="email"
-            class="form-control"
-            [class.is-invalid]="fieldError('email')"
-            formControlName="email"
-            autocomplete="email"
-            placeholder="your@email.com"
-          />
+          <div class="input-wrapper">
+            <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input
+              id="email"
+              type="email"
+              class="form-control"
+              [class.is-invalid]="fieldError('email')"
+              formControlName="email"
+              autocomplete="email"
+              placeholder="your@email.com"
+            />
+          </div>
           @if (fieldError('email')) {
-            <p class="form-error" role="alert">{{ fieldError('email') }}</p>
+            <span class="form-error" role="alert">{{ fieldError('email') }}</span>
           }
         </div>
 
         <div class="form-group">
           <label class="form-label" for="confirmEmail">Confirm email address</label>
-          <input
-            id="confirmEmail"
-            type="email"
-            class="form-control"
-            [class.is-invalid]="confirmEmailError"
-            formControlName="confirmEmail"
-            autocomplete="email"
-            placeholder="your@email.com"
-          />
+          <div class="input-wrapper">
+            <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input
+              id="confirmEmail"
+              type="email"
+              class="form-control"
+              [class.is-invalid]="confirmEmailError"
+              formControlName="confirmEmail"
+              autocomplete="email"
+              placeholder="your@email.com"
+            />
+          </div>
           @if (confirmEmailError) {
-            <p class="form-error" role="alert">{{ confirmEmailError }}</p>
+            <span class="form-error" role="alert">{{ confirmEmailError }}</span>
           }
         </div>
 
@@ -135,45 +155,58 @@
             Mobile number <span class="reg-optional">(optional)</span>
           </label>
           <p class="form-hint">We'll only contact you about your orders.</p>
-          <input
-            id="mobileNumber"
-            type="tel"
-            class="form-control"
-            [class.is-invalid]="fieldError('mobileNumber')"
-            formControlName="mobileNumber"
-            autocomplete="tel"
-            placeholder="e.g. 07700 900000"
-          />
+          <div class="input-wrapper">
+            <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+            <input
+              id="mobileNumber"
+              type="tel"
+              class="form-control"
+              [class.is-invalid]="fieldError('mobileNumber')"
+              formControlName="mobileNumber"
+              autocomplete="tel"
+              placeholder="e.g. 07700 900000"
+            />
+          </div>
           @if (fieldError('mobileNumber')) {
-            <p class="form-error" role="alert">{{ fieldError('mobileNumber') }}</p>
+            <span class="form-error" role="alert">{{ fieldError('mobileNumber') }}</span>
           }
         </div>
       </section>
 
       <!-- ── Section 3: Password ──────────────────────────────────── -->
       <section class="reg-section">
-        <h2 class="reg-section__title">Password</h2>
+        <h2 class="reg-section__title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Password
+        </h2>
 
         <div class="form-group">
           <label class="form-label" for="password">Create a password</label>
-          <div class="reg-pw-wrap">
+          <div class="input-wrapper">
+            <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
             <input
               id="password"
               [type]="showPassword() ? 'text' : 'password'"
-              class="form-control"
+              class="form-control form-control--has-toggle"
               [class.is-invalid]="fieldError('password')"
               formControlName="password"
               autocomplete="new-password"
+              placeholder="••••••••"
             />
-            <button type="button" class="reg-pw-toggle" (click)="togglePassword()" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+            <button type="button" class="input-toggle" (click)="togglePassword()" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
               {{ showPassword() ? 'Hide' : 'Show' }}
             </button>
           </div>
           @if (fieldError('password')) {
-            <p class="form-error" role="alert">{{ fieldError('password') }}</p>
+            <span class="form-error" role="alert">{{ fieldError('password') }}</span>
           }
 
-          <!-- Password rules -->
           <ul class="reg-pw-rules">
             <li [class.reg-pw-rules__item--met]="(form.get('password')?.value?.length ?? 0) >= 8">
               <span class="reg-pw-rules__icon">{{ (form.get('password')?.value?.length ?? 0) >= 8 ? '✓' : '○' }}</span>
@@ -185,7 +218,6 @@
             </li>
           </ul>
 
-          <!-- Strength bar -->
           @if ((form.get('password')?.value?.length ?? 0) > 0) {
             <div class="reg-strength" [attr.aria-label]="'Password strength: ' + strengthLabel()">
               <div class="reg-strength__bar">
@@ -209,7 +241,12 @@
 
       <!-- ── Section 4: Contact preferences ─────────────────────── -->
       <section class="reg-section">
-        <h2 class="reg-section__title">Contact preferences</h2>
+        <h2 class="reg-section__title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          Contact preferences
+        </h2>
         <p class="reg-section__desc">
           Would you like to hear about great deals, Clubcard offers, and competitions from Tesco?
           You can unsubscribe at any time.
@@ -218,30 +255,22 @@
           <label class="reg-pref-item">
             <input type="checkbox" class="reg-pref-item__checkbox" formControlName="marketingEmail" />
             <span class="reg-pref-item__box"></span>
-            <div>
-              <span class="reg-pref-item__name">Email</span>
-            </div>
+            <span class="reg-pref-item__name">Email</span>
           </label>
           <label class="reg-pref-item">
             <input type="checkbox" class="reg-pref-item__checkbox" formControlName="marketingPost" />
             <span class="reg-pref-item__box"></span>
-            <div>
-              <span class="reg-pref-item__name">Post</span>
-            </div>
+            <span class="reg-pref-item__name">Post</span>
           </label>
           <label class="reg-pref-item">
             <input type="checkbox" class="reg-pref-item__checkbox" formControlName="marketingPhone" />
             <span class="reg-pref-item__box"></span>
-            <div>
-              <span class="reg-pref-item__name">Phone</span>
-            </div>
+            <span class="reg-pref-item__name">Phone</span>
           </label>
           <label class="reg-pref-item">
             <input type="checkbox" class="reg-pref-item__checkbox" formControlName="marketingSms" />
             <span class="reg-pref-item__box"></span>
-            <div>
-              <span class="reg-pref-item__name">SMS / Text message</span>
-            </div>
+            <span class="reg-pref-item__name">SMS / Text</span>
           </label>
         </div>
       </section>
@@ -260,23 +289,23 @@
           </span>
         </label>
         @if (termsError) {
-          <p class="form-error" role="alert">You must agree to the Terms &amp; Conditions to create an account.</p>
+          <span class="form-error" role="alert">You must agree to the Terms &amp; Conditions to create an account.</span>
         }
 
-        <p class="reg-clubcard-note">
-          You'll be able to add or apply for a
-          <strong>Clubcard</strong> once your account is created.
-        </p>
+        <div class="reg-clubcard-note">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          You'll be able to add or apply for a <strong>Clubcard</strong> once your account is created.
+        </div>
       </section>
 
       <!-- ── Submit ──────────────────────────────────────────────── -->
       <div class="reg-actions">
-        <button
-          type="submit"
-          class="button button--primary button--full button--lg"
-          [disabled]="loading()"
-        >
-          @if (loading()) { Creating your account&hellip; } @else { Create account }
+        <button type="submit" class="reg-btn" [disabled]="loading()">
+          @if (loading()) {
+            <span class="reg-btn__spinner"></span> Creating your account...
+          } @else {
+            Create account
+          }
         </button>
 
         <p class="reg-actions__signin">

@@ -28,6 +28,7 @@ export class LoginComponent {
 
   protected loading = signal(false);
   protected showPassword = signal(false);
+  protected readonly currentYear = new Date().getFullYear();
 
   protected toggleShowPassword(): void {
     this.showPassword.update(v => !v);

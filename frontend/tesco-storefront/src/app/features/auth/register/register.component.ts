@@ -93,6 +93,7 @@ export class RegisterComponent {
 
   protected loading = signal(false);
   protected showPassword = signal(false);
+  protected readonly currentYear = new Date().getFullYear();
 
   protected passwordStrengthLevel = computed(() => {
     const pw: string = this.form.get('password')?.value ?? '';
