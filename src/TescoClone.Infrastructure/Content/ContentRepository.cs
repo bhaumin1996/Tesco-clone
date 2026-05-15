@@ -57,6 +57,16 @@ public sealed class ContentRepository : IContentRepository
             [SqlHelper.Input("@PageId", id)],
             cancellationToken);
     }
+    public async Task<PageDto?> GetPageBySlugAsync(string slug, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        return await SqlHelper.ExecuteReaderSingleAsync(
+            connection,
+            "proc_Content_GetPageBySlug",
+            MapPage,
+            [SqlHelper.Input("@Slug", slug)],
+            cancellationToken);
+    }
 
     public async Task<int> CreatePageAsync(PageDto page, int adminId, CancellationToken cancellationToken = default)
     {

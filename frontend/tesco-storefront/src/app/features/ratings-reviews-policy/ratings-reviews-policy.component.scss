@@ -1,0 +1,195 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+.policy-page {
+  background-color: #fff;
+  padding-bottom: 4rem;
+  color: $color-ink;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.policy-header {
+  margin: 2rem 0 3rem;
+
+  .policy-title {
+    font-size: 2.25rem;
+    color: $color-ink;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+  }
+
+  .last-updated {
+    font-size: 1rem;
+    color: lighten($color-ink, 20%);
+  }
+}
+
+.accordion-list {
+  border-top: 1px solid $color-border;
+  margin-bottom: 4rem;
+}
+
+.accordion-item {
+  border-bottom: 1px solid $color-border;
+  overflow: hidden;
+
+  &.is-open {
+    .accordion-header {
+      .accordion-icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+.accordion-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    .accordion-title {
+      text-decoration: underline;
+    }
+  }
+
+  .accordion-title {
+    font-size: 1.125rem;
+    color: $color-tesco-blue;
+    font-weight: 700;
+  }
+
+  .accordion-icon {
+    width: 24px;
+    height: 24px;
+    color: $color-tesco-blue;
+    transition: transform 0.3s ease;
+    border: 1px solid $color-tesco-blue;
+    border-radius: 50%;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.accordion-content {
+  padding: 0 0 1.5rem;
+  animation: slideDown 0.3s ease-out forwards;
+
+  .content-inner {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: lighten($color-ink, 10%);
+
+    ::ng-deep {
+      p {
+        margin-bottom: 1rem;
+      }
+
+      ul {
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+        list-style-type: disc;
+
+        li {
+          margin-bottom: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.policy-footer {
+  margin-top: 5rem;
+  padding-top: 2rem;
+  border-top: 1px solid $color-border;
+
+  .back-to-top {
+    display: inline-block;
+    color: $color-tesco-blue;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .footer-contact {
+    p {
+      margin: 0;
+      font-size: 1rem;
+      color: lighten($color-ink, 20%);
+    }
+
+    a {
+      color: $color-tesco-blue;
+      text-decoration: underline;
+
+      &:hover {
+        color: $color-tesco-red;
+      }
+    }
+  }
+}
+
+.loading-state, .error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10rem 0;
+  gap: 1.5rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba($color-tesco-blue, 0.1);
+  border-top-color: $color-tesco-blue;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.btn-retry {
+  padding: 0.75rem 2rem;
+  background-color: $color-tesco-blue;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken($color-tesco-blue, 10%);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

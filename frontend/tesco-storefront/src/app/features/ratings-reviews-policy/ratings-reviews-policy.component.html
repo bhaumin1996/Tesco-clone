@@ -1,0 +1,53 @@
+<div class="policy-page">
+  <div class="container">
+    <app-breadcrumb [items]="[{ label: 'Home', url: '/' }, { label: 'Help & Support', url: '/help' }, { label: 'Ratings & reviews policy', url: '/ratings-reviews-policy' }]"></app-breadcrumb>
+
+    <div *ngIf="!loading(); else loadingTemplate">
+      <div *ngIf="policy() as data; else errorTemplate" class="policy-content-wrapper">
+        <header class="policy-header">
+          <h1 class="policy-title">{{ data.title }}</h1>
+          <p class="last-updated">This policy was last updated on {{ data.modifiedOn || data.createdOn | date:'dd MMMM yyyy' }}</p>
+        </header>
+
+        <div class="accordion-list">
+          <div *ngFor="let section of sections(); let i = index" 
+               class="accordion-item" 
+               [class.is-open]="section.isOpen">
+            <button class="accordion-header" (click)="toggleSection(i)">
+              <span class="accordion-title">{{ section.title }}</span>
+              <span class="accordion-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </button>
+            <div class="accordion-content" *ngIf="section.isOpen">
+              <div class="content-inner" [innerHTML]="section.content"></div>
+            </div>
+          </div>
+        </div>
+        
+        <footer class="policy-footer">
+          <a href="#" (click)="scrollToTop(); $event.preventDefault()" class="back-to-top">Back to top</a>
+          <div class="footer-contact">
+            <p>If you have any questions about this policy, please <a routerLink="/help">contact our customer service team</a>.</p>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <ng-template #loadingTemplate>
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading policy details...</p>
+      </div>
+    </ng-template>
+
+    <ng-template #errorTemplate>
+      <div class="error-state">
+        <p>Sorry, we couldn't load the policy at this time. Please try again later.</p>
+        <button class="btn-retry" (click)="ngOnInit()">Retry</button>
+      </div>
+    </ng-template>
+  </div>
+</div>

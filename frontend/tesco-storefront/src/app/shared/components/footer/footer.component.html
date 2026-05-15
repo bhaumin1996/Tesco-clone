@@ -11,6 +11,7 @@
             <li><a routerLink="/account/orders" class="footer__link">Orders</a></li>
             <li><a routerLink="/help" class="footer__link">Help &amp; FAQs</a></li>
             <li><a routerLink="/product-recall" class="footer__link">Product Recall</a></li>
+            <li><a routerLink="/magazine" class="footer__link">Tesco Magazine</a></li>
             <li><a routerLink="/help" class="footer__link">Privacy Centre</a></li>
             <li><a href="#" class="footer__link">Pharmacy</a></li>
             <li><a href="#" class="footer__link">Photo</a></li>
@@ -20,11 +21,14 @@
         <div class="footer__col">
           <h3 class="footer__heading">About</h3>
           <ul class="footer__links">
-            <li><a href="#" class="footer__link">Accessibility</a></li>
+            <li><a routerLink="/accessibility" class="footer__link">Accessibility</a></li>
             <li><a href="#" class="footer__link">Sitemap</a></li>
             <li><a href="#" class="footer__link">Privacy &amp; Cookies</a></li>
             <li><a href="#" class="footer__link">Cookie Settings</a></li>
-            <li><a href="#" class="footer__link">Terms &amp; Conditions</a></li>
+            <li><a routerLink="/terms-and-conditions" class="footer__link">General terms &amp; conditions</a></li>
+            <li><a routerLink="/product-terms" class="footer__link">Product terms &amp; conditions</a></li>
+            <li><a routerLink="/terms-and-conditions" fragment="6-coupon-terms-and-conditions" class="footer__link">Coupon terms &amp; conditions</a></li>
+            <li><a routerLink="/ratings-reviews-policy" class="footer__link">Ratings &amp; reviews policy</a></li>
             <li><a href="#" class="footer__link">Modern Slavery Statement</a></li>
           </ul>
         </div>
@@ -36,7 +40,6 @@
             <li><a routerLink="/account/clubcard" class="footer__link">Clubcard</a></li>
             <li><a routerLink="/delivery" class="footer__link">Click &amp; Collect</a></li>
             <li><a routerLink="/offers" class="footer__link">Clubcard Prices</a></li>
-            <li><a href="#" class="footer__link">E-Gift Cards</a></li>
           </ul>
         </div>
 
@@ -53,26 +56,32 @@
         </div>
       </div>
 
+
       <!-- Social media row -->
       <div class="footer__social">
         <span class="footer__social-label">Follow us</span>
         <div class="footer__social-links">
-          <a href="#" class="footer__social-link" aria-label="Facebook">
+          <a href="https://www.facebook.com/tesco/" class="footer__social-link" aria-label="Facebook" target="_blank" rel="noopener">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
             </svg>
           </a>
-          <a href="#" class="footer__social-link" aria-label="Twitter / X">
+          <a href="https://x.com/tesco" class="footer__social-link" aria-label="Twitter / X" target="_blank" rel="noopener">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M4 4l16 16M4 20L20 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
             </svg>
           </a>
-          <a href="#" class="footer__social-link" aria-label="Instagram">
+          <a href="https://www.instagram.com/tesco/" class="footer__social-link" aria-label="Instagram" target="_blank" rel="noopener">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
               <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
             </svg>
           </a>
-          <a href="#" class="footer__social-link" aria-label="YouTube">
+          <a href="https://www.pinterest.com/tesco/" class="footer__social-link" aria-label="Pinterest" target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12.017 0C5.396 0 0 5.397 0 12.017c0 5.078 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.965 1.406-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.259 7.929-7.259 4.161 0 7.394 2.965 7.394 6.927 0 4.135-2.607 7.462-6.233 7.462-1.217 0-2.361-.632-2.751-1.378l-.748 2.853c-.271 1.034-1.002 2.331-1.492 3.127C9.516 23.88 10.742 24 12.017 24 18.637 24 24 18.637 24 12.017 24 5.397 18.637 0 12.017 0z"/>
+            </svg>
+          </a>
+          <a href="https://www.youtube.com/tesco" class="footer__social-link" aria-label="YouTube" target="_blank" rel="noopener">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.96C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.4 19.54C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#1C1C1C"/>
             </svg>

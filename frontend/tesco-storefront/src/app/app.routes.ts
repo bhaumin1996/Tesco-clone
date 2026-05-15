@@ -107,6 +107,26 @@ export const routes: Routes = [
     loadComponent: () => import('./features/product-recall/product-recall.component').then(m => m.ProductRecallComponent)
   },
   {
+    path: 'magazine',
+    loadComponent: () => import('./features/tesco-magazine/tesco-magazine.component').then(m => m.TescoMagazineComponent)
+  },
+  {
+    path: 'accessibility',
+    loadComponent: () => import('./features/accessibility/accessibility.component').then(m => m.AccessibilityComponent)
+  },
+  {
+    path: 'terms-and-conditions',
+    loadComponent: () => import('./features/terms-and-conditions/terms-and-conditions.component').then(m => m.TermsAndConditionsComponent)
+  },
+  {
+    path: 'product-terms',
+    loadComponent: () => import('./features/product-terms/product-terms.component').then(m => m.ProductTermsComponent)
+  },
+  {
+    path: 'ratings-reviews-policy',
+    loadComponent: () => import('./features/ratings-reviews-policy/ratings-reviews-policy.component').then(m => m.RatingsReviewsPolicyComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

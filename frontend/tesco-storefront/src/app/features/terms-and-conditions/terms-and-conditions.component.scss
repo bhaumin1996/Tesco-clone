@@ -1,0 +1,277 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+.terms-page {
+  background-color: #fff;
+  padding-bottom: 4rem;
+  color: $color-ink;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.terms-header {
+  margin: 2rem 0 3rem;
+  border-bottom: 1px solid $color-border;
+  padding-bottom: 2rem;
+
+  .terms-title {
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
+    color: $color-tesco-blue;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+  }
+
+  .terms-intro {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    color: $color-ink;
+    max-width: 800px;
+  }
+}
+
+.terms-nav {
+  background-color: $color-surface-alt;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 4rem;
+  border: 1px solid $color-border;
+
+  .nav-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $color-tesco-blue;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &::before {
+      content: "";
+      width: 4px;
+      height: 24px;
+      background-color: $color-tesco-red;
+      border-radius: 2px;
+    }
+  }
+
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 0.75rem;
+
+    li a {
+      color: $color-ink;
+      text-decoration: none;
+      font-size: 0.9375rem;
+      transition: all 0.2s ease;
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+
+      &:hover {
+        color: $color-tesco-blue;
+        background-color: rgba($color-tesco-blue, 0.05);
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.terms-section {
+  margin-bottom: 4rem;
+  scroll-margin-top: 100px;
+
+  .section-title {
+    font-size: 2rem;
+    color: $color-tesco-blue;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid $color-tesco-blue-light;
+  }
+
+  .section-content {
+    font-size: 1rem;
+    line-height: 1.7;
+
+    p {
+      margin-bottom: 1.25rem;
+    }
+
+    a {
+      color: $color-tesco-blue;
+      text-decoration: underline;
+      font-weight: 600;
+
+      &:hover {
+        color: $color-tesco-red;
+      }
+    }
+
+    strong {
+      color: $color-tesco-blue;
+    }
+  }
+}
+
+.subsection {
+  margin-top: 2.5rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid $color-border;
+  scroll-margin-top: 100px;
+
+  .subsection-title {
+    font-size: 1.5rem;
+    color: $color-tesco-blue;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+}
+
+.bullet-list, .numbered-list, .letter-list {
+  margin: 1.25rem 0;
+  padding-left: 1.5rem;
+
+  li {
+    margin-bottom: 0.75rem;
+    position: relative;
+  }
+}
+
+.bullet-list {
+  list-style: none;
+  
+  li::before {
+    content: "";
+    position: absolute;
+    left: -1.5rem;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    background-color: $color-tesco-red;
+    border-radius: 50%;
+  }
+}
+
+.numbered-list {
+  list-style: decimal;
+}
+
+.lettered-list {
+  list-style: lower-alpha;
+}
+
+.spoon-guru-brand {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: $color-surface-alt;
+  border-radius: 8px;
+
+  img {
+    height: 40px;
+    width: auto;
+  }
+}
+
+.filter-definitions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+
+  .filter-item {
+    background: #fff;
+    border: 1px solid $color-border;
+    padding: 1.5rem;
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    scroll-margin-top: 100px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-color: $color-tesco-blue-light;
+    }
+
+    .filter-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: $color-tesco-blue;
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      font-size: 0.9375rem;
+      margin-bottom: 0;
+      color: lighten($color-ink, 10%);
+    }
+  }
+}
+
+.terms-footer {
+  margin-top: 6rem;
+  padding-top: 3rem;
+  border-top: 2px solid $color-border;
+
+  .back-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $color-tesco-blue;
+    text-decoration: none;
+    font-weight: 700;
+    margin-bottom: 2rem;
+
+    &::before {
+      content: "↑";
+    }
+
+    &:hover {
+      text-decoration: underline;
+      color: $color-tesco-red;
+    }
+  }
+
+  .footer-info {
+    color: lighten($color-ink, 20%);
+    font-size: 0.875rem;
+    line-height: 1.6;
+
+    p {
+      margin-bottom: 0.5rem;
+    }
+
+    .last-update {
+      margin-top: 1.5rem;
+      font-weight: 700;
+      color: $color-ink;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .terms-nav .nav-list {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-definitions {
+    grid-template-columns: 1fr;
+  }
+
+  .spoon-guru-brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}

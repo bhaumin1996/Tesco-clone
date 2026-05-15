@@ -1,0 +1,309 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+.terms-page {
+  background-color: #fff;
+  padding-bottom: 4rem;
+  color: $color-ink;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.terms-header {
+  margin: 2rem 0 4rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid $color-border;
+
+  .terms-title {
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
+    color: $color-tesco-blue;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    line-height: 1.1;
+  }
+
+  .terms-intro {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    max-width: 900px;
+  }
+}
+
+.intro-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+
+  .intro-card {
+    background: $color-surface-alt;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid $color-border;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      border-color: $color-tesco-blue-light;
+    }
+
+    h3 {
+      color: $color-tesco-blue;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      color: lighten($color-ink, 10%);
+    }
+
+    .card-link {
+      display: inline-block;
+      color: $color-tesco-blue;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      background: #fff;
+      border-radius: 6px;
+      border: 1px solid $color-border;
+
+      &:hover {
+        background: $color-tesco-blue;
+        color: #fff;
+        border-color: $color-tesco-blue;
+      }
+    }
+  }
+}
+
+.part-container {
+  margin-bottom: 5rem;
+  scroll-margin-top: 80px;
+
+  .part-title {
+    font-size: 2.25rem;
+    color: $color-tesco-blue;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    padding: 1rem 1.5rem;
+    background: $color-tesco-blue-light;
+    border-radius: 8px;
+    display: inline-block;
+  }
+}
+
+.part-divider {
+  border: 0;
+  height: 4px;
+  background: $color-surface-alt;
+  margin: 4rem 0;
+  border-radius: 2px;
+}
+
+.terms-section {
+  margin-bottom: 4rem;
+  scroll-margin-top: 100px;
+
+  .section-title {
+    font-size: 1.75rem;
+    color: $color-tesco-blue;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    &::before {
+      content: "";
+      width: 4px;
+      height: 24px;
+      background: $color-tesco-red;
+      border-radius: 2px;
+    }
+  }
+
+  .section-content {
+    font-size: 1rem;
+    line-height: 1.7;
+
+    p {
+      margin-bottom: 1.25rem;
+    }
+
+    a {
+      color: $color-tesco-blue;
+      text-decoration: underline;
+      font-weight: 600;
+
+      &:hover {
+        color: $color-tesco-red;
+      }
+    }
+  }
+}
+
+.info-note, .highlight-box, .fee-notice, .cancellation-form-box {
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  font-size: 0.9375rem;
+}
+
+.info-note {
+  background: rgba($color-tesco-blue, 0.05);
+  border-left: 4px solid $color-tesco-blue;
+}
+
+.highlight-box {
+  background: rgba($color-tesco-red, 0.05);
+  border: 1px dashed $color-tesco-red;
+}
+
+.fee-notice {
+  background: $color-surface-alt;
+  border: 1px solid $color-border;
+  
+  strong {
+    color: $color-tesco-red;
+  }
+}
+
+.cancellation-form-box {
+  background: $color-surface-alt;
+  border: 1px solid $color-border;
+  font-family: monospace;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.value-table {
+  background: #fff;
+  border: 1px solid $color-border;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  max-width: 400px;
+
+  .value-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid $color-border;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    .label {
+      font-weight: 700;
+      color: $color-tesco-blue;
+    }
+
+    .value {
+      color: $color-ink;
+    }
+  }
+}
+
+.spoon-guru {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: $color-surface-alt;
+  border-radius: 8px;
+
+  img {
+    height: 32px;
+  }
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+
+  .filter-box {
+    background: #fff;
+    border: 1px solid $color-border;
+    padding: 1.25rem;
+    border-radius: 8px;
+
+    h4 {
+      color: $color-tesco-blue;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    p {
+      font-size: 0.875rem;
+      margin-bottom: 0;
+      color: lighten($color-ink, 15%);
+    }
+  }
+}
+
+.terms-footer {
+  margin-top: 6rem;
+  padding-top: 3rem;
+  border-top: 2px solid $color-border;
+
+  .back-to-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $color-tesco-blue;
+    text-decoration: none;
+    font-weight: 700;
+    margin-bottom: 2rem;
+
+    &::before {
+      content: "↑";
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .footer-info {
+    color: lighten($color-ink, 20%);
+    font-size: 0.875rem;
+
+    p {
+      margin-bottom: 0.5rem;
+    }
+
+    .last-update {
+      margin-top: 1.5rem;
+      font-weight: 700;
+      color: $color-ink;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .intro-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .part-title {
+    font-size: 1.75rem;
+    width: 100%;
+  }
+
+  .spoon-guru {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

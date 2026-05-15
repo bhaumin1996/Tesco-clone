@@ -1,0 +1,99 @@
+<div class="accessibility-page">
+  <div class="page-container">
+    <app-breadcrumb [items]="[{ label: 'Home', url: '/' }, { label: 'Accessibility' }]"></app-breadcrumb>
+
+    <header class="accessibility-header">
+      <h1 class="accessibility-title">Accessibility</h1>
+      <div class="accessibility-intro">
+        <p>Tesco.com is committed to providing you a website that is accessible to the widest possible audiences.</p>
+        <p class="summary-box">
+          <strong>Summary:</strong> Information about the Tesco.com site, how to change how it looks and tips for people using screen readers.
+        </p>
+      </div>
+    </header>
+
+    <section class="accessibility-section">
+      <h2 class="section-title">Using the Site</h2>
+      <div class="section-content">
+        <p>We have aimed to create sites that are available to everyone including those with sight, audio and motor impairment restrictions.</p>
+        <ul class="accessibility-list">
+          <li>We aim to use a web font so all text is easy to read.</li>
+          <li>We have appropriate alt tags for images to convey information.</li>
+          <li>We ensure that navigation through our websites works in a consistent way.</li>
+          <li>We do not rely on just colour as the only way of giving information.</li>
+          <li>We avoid the use of images of text wherever possible, and provide equivalent text links that consist of images.</li>
+        </ul>
+        <p>Here are a few helpful ways in which you can start using the website more easily.</p>
+      </div>
+    </section>
+
+    <section class="accessibility-section">
+      <h3 class="subsection-title">To enlarge text and images on the site</h3>
+      <div class="section-content">
+        <p>On a PC:</p>
+        <ol class="accessibility-steps">
+          <li>Hold down the <strong>'Ctrl'</strong> key and press <strong>'+'</strong> to enlarge.</li>
+          <li>Hold down the <strong>'Ctrl'</strong> key and press <strong>'-'</strong> to reduce.</li>
+          <li>To reset hold down <strong>'Ctrl'</strong> and press <strong>'0'</strong>.</li>
+        </ol>
+        <p>On an Apple Macintosh computer hold the <strong>'Cmd'</strong> (Apple) key instead of 'Ctrl'.</p>
+      </div>
+    </section>
+
+    <section class="accessibility-section">
+      <h3 class="subsection-title">Browser accessibility options</h3>
+      <div class="section-content">
+        <p>Each browser has different methods for font size, formatting, and screen color options:</p>
+        <div class="browser-links">
+          <a href="http://www.google.com/accessibility/products/#blind-low-vision" target="_blank" rel="noopener">Google Chrome accessibility options</a>
+          <a href="http://windows.microsoft.com/en-gb/windows/internet-explorer-accessibility-options#1TC=windows-7" target="_blank" rel="noopener">Internet Explorer accessibility options</a>
+          <a href="https://support.mozilla.org/en-US/kb/accessibility-features-firefox-make-firefox-and-we" target="_blank" rel="noopener">Mozilla Firefox accessibilty options</a>
+        </div>
+        <p>The BBC also has information on how to customise your computer, and your browser, to make them more accessible in their <a href="http://www.bbc.co.uk/accessibility/" target="_blank" rel="noopener">'My web my way'</a> section.</p>
+      </div>
+    </section>
+
+    <section class="accessibility-section">
+      <h2 class="section-title">How the Site is built for Accessibility</h2>
+      <div class="section-content">
+        <h3 class="subsection-title">Standards</h3>
+        <p>The Web Content Accessibility Guidelines (WCAG) define requirements for designers and developers to improve accessibility for people with disabilities. It defines three levels of conformance: Level A, Level AA, and Level AAA. We aim to achieve compliance to level AA as a minimum and level AAA when possible of WCAG v2.1.</p>
+        <p>We also strive to make all pages validate to a W3C formal grammar (XHTML Strict or HTML 5).</p>
+
+        <h3 class="subsection-title">Layout</h3>
+        <p>The site uses Cascading Style Sheets (CSS) to control all of the presentation and layout. Tables are used only to present data.</p>
+        <p>As a result screen reader users can use the screen reader's navigation key to get around the site. If you are listening to the site, menus are grouped together in a more logical fashion.</p>
+
+        <h3 class="subsection-title">Content on our site</h3>
+        <p>The content has been written and formatted to make it accessible. For example:</p>
+        <ul class="accessibility-list">
+          <li>Headings highlight sections of text (a h1 starts the content area of each page).</li>
+          <li>Sentences are short with the meaning at the beginning.</li>
+          <li>Links use meaningful text.</li>
+          <li>Forms can be navigated using the tab key.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="accessibility-section contact-section">
+      <h2 class="section-title">Contact</h2>
+      <div class="section-content">
+        <div class="contact-card">
+          <div class="contact-card__icon">
+            <img src="https://digitalcontent.api.tesco.com/v2/media/homepage/1771bf8a-a13d-4e8d-b53a-bfddb445ccd7/2205-DCHP-help-icon.png" alt="Help icon">
+          </div>
+          <div class="contact-card__info">
+            <p>If you're experiencing difficulties accessing the site, have any comments, or you need to get in touch with our customer services team, please call us on <strong>0800 323 4040</strong> (free from all landlines and mobiles).</p>
+            <ul class="opening-times">
+              <li><strong>Monday to Friday:</strong> 9am to 11pm</li>
+              <li><strong>Saturday:</strong> 9am to 8pm</li>
+              <li><strong>Sunday:</strong> 9am to 4pm</li>
+            </ul>
+          </div>
+        </div>
+        <p>If you're deaf, hard of hearing or speech-impaired, please visit <a href="https://www.relayuk.bt.com/" target="_blank" rel="noopener">relayuk.bt.com</a> to get help when contacting us.</p>
+        <p>If you'd prefer to send us an email, please complete <a href="https://tescoforms.creativevirtual.com/tesco_webforms/other/forms/general_query.html" target="_blank" rel="noopener">this form</a> and we'll reply within 72 hours.</p>
+      </div>
+    </section>
+  </div>
+</div>
