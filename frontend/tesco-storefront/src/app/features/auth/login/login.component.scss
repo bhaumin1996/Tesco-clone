@@ -2,7 +2,7 @@
 
 // ── Page shell ────────────────────────────────────────────────────────────────
 .login-page {
-  min-height: 100vh;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -272,6 +272,6 @@
   .login-page {
     background: #fff;
     align-items: flex-start;
-    padding-top: 2rem;
+    padding-top: 1.5rem;
   }
 }

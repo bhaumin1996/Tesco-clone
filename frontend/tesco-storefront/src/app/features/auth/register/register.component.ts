@@ -93,7 +93,8 @@ export class RegisterComponent {
 
   protected loading = signal(false);
   protected showPassword = signal(false);
-  protected readonly currentYear = new Date().getFullYear();
+  protected step = signal(1);
+  protected readonly totalSteps = 3;
 
   protected passwordStrengthLevel = computed(() => {
     const pw: string = this.form.get('password')?.value ?? '';
@@ -112,6 +113,31 @@ export class RegisterComponent {
 
   protected togglePassword(): void {
     this.showPassword.update(v => !v);
+  }
+
+  protected nextStep(): void {
+    const fields = this._stepFields(this.step());
+    fields.forEach(f => this.form.get(f)?.markAsTouched());
+    const hasInvalid = fields.some(f => this.form.get(f)?.invalid);
+    const emailMismatch = this.step() === 2 &&
+      this.form.hasError('emailsMismatch') &&
+      this.form.get('confirmEmail')?.touched;
+    if (!hasInvalid && !emailMismatch) {
+      this.step.update(s => Math.min(s + 1, this.totalSteps));
+    }
+  }
+
+  protected prevStep(): void {
+    this.step.update(s => Math.max(s - 1, 1));
+  }
+
+  private _stepFields(step: number): string[] {
+    switch (step) {
+      case 1: return ['firstName', 'lastName'];
+      case 2: return ['email', 'confirmEmail', 'password'];
+      case 3: return ['termsAccepted'];
+      default: return [];
+    }
   }
 
   protected submit(): void {

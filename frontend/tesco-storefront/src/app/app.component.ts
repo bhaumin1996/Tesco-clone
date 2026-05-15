@@ -20,7 +20,7 @@ import { AuthService } from './core/services/auth.service';
   `,
   styles: [`
     :host { display: flex; flex-direction: column; min-height: 100vh; }
-    .site-main { flex: 1; }
+    .site-main { flex: 1; display: flex; flex-direction: column; }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
