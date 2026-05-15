@@ -61,17 +61,19 @@ public sealed class OrderRepository : IOrderRepository
                 reader => new
                 {
                     OrderId = SqlHelper.GetValue<int>(reader, "OrderId"),
-                    OrderReference = SqlHelper.GetValue<string>(reader, "OrderReference"),
+                    OrderNumber = SqlHelper.GetValue<string>(reader, "OrderReference"),
                     Status = (OrderStatus)SqlHelper.GetValue<byte>(reader, "StatusId"),
-                    SubTotal = SqlHelper.GetValue<decimal>(reader, "SubTotal"),
+                    Subtotal = SqlHelper.GetValue<decimal>(reader, "SubTotal"),
                     DeliveryCharge = SqlHelper.GetValue<decimal>(reader, "DeliveryCharge"),
-                    DiscountTotal = SqlHelper.GetValue<decimal>(reader, "DiscountTotal"),
+                    ClubcardSavings = SqlHelper.GetValue<decimal>(reader, "DiscountTotal"),
                     Total = SqlHelper.GetValue<decimal>(reader, "Total"),
-                    CreatedOn = SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
+                    CreatedAt = SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
                     TotalCount = SqlHelper.GetValue<int>(reader, "TotalCount"),
-                    Line = new OrderLineDto(
+                    Item = new OrderLineDto(
+                        SqlHelper.GetValue<int>(reader, "OrderLineId"),
                         SqlHelper.GetValue<int>(reader, "ProductVariantId"),
                         SqlHelper.GetValue<string>(reader, "ProductName"),
+                        SqlHelper.GetValue<string?>(reader, "ImageUrl"),
                         SqlHelper.GetValue<decimal>(reader, "UnitPrice"),
                         SqlHelper.GetValue<int>(reader, "Quantity"),
                         SqlHelper.GetValue<decimal>(reader, "LineTotal"))
@@ -91,14 +93,14 @@ public sealed class OrderRepository : IOrderRepository
                     var first = g.First();
                     return new OrderDto(
                         g.Key,
-                        first.OrderReference,
+                        first.OrderNumber,
                         first.Status,
-                        first.SubTotal,
+                        first.Subtotal,
                         first.DeliveryCharge,
-                        first.DiscountTotal,
+                        first.ClubcardSavings,
                         first.Total,
-                        g.Select(r => r.Line).ToList(),
-                        first.CreatedOn);
+                        g.Select(r => r.Item).ToList(),
+                        first.CreatedAt);
                 })
                 .ToList();
 
@@ -165,16 +167,18 @@ public sealed class OrderRepository : IOrderRepository
             reader => new
             {
                 OrderId = SqlHelper.GetValue<int>(reader, "OrderId"),
-                OrderReference = SqlHelper.GetValue<string>(reader, "OrderReference"),
+                OrderNumber = SqlHelper.GetValue<string>(reader, "OrderReference"),
                 Status = (OrderStatus)SqlHelper.GetValue<byte>(reader, "StatusId"),
-                SubTotal = SqlHelper.GetValue<decimal>(reader, "SubTotal"),
+                Subtotal = SqlHelper.GetValue<decimal>(reader, "SubTotal"),
                 DeliveryCharge = SqlHelper.GetValue<decimal>(reader, "DeliveryCharge"),
-                DiscountTotal = SqlHelper.GetValue<decimal>(reader, "DiscountTotal"),
+                ClubcardSavings = SqlHelper.GetValue<decimal>(reader, "DiscountTotal"),
                 Total = SqlHelper.GetValue<decimal>(reader, "Total"),
-                CreatedOn = SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
-                Line = new OrderLineDto(
+                CreatedAt = SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
+                Item = new OrderLineDto(
+                    SqlHelper.GetValue<int>(reader, "OrderLineId"),
                     SqlHelper.GetValue<int>(reader, "ProductVariantId"),
                     SqlHelper.GetValue<string>(reader, "ProductName"),
+                    SqlHelper.GetValue<string?>(reader, "ImageUrl"),
                     SqlHelper.GetValue<decimal>(reader, "UnitPrice"),
                     SqlHelper.GetValue<int>(reader, "Quantity"),
                     SqlHelper.GetValue<decimal>(reader, "LineTotal"))
@@ -187,13 +191,13 @@ public sealed class OrderRepository : IOrderRepository
         var first = rows[0];
         return new OrderDto(
             first.OrderId,
-            first.OrderReference,
+            first.OrderNumber,
             first.Status,
-            first.SubTotal,
+            first.Subtotal,
             first.DeliveryCharge,
-            first.DiscountTotal,
+            first.ClubcardSavings,
             first.Total,
-            rows.Select(r => r.Line).ToList(),
-            first.CreatedOn);
+            rows.Select(r => r.Item).ToList(),
+            first.CreatedAt);
     }
 }

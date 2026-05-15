@@ -31,16 +31,25 @@
               <div class="checkout-name-row">
                 <div class="form-group">
                   <label class="form-label" for="firstName">First name</label>
-                  <input id="firstName" type="text" class="form-control" formControlName="firstName" autocomplete="given-name" />
+                  <input id="firstName" type="text" class="form-control" formControlName="firstName" autocomplete="given-name" [class.is-invalid]="addressForm.get('firstName')?.touched && addressForm.get('firstName')?.invalid" />
+                  @if (addressForm.get('firstName')?.touched && addressForm.get('firstName')?.invalid) {
+                    <div class="form-error">First name is required</div>
+                  }
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="lastName">Last name</label>
-                  <input id="lastName" type="text" class="form-control" formControlName="lastName" autocomplete="family-name" />
+                  <input id="lastName" type="text" class="form-control" formControlName="lastName" autocomplete="family-name" [class.is-invalid]="addressForm.get('lastName')?.touched && addressForm.get('lastName')?.invalid" />
+                  @if (addressForm.get('lastName')?.touched && addressForm.get('lastName')?.invalid) {
+                    <div class="form-error">Last name is required</div>
+                  }
                 </div>
               </div>
               <div class="form-group">
                 <label class="form-label" for="addr1">Address line 1</label>
-                <input id="addr1" type="text" class="form-control" formControlName="addressLine1" autocomplete="address-line1" />
+                <input id="addr1" type="text" class="form-control" formControlName="addressLine1" autocomplete="address-line1" [class.is-invalid]="addressForm.get('addressLine1')?.touched && addressForm.get('addressLine1')?.invalid" />
+                @if (addressForm.get('addressLine1')?.touched && addressForm.get('addressLine1')?.invalid) {
+                  <div class="form-error">Address is required</div>
+                }
               </div>
               <div class="form-group">
                 <label class="form-label" for="addr2">Address line 2 (optional)</label>
@@ -49,11 +58,17 @@
               <div class="checkout-name-row">
                 <div class="form-group">
                   <label class="form-label" for="city">Town / City</label>
-                  <input id="city" type="text" class="form-control" formControlName="city" autocomplete="address-level2" />
+                  <input id="city" type="text" class="form-control" formControlName="city" autocomplete="address-level2" [class.is-invalid]="addressForm.get('city')?.touched && addressForm.get('city')?.invalid" />
+                  @if (addressForm.get('city')?.touched && addressForm.get('city')?.invalid) {
+                    <div class="form-error">Town / City is required</div>
+                  }
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="postcode">Postcode</label>
-                  <input id="postcode" type="text" class="form-control" formControlName="postcode" autocomplete="postal-code" placeholder="SW1A 1AA" />
+                  <input id="postcode" type="text" class="form-control" formControlName="postcode" autocomplete="postal-code" placeholder="SW1A 1AA" [class.is-invalid]="addressForm.get('postcode')?.touched && addressForm.get('postcode')?.invalid" />
+                  @if (addressForm.get('postcode')?.touched && addressForm.get('postcode')?.invalid) {
+                    <div class="form-error">Enter a valid UK postcode</div>
+                  }
                 </div>
               </div>
             </form>
@@ -69,21 +84,33 @@
             <form [formGroup]="paymentForm" novalidate>
               <div class="form-group">
                 <label class="form-label" for="cardNumber">Card number</label>
-                <input id="cardNumber" type="text" class="form-control" formControlName="cardNumber" placeholder="1234 5678 9012 3456" maxlength="16" autocomplete="cc-number" />
+                <input id="cardNumber" type="text" class="form-control" formControlName="cardNumber" placeholder="1234 5678 9012 3456" maxlength="16" autocomplete="cc-number" [class.is-invalid]="paymentForm.get('cardNumber')?.touched && paymentForm.get('cardNumber')?.invalid" />
+                @if (paymentForm.get('cardNumber')?.touched && paymentForm.get('cardNumber')?.invalid) {
+                  <div class="form-error">Enter a valid 16-digit card number</div>
+                }
               </div>
               <div class="checkout-name-row">
                 <div class="form-group">
                   <label class="form-label" for="expiry">Expiry date</label>
-                  <input id="expiry" type="text" class="form-control" formControlName="expiryDate" placeholder="MM/YY" autocomplete="cc-exp" />
+                  <input id="expiry" type="text" class="form-control" formControlName="expiryDate" placeholder="MM/YY" autocomplete="cc-exp" [class.is-invalid]="paymentForm.get('expiryDate')?.touched && paymentForm.get('expiryDate')?.invalid" />
+                  @if (paymentForm.get('expiryDate')?.touched && paymentForm.get('expiryDate')?.invalid) {
+                    <div class="form-error">Invalid date (MM/YY)</div>
+                  }
                 </div>
                 <div class="form-group">
                   <label class="form-label" for="cvv">CVV</label>
-                  <input id="cvv" type="text" class="form-control" formControlName="cvv" placeholder="123" maxlength="4" autocomplete="cc-csc" />
+                  <input id="cvv" type="text" class="form-control" formControlName="cvv" placeholder="123" maxlength="4" autocomplete="cc-csc" [class.is-invalid]="paymentForm.get('cvv')?.touched && paymentForm.get('cvv')?.invalid" />
+                  @if (paymentForm.get('cvv')?.touched && paymentForm.get('cvv')?.invalid) {
+                    <div class="form-error">Invalid CVV</div>
+                  }
                 </div>
               </div>
               <div class="form-group">
                 <label class="form-label" for="nameOnCard">Name on card</label>
-                <input id="nameOnCard" type="text" class="form-control" formControlName="nameOnCard" autocomplete="cc-name" />
+                <input id="nameOnCard" type="text" class="form-control" formControlName="nameOnCard" autocomplete="cc-name" [class.is-invalid]="paymentForm.get('nameOnCard')?.touched && paymentForm.get('nameOnCard')?.invalid" />
+                @if (paymentForm.get('nameOnCard')?.touched && paymentForm.get('nameOnCard')?.invalid) {
+                  <div class="form-error">Name on card is required</div>
+                }
               </div>
               <div class="checkout-accept-options">
                 <label class="checkout-checkbox">
@@ -92,9 +119,12 @@
                 </label>
                 @if (cartService.cart()?.hasAgeRestrictedItems) {
                   <label class="checkout-checkbox">
-                    <input type="checkbox" formControlName="ageConfirmed" />
-                    <span>I confirm that I am 18 or over and all recipients of age-restricted products are 18 or over</span>
+                    <input type="checkbox" formControlName="ageConfirmed" id="ageConfirmed" />
+                    <span [class.text-danger]="paymentForm.get('ageConfirmed')?.touched && paymentForm.get('ageConfirmed')?.invalid">I confirm that I am 18 or over and all recipients of age-restricted products are 18 or over</span>
                   </label>
+                  @if (paymentForm.get('ageConfirmed')?.touched && paymentForm.get('ageConfirmed')?.invalid) {
+                    <div class="form-error">You must confirm your age</div>
+                  }
                 }
               </div>
             </form>

@@ -44,17 +44,53 @@ export class CheckoutComponent {
   });
 
   protected nextStep(): void {
-    if (this.step() === 1 && this.addressForm.invalid) { this.addressForm.markAllAsTouched(); return; }
+    if (this.step() === 1 && this.addressForm.invalid) {
+      this.addressForm.markAllAsTouched();
+      return;
+    }
+    
+    if (this.step() === 2) {
+      const isAgeRestricted = this.cartService.cart()?.hasAgeRestrictedItems;
+      const ageConfirmed = this.paymentForm.get('ageConfirmed')?.value;
+      
+      if (isAgeRestricted && !ageConfirmed) {
+        this.paymentForm.get('ageConfirmed')?.setErrors({ required: true });
+        this.paymentForm.get('ageConfirmed')?.markAsTouched();
+      }
+
+      if (this.paymentForm.invalid) {
+        this.paymentForm.markAllAsTouched();
+        return;
+      }
+    }
+
     if (this.step() < 3) this.step.update(s => (s + 1) as 1 | 2 | 3);
   }
 
   protected prevStep(): void { if (this.step() > 1) this.step.update(s => (s - 1) as 1 | 2 | 3); }
 
   protected placeOrder(): void {
-    if (this.paymentForm.invalid) { this.paymentForm.markAllAsTouched(); return; }
+    const isAgeRestricted = this.cartService.cart()?.hasAgeRestrictedItems;
+    const ageConfirmed = this.paymentForm.get('ageConfirmed')?.value;
+    
+    if (isAgeRestricted && !ageConfirmed) {
+      this.paymentForm.get('ageConfirmed')?.setErrors({ required: true });
+    }
+
+    if (this.paymentForm.invalid) {
+      this.paymentForm.markAllAsTouched();
+      return;
+    }
+
     this.submitting.set(true);
+    
+    const address = this.addressForm.value;
+    const deliveryAddress = `${address.firstName} ${address.lastName}, ${address.addressLine1}${address.addressLine2 ? ', ' + address.addressLine2 : ''}, ${address.city}, ${address.postcode}`;
+    
     this._orders.placeOrder({
-      addressId: 1,
+      deliverySlotId: undefined, // Slot selection not implemented yet
+      deliveryAddress: deliveryAddress,
+      deliveryCharge: this.cartService.cart()?.deliveryCharge ?? 0,
       acceptSubstitutions: !!this.paymentForm.get('acceptSubstitutions')?.value,
       ageConfirmed: !!this.paymentForm.get('ageConfirmed')?.value
     }).subscribe({

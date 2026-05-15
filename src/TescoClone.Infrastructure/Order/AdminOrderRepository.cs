@@ -80,12 +80,12 @@ public sealed class AdminOrderRepository : IAdminOrderRepository
     private static OrderDto MapOrder(SqlDataReader reader) =>
         new(
             Id: SqlHelper.GetValue<int>(reader, "Id"),
-            OrderReference: SqlHelper.GetValue<string>(reader, "OrderReference"),
+            OrderNumber: SqlHelper.GetValue<string>(reader, "OrderReference"),
             Status: (OrderStatus)SqlHelper.GetValue<byte>(reader, "StatusId"),
-            SubTotal: SqlHelper.GetValue<decimal>(reader, "SubTotal"),
+            Subtotal: SqlHelper.GetValue<decimal>(reader, "SubTotal"),
             DeliveryCharge: SqlHelper.GetValue<decimal>(reader, "DeliveryCharge"),
-            DiscountTotal: SqlHelper.GetValue<decimal>(reader, "DiscountTotal"),
+            ClubcardSavings: SqlHelper.GetValue<decimal>(reader, "DiscountTotal"),
             Total: SqlHelper.GetValue<decimal>(reader, "Total"),
-            Lines: Array.Empty<OrderLineDto>(),
-            CreatedOn: SqlHelper.GetValue<DateTime>(reader, "CreatedOn"));
+            Items: Array.Empty<OrderLineDto>(),
+            CreatedAt: SqlHelper.GetValue<DateTime>(reader, "CreatedOn"));
 }

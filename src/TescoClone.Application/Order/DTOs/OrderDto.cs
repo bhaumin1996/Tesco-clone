@@ -4,11 +4,11 @@ namespace TescoClone.Application.Order.DTOs;
 
 public sealed record OrderDto(
     int Id,
-    string OrderReference,
+    string OrderNumber,
     OrderStatus Status,
-    decimal SubTotal,
+    decimal Subtotal,
     decimal DeliveryCharge,
-    decimal DiscountTotal,
+    decimal ClubcardSavings,
     decimal Total,
-    IReadOnlyList<OrderLineDto> Lines,
-    DateTime CreatedOn);
+    IReadOnlyList<OrderLineDto> Items,
+    DateTime CreatedAt);

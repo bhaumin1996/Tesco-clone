@@ -1,8 +1,10 @@
 namespace TescoClone.Application.Order.DTOs;
 
 public sealed record OrderLineDto(
-    int ProductVariantId,
+    int Id,
+    int ProductId,
     string ProductName,
-    decimal UnitPrice,
+    string? ImageUrl,
+    decimal Price,
     int Quantity,
     decimal LineTotal);

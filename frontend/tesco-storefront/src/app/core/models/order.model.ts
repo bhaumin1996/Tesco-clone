@@ -36,11 +36,9 @@ export interface DeliveryAddress {
 }
 
 export interface PlaceOrderRequest {
-  slotId?: number;
-  addressId: number;
-  paymentMethodId?: string;
-  voucherCode?: string;
-  specialInstructions?: string;
+  deliverySlotId?: number;
+  deliveryAddress: string;
+  deliveryCharge: number;
   acceptSubstitutions: boolean;
   ageConfirmed: boolean;
 }

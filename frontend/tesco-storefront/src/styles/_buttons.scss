@@ -18,9 +18,11 @@
   white-space: nowrap;
   line-height: 1;
 
-  &:disabled {
+  &:disabled,
+  &.disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    pointer-events: none;
   }
 }
 
