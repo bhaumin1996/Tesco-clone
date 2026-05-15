@@ -11,7 +11,8 @@
     <app-breadcrumb [items]="breadcrumb" />
 
     <div class="pdp-layout">
-      <!-- Gallery -->
+
+      <!-- ── Gallery ── -->
       <div class="pdp-gallery">
         <div class="pdp-gallery__main">
           @if (p.images && p.images.length > 0) {
@@ -37,9 +38,13 @@
         }
       </div>
 
-      <!-- Info -->
+      <!-- ── Info ── -->
       <div class="pdp-info">
-        <p class="pdp-info__brand">{{ p.brand }}</p>
+
+        <!-- Brand + title -->
+        @if (p.brand) {
+          <p class="pdp-info__brand">{{ p.brand }}</p>
+        }
         <h1 class="pdp-info__title">{{ p.name }}</h1>
 
         <!-- Dietary tags -->
@@ -51,32 +56,55 @@
           </div>
         }
 
-        <!-- Rating -->
+        <!-- Star rating -->
         @if (p.averageRating && p.averageRating > 0) {
           <div class="pdp-info__rating">
-            <span class="pdp-stars">★★★★★</span>
-            <span class="pdp-info__review-count">{{ p.reviewCount }} reviews</span>
+            <div class="star-rating" [attr.aria-label]="p.averageRating + ' out of 5 stars'">
+              <span class="star-rating__empty" aria-hidden="true">★★★★★</span>
+              <span class="star-rating__filled" aria-hidden="true" [style.width.%]="(p.averageRating / 5) * 100">★★★★★</span>
+            </div>
+            <span class="pdp-rating-score">{{ p.averageRating | number:'1.1-1' }}</span>
+            <span class="pdp-rating-count">{{ p.reviewCount }} reviews</span>
           </div>
         }
 
-        <!-- Pricing -->
+        <!-- Clubcard / pricing block -->
         <div class="pdp-pricing">
           @if (p.clubcardPrice) {
-            <div class="pdp-pricing__clubcard">
-              <span class="clubcard-badge">Clubcard Price</span>
-              <span class="pdp-pricing__clubcard-price">£{{ p.clubcardPrice | number:'1.2-2' }}</span>
+            <div class="pdp-clubcard-row">
+              <div class="cc-label">
+                <span>Clubcard<br>Price</span>
+              </div>
+              <div class="cc-promo">
+                @if (p.promotionLabel) {
+                  <span class="cc-promo__text">{{ p.promotionLabel }}</span>
+                } @else {
+                  <span class="cc-promo__text">Clubcard Price £{{ p.clubcardPrice | number:'1.2-2' }}</span>
+                }
+                <svg class="cc-promo__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </div>
             </div>
-            <p class="pdp-pricing__rrp">Normal price: £{{ p.price | number:'1.2-2' }}</p>
+            <div class="pdp-pricing__prices">
+              <span class="pdp-pricing__price">£{{ p.price | number:'1.2-2' }}</span>
+              <span class="pdp-pricing__rrp">Normal price: £{{ p.price | number:'1.2-2' }}</span>
+            </div>
           } @else {
+            @if (p.promotionLabel) {
+              <div class="pdp-promo-badge">{{ p.promotionLabel }}</div>
+            }
             <span class="pdp-pricing__price">£{{ p.price | number:'1.2-2' }}</span>
           }
-          @if (p.unitPrice) { <p class="pdp-pricing__unit">{{ p.unitPrice }}</p> }
+          @if (p.unitPrice) {
+            <p class="pdp-pricing__unit">{{ p.unitPrice }}</p>
+          }
         </div>
 
         <!-- Variants -->
         @if (p.variants && p.variants.length > 0) {
           <div class="pdp-variants">
-            <p class="pdp-variants__label">Size:</p>
+            <p class="pdp-variants__label">Size</p>
             <div class="pdp-variants__options">
               @for (v of p.variants; track v.id) {
                 <button class="pdp-variants__chip" [class.active]="true" [disabled]="!v.isInStock">
@@ -87,21 +115,19 @@
           </div>
         }
 
-        <!-- Stock status -->
+        <!-- Out of stock notice -->
         @if (!p.isInStock) {
-          <div class="pdp-oos-banner">
-            <span>Out of stock</span>
-          </div>
+          <div class="pdp-oos-banner">Currently unavailable</div>
         }
 
-        <!-- Add to basket -->
+        <!-- Add to basket row -->
         <div class="pdp-add-row">
           <app-quantity-stepper
             [quantity]="quantity()"
             (quantityChange)="quantity.set($event)"
           />
           <button
-            class="button button--primary button--lg"
+            class="pdp-add-btn"
             [disabled]="!p.isInStock || adding()"
             (click)="addToCart()"
           >
@@ -109,19 +135,14 @@
           </button>
         </div>
 
-        <!-- Promo badge -->
-        @if (p.promotionLabel) {
-          <div class="pdp-promo-label badge badge--red">{{ p.promotionLabel }}</div>
-        }
-
-        <!-- Key info -->
+        <!-- Country of origin -->
         @if (p.countryOfOrigin) {
           <p class="pdp-meta">Country of origin: <strong>{{ p.countryOfOrigin }}</strong></p>
         }
       </div>
     </div>
 
-    <!-- Tabs -->
+    <!-- ── Tabs ── -->
     <div class="pdp-tabs">
       <div class="pdp-tabs__nav">
         <button class="pdp-tabs__btn" [class.active]="selectedTab() === 'description'" (click)="selectedTab.set('description')">Description</button>
@@ -141,7 +162,11 @@
         @if (selectedTab() === 'nutrition' && p.nutritionalInfo) {
           <table class="nutrition-table">
             <thead>
-              <tr><th>Nutrient</th><th>Per 100g</th>@if (p.nutritionalInfo.perServing) {<th>Per serving</th>}</tr>
+              <tr>
+                <th>Nutrient</th>
+                <th>Per 100g</th>
+                @if (p.nutritionalInfo.perServing) { <th>Per serving</th> }
+              </tr>
             </thead>
             <tbody>
               <tr><td>Energy</td><td>{{ p.nutritionalInfo.per100g.calories }} kcal</td>@if (p.nutritionalInfo.perServing) {<td>{{ p.nutritionalInfo.perServing.calories }} kcal</td>}</tr>
@@ -156,7 +181,18 @@
           @if (p.reviewCount === 0) {
             <p>No reviews yet. Be the first to review this product.</p>
           } @else {
-            <p>{{ p.reviewCount }} customer reviews — average rating: {{ p.averageRating | number:'1.1-1' }}/5</p>
+            <div class="pdp-reviews-summary">
+              <div class="pdp-reviews-rating-block">
+                <span class="pdp-reviews-score">{{ p.averageRating | number:'1.1-1' }}</span>
+                <div class="pdp-reviews-stars">
+                  <div class="star-rating star-rating--lg" [attr.aria-label]="p.averageRating + ' out of 5 stars'">
+                    <span class="star-rating__empty" aria-hidden="true">★★★★★</span>
+                    <span class="star-rating__filled" aria-hidden="true" [style.width.%]="(p.averageRating / 5) * 100">★★★★★</span>
+                  </div>
+                  <span class="pdp-reviews-count">{{ p.reviewCount }} reviews</span>
+                </div>
+              </div>
+            </div>
           }
         }
       </div>

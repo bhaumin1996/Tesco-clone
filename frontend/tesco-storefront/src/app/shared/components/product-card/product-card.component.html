@@ -1,5 +1,7 @@
 <article class="product-card" [class.product-card--out-of-stock]="!product.isInStock">
   <a [routerLink]="['/products', product.id]" class="product-card__link">
+
+    <!-- Image -->
     <div class="product-card__image-wrap">
       @if (product.imageUrl) {
         <img [src]="product.imageUrl" [alt]="product.name" class="product-card__image" loading="lazy" />
@@ -11,60 +13,72 @@
           </svg>
         </div>
       }
-
-      <!-- Badges -->
-      @if (product.promotionLabel) {
-        <span class="product-card__promo-badge">{{ product.promotionLabel }}</span>
-      }
       @if (!product.isInStock) {
-        <span class="product-card__oos-badge">Out of stock</span>
+        <div class="product-card__oos-overlay">Out of stock</div>
       }
     </div>
 
+    <!-- Body -->
     <div class="product-card__body">
-      <p class="product-card__brand">{{ product.brand }}</p>
       <h3 class="product-card__title">{{ product.name }}</h3>
-      <p class="product-card__unit">{{ product.unitPrice }}</p>
 
-      <div class="product-card__pricing">
-        @if (product.clubcardPrice) {
-          <div class="product-card__clubcard-block">
-            <span class="clubcard-badge">Clubcard Price</span>
-            <span class="product-card__clubcard-price">£{{ product.clubcardPrice | number:'1.2-2' }}</span>
-          </div>
-          <span class="product-card__rrp">Was £{{ product.price | number:'1.2-2' }}</span>
-        } @else {
-          <span class="product-card__price">£{{ product.price | number:'1.2-2' }}</span>
-        }
-      </div>
-
+      <!-- Star rating -->
       @if (product.averageRating && product.averageRating > 0) {
         <div class="product-card__rating">
-          <span class="product-card__stars" [style.--rating]="product.averageRating">★★★★★</span>
-          <span class="product-card__review-count">({{ product.reviewCount }})</span>
+          <div class="star-rating" [attr.aria-label]="product.averageRating + ' out of 5 stars'">
+            <span class="star-rating__empty" aria-hidden="true">★★★★★</span>
+            <span class="star-rating__filled" aria-hidden="true" [style.width.%]="(product.averageRating / 5) * 100">★★★★★</span>
+          </div>
+          <span class="product-card__rating-score">{{ product.averageRating | number:'1.1-1' }}</span>
+          <span class="product-card__rating-count">({{ product.reviewCount }})</span>
         </div>
       }
+
+      <span class="product-card__more-link" aria-hidden="true">
+        More like this
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </span>
     </div>
   </a>
 
-  <div class="product-card__actions">
+  <!-- Clubcard promotion block -->
+  @if (product.clubcardPrice) {
+    <div class="product-card__clubcard-row">
+      <div class="cc-label">
+        <span>Clubcard<br>Price</span>
+      </div>
+      <div class="cc-promo">
+        @if (product.promotionLabel) {
+          <span class="cc-promo__text">{{ product.promotionLabel }}</span>
+        } @else {
+          <span class="cc-promo__text">Clubcard Price £{{ product.clubcardPrice | number:'1.2-2' }}</span>
+        }
+        <svg class="cc-promo__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+  } @else if (product.promotionLabel) {
+    <div class="product-card__promo-text">{{ product.promotionLabel }}</div>
+  }
+
+  <!-- Footer: price + Add button -->
+  <div class="product-card__footer">
+    <div class="product-card__price-group">
+      <span class="product-card__price">£{{ product.price | number:'1.2-2' }}</span>
+      @if (product.unitPrice) {
+        <span class="product-card__unit">{{ product.unitPrice }}</span>
+      }
+    </div>
     <button
-      class="button button--add-basket button--sm product-card__add-btn"
+      class="product-card__add-btn"
       (click)="addToCart($event)"
       [disabled]="!product.isInStock || adding"
       [attr.aria-label]="'Add ' + product.name + ' to basket'"
     >
-      @if (adding) {
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="product-card__adding-icon" aria-hidden="true">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-        Adding…
-      } @else {
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-        Add to basket
-      }
+      @if (adding) { Adding... } @else { Add }
     </button>
   </div>
 </article>

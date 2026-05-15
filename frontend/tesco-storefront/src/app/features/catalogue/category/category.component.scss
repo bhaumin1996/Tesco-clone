@@ -217,7 +217,7 @@
 .product-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: $space-3;
+  gap: $space-4;
 
   @include respond-to(md) { grid-template-columns: repeat(3, 1fr); }
   @include respond-to(lg) { grid-template-columns: repeat(4, 1fr); }
