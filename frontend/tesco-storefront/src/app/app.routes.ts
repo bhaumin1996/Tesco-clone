@@ -103,6 +103,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/help/help.component').then(m => m.HelpComponent)
   },
   {
+    path: 'product-recall',
+    loadComponent: () => import('./features/product-recall/product-recall.component').then(m => m.ProductRecallComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

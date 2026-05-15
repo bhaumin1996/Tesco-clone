@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit {
     {
       title: 'Tesco Mobile',
       text: 'SIM-only plans from just £5 a month. No contract.',
-      url: '#',
+      url: 'https://www.tescomobile.com/',
       icon: '📱',
       color: '#005DAA'
     },
@@ -137,7 +137,7 @@ export class HomeComponent implements OnInit {
       title: 'Gift Cards',
       text: 'The perfect present for any occasion. Available in-store and online.',
       cta: 'Shop gift cards',
-      url: '#',
+      url: 'https://www.tescogiftcards.com/?icid=DCHP_WK2_Gift_Card_dec_SS8',
       icon: '🎁',
       theme: 'red'
     }
@@ -177,25 +177,25 @@ export class HomeComponent implements OnInit {
     {
       title: 'Tesco Bank',
       text: 'Credit cards, loans, savings and insurance.',
-      url: '#',
+      url: 'https://www.tescobank.com/?referrerid=tesco/redirect',
       icon: '🏦'
     },
     {
       title: 'Tesco Insurance',
       text: 'Home, car, pet and travel insurance policies.',
-      url: '#',
+      url: 'https://www.tescoinsurance.com/?icid=DCHP_WK15_Insurance_SS10',
       icon: '🛡️'
     },
     {
       title: 'Travel Money',
       text: 'Best exchange rates with no commission fees.',
-      url: '#',
+      url: 'https://www.tescotravelmoney.com/?icid=DCHP_WK15_Travel_Money_SS11',
       icon: '✈️'
     },
     {
       title: 'Gift Cards',
       text: 'For every occasion — Tesco, restaurant and experience cards.',
-      url: '#',
+      url: 'https://www.tescogiftcards.com/?icid=DCHP_WK2_Gift_Card_dec_SS8',
       icon: '🎁'
     }
   ];

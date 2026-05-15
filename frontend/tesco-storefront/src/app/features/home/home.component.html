@@ -168,16 +168,29 @@
       </div>
       <div class="promo-grid promo-grid--3">
         @for (item of waysToSave; track item.title) {
-          <a [routerLink]="item.url" class="save-tile">
-            <div class="save-tile__icon-wrap" [style.background]="item.color" aria-hidden="true">
-              {{ item.icon }}
-            </div>
-            <div class="save-tile__body">
-              <h3 class="save-tile__title">{{ item.title }}</h3>
-              <p class="save-tile__text">{{ item.text }}</p>
-              <span class="save-tile__link">Find out more →</span>
-            </div>
-          </a>
+          @if (item.url.startsWith('http')) {
+            <a [href]="item.url" class="save-tile" target="_blank" rel="noopener noreferrer">
+              <div class="save-tile__icon-wrap" [style.background]="item.color" aria-hidden="true">
+                {{ item.icon }}
+              </div>
+              <div class="save-tile__body">
+                <h3 class="save-tile__title">{{ item.title }}</h3>
+                <p class="save-tile__text">{{ item.text }}</p>
+                <span class="save-tile__link">Find out more →</span>
+              </div>
+            </a>
+          } @else {
+            <a [routerLink]="item.url" class="save-tile">
+              <div class="save-tile__icon-wrap" [style.background]="item.color" aria-hidden="true">
+                {{ item.icon }}
+              </div>
+              <div class="save-tile__body">
+                <h3 class="save-tile__title">{{ item.title }}</h3>
+                <p class="save-tile__text">{{ item.text }}</p>
+                <span class="save-tile__link">Find out more →</span>
+              </div>
+            </a>
+          }
         }
       </div>
     </div>
@@ -232,16 +245,29 @@
       </div>
       <div class="promo-grid promo-grid--3">
         @for (item of discoverMore; track item.title) {
-          <a [routerLink]="item.url" class="discover-card">
-            <div class="discover-card__img discover-card__img--{{ item.theme }}" aria-hidden="true">
-              <span class="discover-card__img-icon">{{ item.icon }}</span>
-            </div>
-            <div class="discover-card__body">
-              <h3 class="discover-card__title">{{ item.title }}</h3>
-              <p class="discover-card__text">{{ item.text }}</p>
-              <span class="discover-card__cta">{{ item.cta }} →</span>
-            </div>
-          </a>
+          @if (item.url.startsWith('http')) {
+            <a [href]="item.url" class="discover-card" target="_blank" rel="noopener noreferrer">
+              <div class="discover-card__img discover-card__img--{{ item.theme }}" aria-hidden="true">
+                <span class="discover-card__img-icon">{{ item.icon }}</span>
+              </div>
+              <div class="discover-card__body">
+                <h3 class="discover-card__title">{{ item.title }}</h3>
+                <p class="discover-card__text">{{ item.text }}</p>
+                <span class="discover-card__cta">{{ item.cta }} →</span>
+              </div>
+            </a>
+          } @else {
+            <a [routerLink]="item.url" class="discover-card">
+              <div class="discover-card__img discover-card__img--{{ item.theme }}" aria-hidden="true">
+                <span class="discover-card__img-icon">{{ item.icon }}</span>
+              </div>
+              <div class="discover-card__body">
+                <h3 class="discover-card__title">{{ item.title }}</h3>
+                <p class="discover-card__text">{{ item.text }}</p>
+                <span class="discover-card__cta">{{ item.cta }} →</span>
+              </div>
+            </a>
+          }
         }
       </div>
     </div>
@@ -321,13 +347,23 @@
       </div>
       <div class="promo-grid promo-grid--4">
         @for (svc of services; track svc.title) {
-          <a [href]="svc.url" class="service-tile">
-            <div class="service-tile__icon-wrap" aria-hidden="true">{{ svc.icon }}</div>
-            <div>
-              <h3 class="service-tile__title">{{ svc.title }}</h3>
-              <p class="service-tile__text">{{ svc.text }}</p>
-            </div>
-          </a>
+          @if (svc.url.startsWith('http')) {
+            <a [href]="svc.url" class="service-tile" target="_blank" rel="noopener noreferrer">
+              <div class="service-tile__icon-wrap" aria-hidden="true">{{ svc.icon }}</div>
+              <div>
+                <h3 class="service-tile__title">{{ svc.title }}</h3>
+                <p class="service-tile__text">{{ svc.text }}</p>
+              </div>
+            </a>
+          } @else {
+            <a [routerLink]="svc.url" class="service-tile">
+              <div class="service-tile__icon-wrap" aria-hidden="true">{{ svc.icon }}</div>
+              <div>
+                <h3 class="service-tile__title">{{ svc.title }}</h3>
+                <p class="service-tile__text">{{ svc.text }}</p>
+              </div>
+            </a>
+          }
         }
       </div>
     </div>

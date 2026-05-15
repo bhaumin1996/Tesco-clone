@@ -1,0 +1,115 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+.recall-header {
+  margin-bottom: $space-6;
+}
+
+.recall-title {
+  font-size: $font-size-xl;
+  color: $color-tesco-blue;
+  margin-bottom: $space-2;
+}
+
+.recall-subtitle {
+  color: $color-muted;
+  font-size: $font-size-md;
+}
+
+.beans-grid__row {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: $space-5;
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.beans-content-stamp__container {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: $color-tesco-blue;
+    box-shadow: $shadow-hover;
+    transform: translateY(-4px);
+    
+    .beans-link__text {
+      text-decoration: underline;
+    }
+  }
+}
+
+.beans-content-stamp__image-container {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #f3f5f7;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.beans-content-stamp__panel-container {
+  padding: $space-4;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.beans-content-stamp__content-container {
+  flex: 1;
+  margin-bottom: $space-3;
+}
+
+.beans-content-stamp__headline {
+  font-size: $font-size-md;
+  font-weight: 700;
+  margin-bottom: $space-2;
+  color: $color-tesco-blue;
+  line-height: 1.4;
+}
+
+.beans-content-stamp__body-text {
+  font-size: $font-size-xs;
+  color: $color-muted;
+  background: #f8fafc;
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.beans-content-stamp__link-container {
+  margin-top: auto;
+  padding-top: $space-3;
+}
+
+.beans-link__anchor {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  color: $color-tesco-blue;
+  font-weight: 700;
+  font-size: $font-size-sm;
+}
+
+.beans-link__icon-container {
+  display: flex;
+  align-items: center;
+}
