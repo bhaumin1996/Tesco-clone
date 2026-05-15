@@ -235,6 +235,23 @@
   color: $color-muted;
 }
 
+// ── Out-of-stock badge (footer) ────────────────────────────────────────────────
+.product-card__oos-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid $color-border;
+  border-radius: 999px;
+  font-family: $font-family-base;
+  font-size: $font-size-xs;
+  font-weight: 700;
+  color: $color-muted;
+  padding: 0.5rem 0.75rem;
+  white-space: nowrap;
+  line-height: 1.2;
+  background: $color-surface-alt;
+}
+
 // ── Add button — pill, Tesco blue ──────────────────────────────────────────────
 .product-card__add-btn {
   background: $color-tesco-blue;

@@ -49,7 +49,7 @@ public sealed class CartRepository : ICartRepository
             var clubcardSavings = items.Sum(i => (i.Price - (i.ClubcardPrice ?? i.Price)) * i.Quantity);
             var deliveryCharge = subtotal > 40 ? 0m : 4.50m; // Example logic
             var total = subtotal - clubcardSavings + deliveryCharge;
-            var minimumOrderMet = subtotal >= 15;
+            var minimumOrderMet = subtotal > 0;
 
             return new CartDto(
                 0, // We don't have CartId easily if we don't select it separately, but 0 is fine for now or we can add it to SP
@@ -65,6 +65,26 @@ public sealed class CartRepository : ICartRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in GetByUserIdAsync for userId: {UserId}", userId);
+            throw;
+        }
+    }
+
+    public async Task<int?> GetVariantStockAsync(int productVariantId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            var results = await SqlHelper.ExecuteReaderAsync(
+                connection,
+                "proc_Order_GetVariantStock",
+                reader => SqlHelper.GetValue<int>(reader, "StockQuantity"),
+                [SqlHelper.Input("@ProductVariantId", productVariantId)],
+                cancellationToken);
+            return results.Count > 0 ? results[0] : null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetVariantStockAsync for productVariantId: {ProductVariantId}", productVariantId);
             throw;
         }
     }

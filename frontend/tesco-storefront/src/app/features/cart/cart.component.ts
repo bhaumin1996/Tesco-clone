@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 import { QuantityStepperComponent } from '../../shared/components/quantity-stepper/quantity-stepper.component';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
@@ -17,6 +18,7 @@ import { CartItem } from '../../core/models/cart.model';
 })
 export class CartComponent implements OnInit {
   protected readonly cartService = inject(CartService);
+  private readonly _notifications = inject(NotificationService);
   protected loading = signal(true);
 
   ngOnInit(): void {
@@ -30,11 +32,15 @@ export class CartComponent implements OnInit {
     if (qty === 0) {
       this.removeItem(item.productId);
     } else {
-      this.cartService.updateItem({ itemId: item.productId, quantity: qty }).subscribe();
+      this.cartService.updateItem({ itemId: item.productId, quantity: qty }).subscribe({
+        error: () => this._notifications.error('Could not update item quantity')
+      });
     }
   }
 
   protected removeItem(productId: number): void {
-    this.cartService.removeItem(productId).subscribe();
+    this.cartService.removeItem(productId).subscribe({
+      error: () => this._notifications.error('Could not remove item from basket')
+    });
   }
 }

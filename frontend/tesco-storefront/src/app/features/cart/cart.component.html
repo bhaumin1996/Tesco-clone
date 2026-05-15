@@ -21,7 +21,7 @@
       <div class="cart-items">
         @if (!c.minimumOrderMet) {
           <div class="cart-warning">
-            <strong>Minimum order required.</strong> Add more items to proceed to checkout.
+            <strong>Your basket is empty.</strong> Add items to proceed to checkout.
           </div>
         }
         @for (item of c.items; track item.id) {

@@ -76,9 +76,13 @@
       <span class="product-card__unit">{{ product.unitPrice }}</span>
       }
     </div>
-    <button class="product-card__add-btn" (click)="addToCart($event)" [disabled]="!product.isInStock || adding"
+    @if (product.isInStock) {
+    <button class="product-card__add-btn" (click)="addToCart($event)" [disabled]="adding"
       [attr.aria-label]="'Add ' + product.name + ' to basket'">
       @if (adding) { Adding... } @else { Add }
     </button>
+    } @else {
+    <span class="product-card__oos-badge">Out of stock</span>
+    }
   </div>
 </article>
