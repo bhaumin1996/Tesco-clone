@@ -42,15 +42,29 @@ export class AdminContentComponent implements OnInit {
   protected editId = signal<number | null>(null);
   protected message = signal('');
 
+  protected cmsSearch = signal('');
+  protected bannerSearch = signal('');
+
   protected readonly pageSize = 10;
   protected cmsPage = signal(1);
-  protected cmsTotalPages = computed(() => Math.max(1, Math.ceil(this.pages().length / this.pageSize)));
-  protected pagedCmsPages = computed(() => { const s = (this.cmsPage() - 1) * this.pageSize; return this.pages().slice(s, s + this.pageSize); });
+  protected filteredPages = computed(() => {
+    const q = this.cmsSearch().toLowerCase();
+    return q ? this.pages().filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.slug.toLowerCase().includes(q)
+    ) : this.pages();
+  });
+  protected cmsTotalPages = computed(() => Math.max(1, Math.ceil(this.filteredPages().length / this.pageSize)));
+  protected pagedCmsPages = computed(() => { const s = (this.cmsPage() - 1) * this.pageSize; return this.filteredPages().slice(s, s + this.pageSize); });
   protected cmsPageNumbers = computed(() => Array.from({ length: this.cmsTotalPages() }, (_, i) => i + 1));
 
   protected bannerPage = signal(1);
-  protected bannerTotalPages = computed(() => Math.max(1, Math.ceil(this.banners().length / this.pageSize)));
-  protected pagedBanners = computed(() => { const s = (this.bannerPage() - 1) * this.pageSize; return this.banners().slice(s, s + this.pageSize); });
+  protected filteredBanners = computed(() => {
+    const q = this.bannerSearch().toLowerCase();
+    return q ? this.banners().filter(b => b.title.toLowerCase().includes(q)) : this.banners();
+  });
+  protected bannerTotalPages = computed(() => Math.max(1, Math.ceil(this.filteredBanners().length / this.pageSize)));
+  protected pagedBanners = computed(() => { const s = (this.bannerPage() - 1) * this.pageSize; return this.filteredBanners().slice(s, s + this.pageSize); });
   protected bannerPageNumbers = computed(() => Array.from({ length: this.bannerTotalPages() }, (_, i) => i + 1));
 
   protected pageForm = this._fb.group({
@@ -72,12 +86,18 @@ export class AdminContentComponent implements OnInit {
 
   private _load(): void {
     this.loading.set(true);
-    this._http.get<CmsPage[]>(`${this._base}/pages`).subscribe({ next: p => { this.pages.set(p); this.cmsPage.set(1); } });
-    this._http.get<Banner[]>(`${this._base}/banners`).subscribe({
-      next: b => { this.banners.set(b); this.bannerPage.set(1); this.loading.set(false); },
+    this._http.get<{ items: CmsPage[] }>(`${this._base}/pages`).subscribe({
+      next: p => { this.pages.set(p.items ?? []); this.cmsPage.set(1); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
+    this._http.get<Banner[]>(`${this._base}/banners`).subscribe({
+      next: b => { this.banners.set(b); this.bannerPage.set(1); },
+      error: () => {}
+    });
   }
+
+  protected onCmsSearch(term: string): void { this.cmsSearch.set(term); this.cmsPage.set(1); }
+  protected onBannerSearch(term: string): void { this.bannerSearch.set(term); this.bannerPage.set(1); }
 
   protected goToCmsPage(page: number): void { if (page >= 1 && page <= this.cmsTotalPages()) this.cmsPage.set(page); }
   protected goToBannerPage(page: number): void { if (page >= 1 && page <= this.bannerTotalPages()) this.bannerPage.set(page); }

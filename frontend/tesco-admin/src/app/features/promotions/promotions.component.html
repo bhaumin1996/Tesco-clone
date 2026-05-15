@@ -47,6 +47,11 @@
 }
 
 <div class="admin-card">
+  <div class="admin-search-bar">
+    <i class="bi bi-search admin-search-bar__icon"></i>
+    <input class="admin-search-bar__input" type="search" placeholder="Search by name or type…" [value]="searchQuery()" (input)="onSearch($any($event.target).value)" />
+  </div>
+
   @if (loading()) {
     <p class="admin-loading">Loading…</p>
   } @else {
@@ -81,7 +86,7 @@
     @if (totalPages() > 1) {
       <div class="admin-pagination">
         <span class="admin-pagination__info">
-          Showing {{ (currentPage() - 1) * pageSize + 1 }}–{{ currentPage() * pageSize < promotions().length ? currentPage() * pageSize : promotions().length }} of {{ promotions().length }}
+          Showing {{ (currentPage() - 1) * pageSize + 1 }}–{{ currentPage() * pageSize < filteredPromotions().length ? currentPage() * pageSize : filteredPromotions().length }} of {{ filteredPromotions().length }}
         </span>
         <div class="admin-pagination__controls">
           <button class="pagination-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)"><i class="bi bi-chevron-left"></i></button>

@@ -38,12 +38,22 @@ export class AdminCategoriesComponent implements OnInit {
   protected messageType = signal<'success' | 'error'>('success');
   protected saving = signal(false);
 
+  protected searchQuery = signal('');
+
   protected readonly pageSize = 10;
   protected currentPage = signal(1);
-  protected totalPages = computed(() => Math.max(1, Math.ceil(this.categories().length / this.pageSize)));
+  protected filteredCategories = computed(() => {
+    const q = this.searchQuery().toLowerCase();
+    return q ? this.categories().filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.slug.toLowerCase().includes(q) ||
+      c.departmentName.toLowerCase().includes(q)
+    ) : this.categories();
+  });
+  protected totalPages = computed(() => Math.max(1, Math.ceil(this.filteredCategories().length / this.pageSize)));
   protected pagedCategories = computed(() => {
     const start = (this.currentPage() - 1) * this.pageSize;
-    return this.categories().slice(start, start + this.pageSize);
+    return this.filteredCategories().slice(start, start + this.pageSize);
   });
   protected pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
 
@@ -67,6 +77,8 @@ export class AdminCategoriesComponent implements OnInit {
       error: () => this.loading.set(false)
     });
   }
+
+  protected onSearch(term: string): void { this.searchQuery.set(term); this.currentPage.set(1); }
 
   protected goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages()) this.currentPage.set(page);

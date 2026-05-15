@@ -32,10 +32,19 @@ export class AdminPromotionsComponent implements OnInit {
   protected editId = signal<number | null>(null);
   protected message = signal('');
 
+  protected searchQuery = signal('');
+
   protected readonly pageSize = 10;
   protected currentPage = signal(1);
-  protected totalPages = computed(() => Math.max(1, Math.ceil(this.promotions().length / this.pageSize)));
-  protected pagedPromotions = computed(() => { const s = (this.currentPage() - 1) * this.pageSize; return this.promotions().slice(s, s + this.pageSize); });
+  protected filteredPromotions = computed(() => {
+    const q = this.searchQuery().toLowerCase();
+    return q ? this.promotions().filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.type.toLowerCase().includes(q)
+    ) : this.promotions();
+  });
+  protected totalPages = computed(() => Math.max(1, Math.ceil(this.filteredPromotions().length / this.pageSize)));
+  protected pagedPromotions = computed(() => { const s = (this.currentPage() - 1) * this.pageSize; return this.filteredPromotions().slice(s, s + this.pageSize); });
   protected pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
 
   protected form = this._fb.group({
@@ -59,6 +68,8 @@ export class AdminPromotionsComponent implements OnInit {
       error: () => this.loading.set(false)
     });
   }
+
+  protected onSearch(term: string): void { this.searchQuery.set(term); this.currentPage.set(1); }
 
   protected goToPage(page: number): void { if (page >= 1 && page <= this.totalPages()) this.currentPage.set(page); }
 

@@ -75,6 +75,10 @@
 } @else {
   @if (activeTab() === 'pages') {
     <div class="admin-card">
+      <div class="admin-search-bar">
+        <i class="bi bi-search admin-search-bar__icon"></i>
+        <input class="admin-search-bar__input" type="search" placeholder="Search by title or slug…" [value]="cmsSearch()" (input)="onCmsSearch($any($event.target).value)" />
+      </div>
       <table class="admin-table">
         <thead><tr><th>Title</th><th>Slug</th><th>Status</th><th>Last Updated</th><th>Actions</th></tr></thead>
         <tbody>
@@ -102,7 +106,7 @@
       @if (cmsTotalPages() > 1) {
         <div class="admin-pagination">
           <span class="admin-pagination__info">
-            Showing {{ (cmsPage() - 1) * pageSize + 1 }}–{{ cmsPage() * pageSize < pages().length ? cmsPage() * pageSize : pages().length }} of {{ pages().length }}
+            Showing {{ (cmsPage() - 1) * pageSize + 1 }}–{{ cmsPage() * pageSize < filteredPages().length ? cmsPage() * pageSize : filteredPages().length }} of {{ filteredPages().length }}
           </span>
           <div class="admin-pagination__controls">
             <button class="pagination-btn" [disabled]="cmsPage() === 1" (click)="goToCmsPage(cmsPage() - 1)"><i class="bi bi-chevron-left"></i></button>
@@ -118,6 +122,10 @@
 
   @if (activeTab() === 'banners') {
     <div class="admin-card">
+      <div class="admin-search-bar">
+        <i class="bi bi-search admin-search-bar__icon"></i>
+        <input class="admin-search-bar__input" type="search" placeholder="Search by banner title…" [value]="bannerSearch()" (input)="onBannerSearch($any($event.target).value)" />
+      </div>
       <table class="admin-table">
         <thead><tr><th>Position</th><th>Title</th><th>Link</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>
@@ -143,7 +151,7 @@
       @if (bannerTotalPages() > 1) {
         <div class="admin-pagination">
           <span class="admin-pagination__info">
-            Showing {{ (bannerPage() - 1) * pageSize + 1 }}–{{ bannerPage() * pageSize < banners().length ? bannerPage() * pageSize : banners().length }} of {{ banners().length }}
+            Showing {{ (bannerPage() - 1) * pageSize + 1 }}–{{ bannerPage() * pageSize < filteredBanners().length ? bannerPage() * pageSize : filteredBanners().length }} of {{ filteredBanners().length }}
           </span>
           <div class="admin-pagination__controls">
             <button class="pagination-btn" [disabled]="bannerPage() === 1" (click)="goToBannerPage(bannerPage() - 1)"><i class="bi bi-chevron-left"></i></button>

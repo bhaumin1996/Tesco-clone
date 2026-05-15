@@ -73,6 +73,11 @@
 }
 
 <div class="admin-card">
+  <div class="admin-search-bar">
+    <i class="bi bi-search admin-search-bar__icon"></i>
+    <input class="admin-search-bar__input" type="search" placeholder="Search by name, slug or department…" [value]="searchQuery()" (input)="onSearch($any($event.target).value)" />
+  </div>
+
   @if (loading()) {
     <p class="admin-loading">Loading categories…</p>
   } @else {
@@ -135,7 +140,7 @@
     @if (totalPages() > 1) {
       <div class="admin-pagination">
         <span class="admin-pagination__info">
-          Showing {{ (currentPage() - 1) * pageSize + 1 }}–{{ currentPage() * pageSize < categories().length ? currentPage() * pageSize : categories().length }} of {{ categories().length }}
+          Showing {{ (currentPage() - 1) * pageSize + 1 }}–{{ currentPage() * pageSize < filteredCategories().length ? currentPage() * pageSize : filteredCategories().length }} of {{ filteredCategories().length }}
         </span>
         <div class="admin-pagination__controls">
           <button class="pagination-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">

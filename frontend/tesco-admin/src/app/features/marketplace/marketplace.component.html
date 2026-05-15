@@ -16,6 +16,10 @@
 } @else {
   @if (activeTab() === 'sellers') {
     <div class="admin-card">
+      <div class="admin-search-bar">
+        <i class="bi bi-search admin-search-bar__icon"></i>
+        <input class="admin-search-bar__input" type="search" placeholder="Search by business name or email…" [value]="sellerSearch()" (input)="onSellerSearch($any($event.target).value)" />
+      </div>
       <table class="admin-table">
         <thead>
           <tr><th>Business</th><th>Email</th><th>Status</th><th>Listings</th><th>Joined</th><th>Actions</th></tr>
@@ -48,7 +52,7 @@
       @if (sellerTotalPages() > 1) {
         <div class="admin-pagination">
           <span class="admin-pagination__info">
-            Showing {{ (sellerPage() - 1) * pageSize + 1 }}–{{ sellerPage() * pageSize < sellers().length ? sellerPage() * pageSize : sellers().length }} of {{ sellers().length }}
+            Showing {{ (sellerPage() - 1) * pageSize + 1 }}–{{ sellerPage() * pageSize < filteredSellers().length ? sellerPage() * pageSize : filteredSellers().length }} of {{ filteredSellers().length }}
           </span>
           <div class="admin-pagination__controls">
             <button class="pagination-btn" [disabled]="sellerPage() === 1" (click)="goToSellerPage(sellerPage() - 1)"><i class="bi bi-chevron-left"></i></button>
@@ -64,6 +68,10 @@
 
   @if (activeTab() === 'disputes') {
     <div class="admin-card">
+      <div class="admin-search-bar">
+        <i class="bi bi-search admin-search-bar__icon"></i>
+        <input class="admin-search-bar__input" type="search" placeholder="Search by seller name or reason…" [value]="disputeSearch()" (input)="onDisputeSearch($any($event.target).value)" />
+      </div>
       <table class="admin-table">
         <thead>
           <tr><th>Dispute #</th><th>Order #</th><th>Seller</th><th>Reason</th><th>Status</th><th>Date</th><th>Actions</th></tr>
@@ -95,7 +103,7 @@
       @if (disputeTotalPages() > 1) {
         <div class="admin-pagination">
           <span class="admin-pagination__info">
-            Showing {{ (disputePage() - 1) * pageSize + 1 }}–{{ disputePage() * pageSize < disputes().length ? disputePage() * pageSize : disputes().length }} of {{ disputes().length }}
+            Showing {{ (disputePage() - 1) * pageSize + 1 }}–{{ disputePage() * pageSize < filteredDisputes().length ? disputePage() * pageSize : filteredDisputes().length }} of {{ filteredDisputes().length }}
           </span>
           <div class="admin-pagination__controls">
             <button class="pagination-btn" [disabled]="disputePage() === 1" (click)="goToDisputePage(disputePage() - 1)"><i class="bi bi-chevron-left"></i></button>
