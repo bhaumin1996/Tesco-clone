@@ -41,4 +41,83 @@ public sealed class AnalyticsRepository : IAnalyticsRepository
 
         return new DashboardStatsDto(0, 0m, 0, 0, 0, 0);
     }
+
+    public async Task<SalesAnalyticsDto> GetSalesAnalyticsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+
+        using var command = connection.CreateCommand();
+        command.CommandType = System.Data.CommandType.StoredProcedure;
+        command.CommandText = "proc_Analytics_GetSalesAnalytics";
+        command.Parameters.Add(new SqlParameter("@From", System.Data.SqlDbType.DateTime2) { Value = from });
+        command.Parameters.Add(new SqlParameter("@To", System.Data.SqlDbType.DateTime2) { Value = to });
+
+        using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        decimal totalRevenue = 0m;
+        int totalOrders = 0;
+        int newCustomers = 0;
+        int returningCustomers = 0;
+
+        if (await reader.ReadAsync(cancellationToken))
+        {
+            totalRevenue = SqlHelper.GetValue<decimal>(reader, "TotalRevenue");
+            totalOrders = SqlHelper.GetValue<int>(reader, "TotalOrders");
+            newCustomers = SqlHelper.GetValue<int>(reader, "NewCustomers");
+            returningCustomers = SqlHelper.GetValue<int>(reader, "ReturningCustomers");
+        }
+
+        var dailySales = new List<DailySalesDto>();
+        if (await reader.NextResultAsync(cancellationToken))
+        {
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                dailySales.Add(new DailySalesDto(
+                    Date: DateOnly.FromDateTime(SqlHelper.GetValue<DateTime>(reader, "Date")),
+                    Orders: SqlHelper.GetValue<int>(reader, "Orders"),
+                    Revenue: SqlHelper.GetValue<decimal>(reader, "Revenue")));
+            }
+        }
+
+        var averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0m;
+
+        return new SalesAnalyticsDto(
+            FromDate: from,
+            ToDate: to,
+            TotalRevenue: totalRevenue,
+            TotalOrders: totalOrders,
+            AverageOrderValue: averageOrderValue,
+            NewCustomers: newCustomers,
+            ReturningCustomers: returningCustomers,
+            DailySales: dailySales);
+    }
+
+    public async Task<IReadOnlyList<TopProductDto>> GetTopProductsAsync(DateTime from, DateTime to, int top, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+
+        using var command = connection.CreateCommand();
+        command.CommandType = System.Data.CommandType.StoredProcedure;
+        command.CommandText = "proc_Analytics_GetTopProducts";
+        command.Parameters.Add(new SqlParameter("@From", System.Data.SqlDbType.DateTime2) { Value = from });
+        command.Parameters.Add(new SqlParameter("@To", System.Data.SqlDbType.DateTime2) { Value = to });
+        command.Parameters.Add(new SqlParameter("@Top", System.Data.SqlDbType.Int) { Value = top });
+
+        using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        var results = new List<TopProductDto>();
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            results.Add(new TopProductDto(
+                ProductId: SqlHelper.GetValue<int>(reader, "ProductId"),
+                ProductName: SqlHelper.GetValue<string>(reader, "ProductName"),
+                ImageUrl: SqlHelper.GetNullableString(reader, "ImageUrl"),
+                TotalUnitsSold: SqlHelper.GetValue<int>(reader, "TotalUnitsSold"),
+                TotalRevenue: SqlHelper.GetValue<decimal>(reader, "TotalRevenue")));
+        }
+
+        return results;
+    }
 }

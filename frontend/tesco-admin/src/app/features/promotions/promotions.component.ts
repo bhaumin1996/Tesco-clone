@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -32,6 +32,12 @@ export class AdminPromotionsComponent implements OnInit {
   protected editId = signal<number | null>(null);
   protected message = signal('');
 
+  protected readonly pageSize = 10;
+  protected currentPage = signal(1);
+  protected totalPages = computed(() => Math.max(1, Math.ceil(this.promotions().length / this.pageSize)));
+  protected pagedPromotions = computed(() => { const s = (this.currentPage() - 1) * this.pageSize; return this.promotions().slice(s, s + this.pageSize); });
+  protected pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+
   protected form = this._fb.group({
     name: ['', Validators.required],
     type: ['Percentage', Validators.required],
@@ -49,10 +55,12 @@ export class AdminPromotionsComponent implements OnInit {
   private _load(): void {
     this.loading.set(true);
     this._http.get<Promotion[]>(this._base).subscribe({
-      next: r => { this.promotions.set(r); this.loading.set(false); },
+      next: r => { this.promotions.set(r); this.currentPage.set(1); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
   }
+
+  protected goToPage(page: number): void { if (page >= 1 && page <= this.totalPages()) this.currentPage.set(page); }
 
   protected openCreate(): void { this.editId.set(null); this.form.reset({ type: 'Percentage', discountValue: 0 }); this.showForm.set(true); }
 

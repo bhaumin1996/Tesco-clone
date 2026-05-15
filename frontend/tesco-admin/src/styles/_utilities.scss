@@ -52,14 +52,26 @@
 // ── Pagination ────────────────────────────────────────────────────────────
 .admin-pagination {
   display: flex;
-  gap: 0.25rem;
-  justify-content: flex-end;
   align-items: center;
-  padding: 1rem 1.25rem;
+  justify-content: space-between;
+  padding: 12px 16px;
   border-top: 1px solid $color-border;
+  gap: 12px;
+
+  &__info {
+    font-size: 0.875rem;
+    color: $color-muted;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 }
 
-.page-btn {
+.page-btn,
+.pagination-btn {
   background: $color-surface;
   border: 1.5px solid $color-border;
   border-radius: 6px;
@@ -76,12 +88,24 @@
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
   font-family: $font-family-base;
 
-  &:hover { border-color: $color-accent; color: $color-accent; background: $color-accent-light; }
-  &.active {
+  &:hover:not(:disabled):not(.active):not(.pagination-btn--active) {
+    border-color: $color-accent;
+    color: $color-accent;
+    background: $color-accent-light;
+  }
+
+  &.active,
+  &.pagination-btn--active {
     background: $color-accent;
     border-color: $color-accent;
     color: #fff;
     font-weight: 700;
+    cursor: default;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
 }
 
@@ -143,6 +167,17 @@
     }
   }
 }
+
+.actions-cell {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+.text-left { text-align: left !important; }
 
 .delete-confirm {
   font-size: 0.8125rem;

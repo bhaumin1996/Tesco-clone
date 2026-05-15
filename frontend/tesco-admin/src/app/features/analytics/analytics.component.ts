@@ -5,18 +5,28 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 interface SalesReport {
-  period: string;
+  fromDate: string;
+  toDate: string;
   totalOrders: number;
   totalRevenue: number;
   averageOrderValue: number;
   newCustomers: number;
   returningCustomers: number;
+  dailySales: DailySales[];
+}
+
+interface DailySales {
+  date: string;
+  orders: number;
+  revenue: number;
 }
 
 interface TopProduct {
+  productId: number;
   productName: string;
-  unitsSold: number;
-  revenue: number;
+  imageUrl: string | null;
+  totalUnitsSold: number;
+  totalRevenue: number;
 }
 
 @Component({

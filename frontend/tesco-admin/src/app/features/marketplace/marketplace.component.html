@@ -21,20 +21,22 @@
           <tr><th>Business</th><th>Email</th><th>Status</th><th>Listings</th><th>Joined</th><th>Actions</th></tr>
         </thead>
         <tbody>
-          @for (s of sellers(); track s.sellerId) {
+          @for (s of pagedSellers(); track s.sellerId) {
             <tr>
               <td>{{ s.businessName }}</td>
               <td>{{ s.email }}</td>
               <td><span class="status-badge status--{{ s.status | lowercase }}">{{ s.status }}</span></td>
               <td>{{ s.totalListings }}</td>
               <td>{{ s.joinedOn | date:'dd MMM yyyy' }}</td>
-              <td class="actions-cell">
-                @if (s.status !== 'Active') {
-                  <button class="table-btn table-btn--success" (click)="approveSeller(s.sellerId)">Approve</button>
-                }
-                @if (s.status === 'Active') {
-                  <button class="table-btn table-btn--danger" (click)="suspendSeller(s.sellerId)">Suspend</button>
-                }
+              <td>
+                <div class="actions-cell">
+                  @if (s.status !== 'Active') {
+                    <button class="table-btn table-btn--success" (click)="approveSeller(s.sellerId)">Approve</button>
+                  }
+                  @if (s.status === 'Active') {
+                    <button class="table-btn table-btn--danger" (click)="suspendSeller(s.sellerId)">Suspend</button>
+                  }
+                </div>
               </td>
             </tr>
           } @empty {
@@ -42,6 +44,21 @@
           }
         </tbody>
       </table>
+
+      @if (sellerTotalPages() > 1) {
+        <div class="admin-pagination">
+          <span class="admin-pagination__info">
+            Showing {{ (sellerPage() - 1) * pageSize + 1 }}–{{ sellerPage() * pageSize < sellers().length ? sellerPage() * pageSize : sellers().length }} of {{ sellers().length }}
+          </span>
+          <div class="admin-pagination__controls">
+            <button class="pagination-btn" [disabled]="sellerPage() === 1" (click)="goToSellerPage(sellerPage() - 1)"><i class="bi bi-chevron-left"></i></button>
+            @for (p of sellerPageNumbers(); track p) {
+              <button class="pagination-btn" [class.pagination-btn--active]="p === sellerPage()" (click)="goToSellerPage(p)">{{ p }}</button>
+            }
+            <button class="pagination-btn" [disabled]="sellerPage() === sellerTotalPages()" (click)="goToSellerPage(sellerPage() + 1)"><i class="bi bi-chevron-right"></i></button>
+          </div>
+        </div>
+      }
     </div>
   }
 
@@ -52,7 +69,7 @@
           <tr><th>Dispute #</th><th>Order #</th><th>Seller</th><th>Reason</th><th>Status</th><th>Date</th><th>Actions</th></tr>
         </thead>
         <tbody>
-          @for (d of disputes(); track d.disputeId) {
+          @for (d of pagedDisputes(); track d.disputeId) {
             <tr>
               <td>#{{ d.disputeId }}</td>
               <td>#{{ d.orderId }}</td>
@@ -60,11 +77,13 @@
               <td>{{ d.reason }}</td>
               <td><span class="status-badge status--{{ d.status | lowercase }}">{{ d.status }}</span></td>
               <td>{{ d.createdOn | date:'dd MMM yyyy' }}</td>
-              <td class="actions-cell">
-                @if (d.status === 'Open') {
-                  <button class="table-btn table-btn--success" (click)="resolveDispute(d.disputeId, 'BuyerFavour')">Buyer favour</button>
-                  <button class="table-btn table-btn--danger" (click)="resolveDispute(d.disputeId, 'SellerFavour')">Seller favour</button>
-                }
+              <td>
+                <div class="actions-cell">
+                  @if (d.status === 'Open') {
+                    <button class="table-btn table-btn--success" (click)="resolveDispute(d.disputeId, 'BuyerFavour')">Buyer favour</button>
+                    <button class="table-btn table-btn--danger" (click)="resolveDispute(d.disputeId, 'SellerFavour')">Seller favour</button>
+                  }
+                </div>
               </td>
             </tr>
           } @empty {
@@ -72,6 +91,21 @@
           }
         </tbody>
       </table>
+
+      @if (disputeTotalPages() > 1) {
+        <div class="admin-pagination">
+          <span class="admin-pagination__info">
+            Showing {{ (disputePage() - 1) * pageSize + 1 }}–{{ disputePage() * pageSize < disputes().length ? disputePage() * pageSize : disputes().length }} of {{ disputes().length }}
+          </span>
+          <div class="admin-pagination__controls">
+            <button class="pagination-btn" [disabled]="disputePage() === 1" (click)="goToDisputePage(disputePage() - 1)"><i class="bi bi-chevron-left"></i></button>
+            @for (p of disputePageNumbers(); track p) {
+              <button class="pagination-btn" [class.pagination-btn--active]="p === disputePage()" (click)="goToDisputePage(p)">{{ p }}</button>
+            }
+            <button class="pagination-btn" [disabled]="disputePage() === disputeTotalPages()" (click)="goToDisputePage(disputePage() + 1)"><i class="bi bi-chevron-right"></i></button>
+          </div>
+        </div>
+      }
     </div>
   }
 }

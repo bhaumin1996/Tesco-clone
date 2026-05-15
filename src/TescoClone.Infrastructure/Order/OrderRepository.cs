@@ -69,6 +69,7 @@ public sealed class OrderRepository : IOrderRepository
                     Total = SqlHelper.GetValue<decimal>(reader, "Total"),
                     CreatedAt = SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
                     TotalCount = SqlHelper.GetValue<int>(reader, "TotalCount"),
+                    CustomerName = SqlHelper.GetValue<string?>(reader, "CustomerName"),
                     Item = new OrderLineDto(
                         SqlHelper.GetValue<int>(reader, "OrderLineId"),
                         SqlHelper.GetValue<int>(reader, "ProductVariantId"),
@@ -101,7 +102,8 @@ public sealed class OrderRepository : IOrderRepository
                         first.Total,
                         null,
                         g.Select(r => r.Item).ToList(),
-                        first.CreatedAt);
+                        first.CreatedAt,
+                        first.CustomerName);
                 })
                 .ToList();
 
@@ -176,6 +178,7 @@ public sealed class OrderRepository : IOrderRepository
                 Total = SqlHelper.GetValue<decimal>(reader, "Total"),
                 DeliveryAddress = SqlHelper.GetValue<string?>(reader, "DeliveryAddress"),
                 CreatedAt = SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
+                CustomerName = SqlHelper.GetValue<string?>(reader, "CustomerName"),
                 Item = new OrderLineDto(
                     SqlHelper.GetValue<int>(reader, "OrderLineId"),
                     SqlHelper.GetValue<int>(reader, "ProductVariantId"),
@@ -201,6 +204,7 @@ public sealed class OrderRepository : IOrderRepository
             first.Total,
             first.DeliveryAddress,
             rows.Select(r => r.Item).ToList(),
-            first.CreatedAt);
+            first.CreatedAt,
+            first.CustomerName);
     }
 }

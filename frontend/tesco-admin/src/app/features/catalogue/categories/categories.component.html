@@ -80,6 +80,7 @@
       <table class="admin-table table table-hover align-middle mb-0">
         <thead>
           <tr>
+            <th class="col-seq">#</th>
             <th>Image</th>
             <th>Name</th>
             <th>Slug</th>
@@ -90,8 +91,9 @@
           </tr>
         </thead>
         <tbody>
-          @for (cat of categories(); track cat.categoryId) {
+          @for (cat of pagedCategories(); track cat.categoryId; let i = $index) {
             <tr>
+              <td class="col-seq text-muted">{{ rowIndex(i) }}</td>
               <td class="cat-thumb-cell">
                 @if (cat.imageUrl) {
                   <img [src]="cat.imageUrl" [alt]="cat.name" class="cat-thumb" />
@@ -110,22 +112,45 @@
                   {{ cat.isActive ? 'Active' : 'Inactive' }}
                 </span>
               </td>
-              <td class="actions-cell">
-                <button class="table-btn" (click)="openEdit(cat)">
-                  <i class="bi bi-pencil me-1"></i>Edit
-                </button>
-                @if (cat.isActive) {
-                  <button class="table-btn table-btn--danger" (click)="deactivate(cat.categoryId)">
-                    <i class="bi bi-slash-circle me-1"></i>Deactivate
+              <td>
+                <div class="actions-cell">
+                  <button class="table-btn" (click)="openEdit(cat)">
+                    <i class="bi bi-pencil me-1"></i>Edit
                   </button>
-                }
+                  @if (cat.isActive) {
+                    <button class="table-btn table-btn--danger" (click)="deactivate(cat.categoryId)">
+                      <i class="bi bi-slash-circle me-1"></i>Deactivate
+                    </button>
+                  }
+                </div>
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="7" class="admin-empty">No categories found.</td></tr>
+            <tr><td colspan="8" class="admin-empty">No categories found.</td></tr>
           }
         </tbody>
       </table>
     </div>
+
+    @if (totalPages() > 1) {
+      <div class="admin-pagination">
+        <span class="admin-pagination__info">
+          Showing {{ (currentPage() - 1) * pageSize + 1 }}–{{ currentPage() * pageSize < categories().length ? currentPage() * pageSize : categories().length }} of {{ categories().length }}
+        </span>
+        <div class="admin-pagination__controls">
+          <button class="pagination-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          @for (p of pageNumbers(); track p) {
+            <button class="pagination-btn" [class.pagination-btn--active]="p === currentPage()" (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+          <button class="pagination-btn" [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    }
   }
 </div>

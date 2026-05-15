@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -38,6 +38,15 @@ export class AdminCategoriesComponent implements OnInit {
   protected messageType = signal<'success' | 'error'>('success');
   protected saving = signal(false);
 
+  protected readonly pageSize = 10;
+  protected currentPage = signal(1);
+  protected totalPages = computed(() => Math.max(1, Math.ceil(this.categories().length / this.pageSize)));
+  protected pagedCategories = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.categories().slice(start, start + this.pageSize);
+  });
+  protected pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+
   protected form = this._fb.group({
     name: ['', Validators.required],
     departmentId: [0, [Validators.required, Validators.min(1)]],
@@ -54,9 +63,17 @@ export class AdminCategoriesComponent implements OnInit {
   private _loadAll(): void {
     this.loading.set(true);
     this._http.get<Category[]>(`${this._base}/categories`).subscribe({
-      next: c => { this.categories.set(c); this.loading.set(false); },
+      next: c => { this.categories.set(c); this.currentPage.set(1); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
+  }
+
+  protected goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) this.currentPage.set(page);
+  }
+
+  protected rowIndex(indexOnPage: number): number {
+    return (this.currentPage() - 1) * this.pageSize + indexOnPage + 1;
   }
 
   protected openCreate(): void {

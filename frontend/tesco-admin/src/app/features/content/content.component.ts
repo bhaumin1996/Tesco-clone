@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -42,6 +42,17 @@ export class AdminContentComponent implements OnInit {
   protected editId = signal<number | null>(null);
   protected message = signal('');
 
+  protected readonly pageSize = 10;
+  protected cmsPage = signal(1);
+  protected cmsTotalPages = computed(() => Math.max(1, Math.ceil(this.pages().length / this.pageSize)));
+  protected pagedCmsPages = computed(() => { const s = (this.cmsPage() - 1) * this.pageSize; return this.pages().slice(s, s + this.pageSize); });
+  protected cmsPageNumbers = computed(() => Array.from({ length: this.cmsTotalPages() }, (_, i) => i + 1));
+
+  protected bannerPage = signal(1);
+  protected bannerTotalPages = computed(() => Math.max(1, Math.ceil(this.banners().length / this.pageSize)));
+  protected pagedBanners = computed(() => { const s = (this.bannerPage() - 1) * this.pageSize; return this.banners().slice(s, s + this.pageSize); });
+  protected bannerPageNumbers = computed(() => Array.from({ length: this.bannerTotalPages() }, (_, i) => i + 1));
+
   protected pageForm = this._fb.group({
     title: ['', Validators.required],
     slug: ['', Validators.required],
@@ -61,12 +72,15 @@ export class AdminContentComponent implements OnInit {
 
   private _load(): void {
     this.loading.set(true);
-    this._http.get<CmsPage[]>(`${this._base}/pages`).subscribe({ next: p => this.pages.set(p) });
+    this._http.get<CmsPage[]>(`${this._base}/pages`).subscribe({ next: p => { this.pages.set(p); this.cmsPage.set(1); } });
     this._http.get<Banner[]>(`${this._base}/banners`).subscribe({
-      next: b => { this.banners.set(b); this.loading.set(false); },
+      next: b => { this.banners.set(b); this.bannerPage.set(1); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
   }
+
+  protected goToCmsPage(page: number): void { if (page >= 1 && page <= this.cmsTotalPages()) this.cmsPage.set(page); }
+  protected goToBannerPage(page: number): void { if (page >= 1 && page <= this.bannerTotalPages()) this.bannerPage.set(page); }
 
   protected openPageForm(page?: CmsPage): void {
     this.formType.set('page');

@@ -54,11 +54,11 @@
       <table class="admin-table">
         <thead><tr><th>Product</th><th>Units Sold</th><th>Revenue</th></tr></thead>
         <tbody>
-          @for (p of topProducts(); track p.productName) {
+          @for (p of topProducts(); track p.productId) {
             <tr>
               <td>{{ p.productName }}</td>
-              <td>{{ p.unitsSold }}</td>
-              <td>£{{ p.revenue | number:'1.2-2' }}</td>
+              <td>{{ p.totalUnitsSold }}</td>
+              <td>£{{ p.totalRevenue | number:'1.2-2' }}</td>
             </tr>
           }
         </tbody>
