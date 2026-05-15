@@ -109,6 +109,10 @@ export class CategoryComponent implements OnInit {
       this.departmentName.set(dept.name);
       this._catalogue.getCategories(dept.id).subscribe(cats => {
         this.categories.set(cats);
+        // If no category is selected, select the first one by default
+        if (this.categoryId() === 0 && cats.length > 0) {
+          this.selectCategory(cats[0]);
+        }
       });
     });
   }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,20 +16,44 @@ import { CartService } from '../../../core/services/cart.service';
 })
 export class HeaderComponent {
   private readonly _router = inject(Router);
+  private readonly _elementRef = inject(ElementRef);
   protected readonly auth = inject(AuthService);
   protected readonly cart = inject(CartService);
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const clickedInside = this._elementRef.nativeElement.contains(event.target);
+    if (!clickedInside) {
+      this.accountMenuOpen.set(false);
+      this.mobileMenuOpen.set(false);
+      this.moreMenuOpen.set(false);
+    }
+  }
 
   protected searchQuery = signal('');
   protected mobileMenuOpen = signal(false);
   protected accountMenuOpen = signal(false);
+  protected moreMenuOpen = signal(false);
 
   protected search(): void {
     const q = this.searchQuery().trim();
     if (q) this._router.navigate(['/search'], { queryParams: { q } });
   }
 
-  protected toggleMobileMenu(): void { this.mobileMenuOpen.update(v => !v); }
-  protected toggleAccountMenu(): void { this.accountMenuOpen.update(v => !v); }
+  protected toggleMobileMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.mobileMenuOpen.update(v => !v);
+  }
+
+  protected toggleAccountMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.accountMenuOpen.update(v => !v);
+  }
+
+  protected toggleMoreMenu(event: MouseEvent): void {
+    event.stopPropagation();
+    this.moreMenuOpen.update(v => !v);
+  }
 
   protected logout(): void {
     this.accountMenuOpen.set(false);
@@ -48,4 +72,12 @@ export class HeaderComponent {
     { name: 'Home', slug: 'home' },
     { name: 'Electronics', slug: 'electronics' }
   ];
+
+  protected get visibleDepts() {
+    return this.departments.slice(0, 5);
+  }
+
+  protected get moreDepts() {
+    return this.departments.slice(5);
+  }
 }

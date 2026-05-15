@@ -50,7 +50,7 @@
       <div class="header__actions">
 
         <!-- Account -->
-        <div class="header__account" (click)="toggleAccountMenu()" (keydown.enter)="toggleAccountMenu()" tabindex="0" role="button" [attr.aria-expanded]="accountMenuOpen()">
+        <div class="header__account" (click)="toggleAccountMenu($event)" (keydown.enter)="toggleAccountMenu($any($event))" tabindex="0" role="button" [attr.aria-expanded]="accountMenuOpen()">
           <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
           </svg>
@@ -104,7 +104,7 @@
         </a>
 
         <!-- Mobile menu toggle -->
-        <button class="header__mobile-toggle" (click)="toggleMobileMenu()" [attr.aria-expanded]="mobileMenuOpen()" aria-label="Toggle navigation menu">
+        <button class="header__mobile-toggle" (click)="toggleMobileMenu($event)" [attr.aria-expanded]="mobileMenuOpen()" aria-label="Toggle navigation menu">
           @if (mobileMenuOpen()) {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -133,10 +133,25 @@
         <li><a routerLink="/offers" class="header__dept-link" routerLinkActive="active">Special Offers</a></li>
         <li><a routerLink="/account/clubcard" class="header__dept-link header__dept-link--clubcard" routerLinkActive="active">Clubcard</a></li>
         <li><a routerLink="/departments/clothing" class="header__dept-link" routerLinkActive="active">F&amp;F Clothing</a></li>
-        @for (dept of departments; track dept.slug) {
+        @for (dept of visibleDepts; track dept.slug) {
           <li><a [routerLink]="['/departments', dept.slug]" class="header__dept-link" routerLinkActive="active">{{ dept.name }}</a></li>
         }
-        <li><a routerLink="/recipes" class="header__dept-link" routerLinkActive="active">Recipes</a></li>
+        <li class="header__more-container">
+          <button class="header__dept-link header__more-btn" (click)="toggleMoreMenu($event)" [class.active]="moreMenuOpen()">
+            More
+            <svg class="header__more-icon" [class.open]="moreMenuOpen()" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+          @if (moreMenuOpen()) {
+            <div class="header__more-dropdown">
+              @for (dept of moreDepts; track dept.slug) {
+                <a [routerLink]="['/departments', dept.slug]" class="header__more-item" (click)="moreMenuOpen.set(false)">{{ dept.name }}</a>
+              }
+              <a routerLink="/recipes" class="header__more-item" (click)="moreMenuOpen.set(false)">Recipes</a>
+            </div>
+          }
+        </li>
       </ul>
     </div>
   </nav>

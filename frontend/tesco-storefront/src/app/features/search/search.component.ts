@@ -49,6 +49,7 @@ export class SearchComponent implements OnInit {
     this.loading.set(true);
     this._catalogue.search({
       query: this.query(),
+      brand: this.brandFilter(),
       pageNumber: this.currentPage(),
       pageSize: 24,
       sortBy: this.sortBy()

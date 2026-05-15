@@ -53,13 +53,13 @@ export class CatalogueService {
 
   search(req: SearchRequest) {
     let params = new HttpParams()
-      .set('query', req.query)
+      .set('searchTerm', req.query || '')
       .set('pageNumber', req.pageNumber)
       .set('pageSize', req.pageSize);
     if (req.departmentId) params = params.set('departmentId', req.departmentId);
     if (req.minPrice) params = params.set('minPrice', req.minPrice);
     if (req.maxPrice) params = params.set('maxPrice', req.maxPrice);
-    if (req.brand) params = params.set('brand', req.brand);
+    if (req.brand) params = params.set('brands', req.brand);
     if (req.sortBy) params = params.set('sortBy', req.sortBy);
     if (req.sortDirection) params = params.set('sortDirection', req.sortDirection);
     return this._http.get<PagedResult<ProductSummary>>(`${this.baseUrl}/products/search`, { params });

@@ -285,7 +285,7 @@
 .header__dept-nav {
   background: $color-surface-alt;
   border-bottom: 1px solid $color-border;
-  overflow: hidden;
+  overflow: visible;
 
   @media (max-width: $breakpoint-lg) {
     display: none;
@@ -303,9 +303,7 @@
 .header__dept-list {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  max-height: 5.25rem; // cap at 2 rows (~40px each)
-  overflow: hidden;
+  flex-wrap: nowrap;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -338,5 +336,50 @@
   &--clubcard {
     color: $color-clubcard-blue;
     font-weight: 700;
+  }
+}
+
+.header__more-container {
+  position: relative;
+}
+
+.header__more-btn {
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+}
+
+.header__more-icon {
+  transition: transform 0.2s ease;
+  &.open { transform: rotate(180deg); }
+}
+
+.header__more-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: 0 0 $radius-md $radius-md;
+  box-shadow: $shadow-popover;
+  min-width: 180px;
+  z-index: 250;
+  padding: $space-2 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.header__more-item {
+  padding: $space-2 $space-4;
+  color: $color-ink;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.1s ease, color 0.1s ease;
+
+  &:hover {
+    background: $color-surface-alt;
+    color: $color-tesco-blue;
+    text-decoration: none;
   }
 }

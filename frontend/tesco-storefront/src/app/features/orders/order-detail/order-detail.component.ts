@@ -50,9 +50,7 @@ export class OrderDetailComponent implements OnInit {
   }
 
   protected canCancel(order: Order): boolean {
-    if (order.status === 'Cancelled' || order.status === 'Delivered') return false;
-    const hoursElapsed = (Date.now() - new Date(order.createdAt).getTime()) / 3_600_000;
-    return hoursElapsed <= 24;
+    return order.status === 'Placed';
   }
 
   protected statusClass(status: OrderStatus): string {
