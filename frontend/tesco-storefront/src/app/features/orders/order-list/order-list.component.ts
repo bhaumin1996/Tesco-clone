@@ -37,7 +37,7 @@ export class OrderListComponent implements OnInit {
 
   protected statusClass(status: OrderStatus): string {
     const map: Record<OrderStatus, string> = {
-      Pending: 'pending',
+      Placed: 'pending',
       Confirmed: 'confirmed',
       Picking: 'picking',
       Packed: 'packed',

@@ -10,6 +10,19 @@
   font-size: 0.8125rem; background: #fff; cursor: pointer;
 }
 
+.order-status {
+  display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+
+  &--placed     { background: #e8f4fd; color: #1a6ea8; }
+  &--confirmed  { background: #e6f9f0; color: #1a7a46; }
+  &--picking    { background: #fff8e1; color: #b45309; }
+  &--delivery   { background: #ede9fe; color: #5b21b6; }
+  &--delivered  { background: #d1fae5; color: #065f46; }
+  &--cancelled  { background: #fee2e2; color: #991b1b; }
+  &--refunded   { background: #f3f4f6; color: #374151; }
+}
+
 .table-btn {
   background: none; border: 1px solid $color-border; border-radius: 4px; cursor: pointer;
   font-size: 0.8125rem; padding: 0.25rem 0.625rem;

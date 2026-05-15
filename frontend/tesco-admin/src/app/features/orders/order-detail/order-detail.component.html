@@ -1,0 +1,103 @@
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-header__title">Order Detail</h1>
+    <p class="admin-page-header__subtitle">Full information for this order.</p>
+  </div>
+  <a routerLink="/orders" class="button button--secondary button--sm">
+    <i class="bi bi-arrow-left me-1"></i>Back to Orders
+  </a>
+</div>
+
+@if (loading()) {
+  <p class="admin-loading">Loading order…</p>
+} @else if (error()) {
+  <div class="admin-alert admin-alert--error">{{ error() }}</div>
+} @else if (order()) {
+  @let o = order()!;
+
+  <!-- Header card -->
+  <div class="admin-card mb-4">
+    <div class="admin-card__header">
+      <span><i class="bi bi-receipt me-2"></i>{{ o.orderNumber }}</span>
+      <span class="status-badge status--{{ o.status | lowercase }}">{{ o.status }}</span>
+    </div>
+    <div class="order-meta">
+      <div class="order-meta__item">
+        <span class="order-meta__label">Customer</span>
+        <span class="order-meta__value">{{ o.customerName ?? '—' }}</span>
+      </div>
+      <div class="order-meta__item">
+        <span class="order-meta__label">Date</span>
+        <span class="order-meta__value">{{ o.createdAt | date:'dd MMM yyyy, HH:mm' }}</span>
+      </div>
+      @if (o.deliveryAddress) {
+        <div class="order-meta__item">
+          <span class="order-meta__label">Delivery Address</span>
+          <span class="order-meta__value">{{ o.deliveryAddress }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Items table -->
+  <div class="admin-card mb-4">
+    <div class="admin-card__header">
+      <span><i class="bi bi-box-seam me-2"></i>Items</span>
+    </div>
+    <div class="admin-table-wrap">
+      <table class="admin-table table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th class="text-end">Unit Price</th>
+            <th class="text-end">Qty</th>
+            <th class="text-end">Line Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of o.items; track item.id) {
+            <tr>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  @if (item.imageUrl) {
+                    <img [src]="item.imageUrl" [alt]="item.productName" class="order-item-img" />
+                  }
+                  <span>{{ item.productName }}</span>
+                </div>
+              </td>
+              <td class="text-end">£{{ item.price | number:'1.2-2' }}</td>
+              <td class="text-end">{{ item.quantity }}</td>
+              <td class="text-end fw-semibold">£{{ item.lineTotal | number:'1.2-2' }}</td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="admin-empty">No items found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Totals card -->
+  <div class="admin-card">
+    <div class="order-totals">
+      <div class="order-totals__row">
+        <span>Subtotal</span>
+        <span>£{{ o.subtotal | number:'1.2-2' }}</span>
+      </div>
+      <div class="order-totals__row">
+        <span>Delivery</span>
+        <span>£{{ o.deliveryCharge | number:'1.2-2' }}</span>
+      </div>
+      @if (o.clubcardSavings > 0) {
+        <div class="order-totals__row order-totals__row--saving">
+          <span>Clubcard savings</span>
+          <span>−£{{ o.clubcardSavings | number:'1.2-2' }}</span>
+        </div>
+      }
+      <div class="order-totals__row order-totals__row--total">
+        <span>Total</span>
+        <span>£{{ o.total | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+}

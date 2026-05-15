@@ -25,7 +25,7 @@ public sealed class Order : Entity
 
     public void Cancel()
     {
-        if (Status != OrderStatus.Pending && Status != OrderStatus.Confirmed)
+        if (Status != OrderStatus.Placed && Status != OrderStatus.Confirmed)
             throw new ConflictException($"Order cannot be cancelled in status {Status}.");
         Status = OrderStatus.Cancelled;
         ModifiedOn = DateTime.UtcNow;
@@ -33,8 +33,8 @@ public sealed class Order : Entity
 
     public void Confirm()
     {
-        if (Status != OrderStatus.Pending)
-            throw new ConflictException("Only pending orders can be confirmed.");
+        if (Status != OrderStatus.Placed)
+            throw new ConflictException("Only placed orders can be confirmed.");
         Status = OrderStatus.Confirmed;
         ModifiedOn = DateTime.UtcNow;
     }

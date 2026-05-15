@@ -25,6 +25,9 @@ public sealed class CancelOrderCommandHandler : IRequestHandler<CancelOrderComma
         if (order.Status is OrderStatus.Delivered or OrderStatus.Cancelled or OrderStatus.Refunded)
             throw new ConflictException($"Cannot cancel an order with status '{order.Status}'.");
 
+        if (DateTime.UtcNow - order.CreatedAt > TimeSpan.FromHours(24))
+            throw new ConflictException("Orders can only be cancelled within 24 hours of placing.");
+
         await _orderRepository.UpdateStatusAsync(request.OrderId, OrderStatus.Cancelled, _currentUser.UserId, cancellationToken);
     }
 }

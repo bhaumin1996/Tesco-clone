@@ -14,7 +14,7 @@ export interface Order {
   total: number;
 }
 
-export type OrderStatus = 'Pending' | 'Confirmed' | 'Picking' | 'Packed' | 'OutForDelivery' | 'Delivered' | 'Cancelled';
+export type OrderStatus = 'Placed' | 'Confirmed' | 'Picking' | 'Packed' | 'OutForDelivery' | 'Delivered' | 'Cancelled';
 
 export interface OrderItem {
   id: number;

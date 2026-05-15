@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -19,7 +20,7 @@ interface PagedResult<T> { items: T[]; totalPages: number; pageNumber: number; }
 @Component({
   selector: 'app-admin-orders',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -35,9 +36,32 @@ export class AdminOrdersComponent implements OnInit {
   protected selectedOrder = signal<OrderRow | null>(null);
   protected message = signal('');
 
-  protected filterForm = this._fb.group({ status: [''], search: [''] });
+  protected filterForm = this._fb.group({ search: [''] });
 
-  protected readonly statuses = ['Pending', 'Confirmed', 'Processing', 'Dispatched', 'Delivered', 'Cancelled', 'Refunded'];
+  protected readonly statuses = ['Placed', 'Confirmed', 'PickingInProgress', 'OutForDelivery', 'Delivered', 'Cancelled', 'Refunded'];
+
+  protected readonly statusLabels: Record<string, string> = {
+    Placed: 'Placed',
+    Confirmed: 'Confirmed',
+    PickingInProgress: 'Picking',
+    OutForDelivery: 'Out for delivery',
+    Delivered: 'Delivered',
+    Cancelled: 'Cancelled',
+    Refunded: 'Refunded'
+  };
+
+  protected getStatusLabel(status: string): string {
+    return (this.statusLabels as Record<string, string | undefined>)[status] ?? status;
+  }
+
+  protected statusBadgeClass(status: string): string {
+    const map: Record<string, string> = {
+      Placed: 'placed', Confirmed: 'confirmed', PickingInProgress: 'picking',
+      OutForDelivery: 'delivery', Delivered: 'delivered',
+      Cancelled: 'cancelled', Refunded: 'refunded'
+    };
+    return map[status] ?? 'placed';
+  }
 
   private get _base() { return `${environment.apiUrl}/admin/orders`; }
 
@@ -50,9 +74,8 @@ export class AdminOrdersComponent implements OnInit {
 
   private _load(): void {
     this.loading.set(true);
-    const { status, search } = this.filterForm.getRawValue();
+    const { search } = this.filterForm.getRawValue();
     const params: Record<string, string> = { pageNumber: String(this.currentPage()), pageSize: '20' };
-    if (status) params['status'] = status;
     if (search) params['search'] = search;
     this._http.get<PagedResult<OrderRow>>(this._base, { params }).subscribe({
       next: r => { this.orders.set(r.items); this.totalPages.set(r.totalPages); this.loading.set(false); },
@@ -63,7 +86,7 @@ export class AdminOrdersComponent implements OnInit {
   protected goTo(page: number): void { this.currentPage.set(page); this._load(); }
 
   protected updateStatus(orderId: number, status: string): void {
-    this._http.patch(`${this._base}/${orderId}/status`, { status }).subscribe({
+    this._http.put(`${this._base}/${orderId}/status`, { newStatus: status }).subscribe({
       next: () => {
         this.orders.update(list => list.map(o => o.id === orderId ? { ...o, status } : o));
         this.message.set('Status updated.');

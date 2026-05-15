@@ -2,7 +2,7 @@ namespace TescoClone.Domain.Enums;
 
 public enum OrderStatus : byte
 {
-    Pending = 1,
+    Placed = 1,
     Confirmed = 2,
     PickingInProgress = 3,
     OutForDelivery = 4,

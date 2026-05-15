@@ -6,6 +6,7 @@ using TescoClone.Application.Common.Abstractions;
 using TescoClone.Application.Order.Commands.ProcessRefund;
 using TescoClone.Application.Order.Commands.UpdateOrderStatus;
 using TescoClone.Application.Order.Queries.GetAllOrders;
+using TescoClone.Application.Order.Queries.GetOrderById;
 using TescoClone.Domain.Enums;
 
 namespace TescoClone.API.Controllers;
@@ -22,6 +23,17 @@ public sealed class AdminOrdersController : ControllerBase
     {
         _mediator = mediator;
         _currentUser = currentUser;
+    }
+
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetOrderById(int id, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetOrderByIdQuery(id), cancellationToken);
+        return Ok(result);
     }
 
     [HttpGet]

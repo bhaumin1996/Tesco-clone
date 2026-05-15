@@ -49,9 +49,15 @@ export class OrderDetailComponent implements OnInit {
     });
   }
 
+  protected canCancel(order: Order): boolean {
+    if (order.status === 'Cancelled' || order.status === 'Delivered') return false;
+    const hoursElapsed = (Date.now() - new Date(order.createdAt).getTime()) / 3_600_000;
+    return hoursElapsed <= 24;
+  }
+
   protected statusClass(status: OrderStatus): string {
     const map: Record<OrderStatus, string> = {
-      Pending: 'pending',
+      Placed: 'pending',
       Confirmed: 'confirmed',
       Picking: 'picking',
       Packed: 'packed',
