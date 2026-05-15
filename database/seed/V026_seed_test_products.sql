@@ -388,6 +388,13 @@ BEGIN TRY
 
             SET @ProdId = SCOPE_IDENTITY();
 
+            -- Insert default variant so AddToCart can resolve DefaultVariantId
+            IF NOT EXISTS (SELECT 1 FROM m.tblProductVariant WHERE ProductId = @ProdId AND IsDeleted = 0)
+                INSERT INTO m.tblProductVariant
+                    (ProductId, Sku, VariantName, PriceModifier, StockQuantity, RecordStatusId, CreatedBy, CreatedOn)
+                VALUES
+                    (@ProdId, 'SKU-' + CAST(@ProdId AS NVARCHAR(10)) + '-DEFAULT', 'Standard', 0, 100, 1, @Admin, GETUTCDATE());
+
             -- Insert default inventory record
             IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 't' AND TABLE_NAME = 'tblInventory')
             BEGIN

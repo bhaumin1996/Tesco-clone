@@ -5,11 +5,11 @@ export interface Order {
   createdAt: string;
   deliveryDate?: string;
   deliverySlot?: string;
-  address: DeliveryAddress;
+  deliveryAddress?: string;
   items: OrderItem[];
   subtotal: number;
   deliveryCharge: number;
-  promotionSavings: number;
+  promotionSavings?: number;
   clubcardSavings: number;
   total: number;
 }
@@ -24,15 +24,6 @@ export interface OrderItem {
   price: number;
   quantity: number;
   lineTotal: number;
-}
-
-export interface DeliveryAddress {
-  firstName: string;
-  lastName: string;
-  addressLine1: string;
-  addressLine2?: string;
-  city: string;
-  postcode: string;
 }
 
 export interface PlaceOrderRequest {

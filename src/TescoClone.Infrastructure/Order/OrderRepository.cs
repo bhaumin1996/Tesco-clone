@@ -99,6 +99,7 @@ public sealed class OrderRepository : IOrderRepository
                         first.DeliveryCharge,
                         first.ClubcardSavings,
                         first.Total,
+                        null,
                         g.Select(r => r.Item).ToList(),
                         first.CreatedAt);
                 })
@@ -173,6 +174,7 @@ public sealed class OrderRepository : IOrderRepository
                 DeliveryCharge = SqlHelper.GetValue<decimal>(reader, "DeliveryCharge"),
                 ClubcardSavings = SqlHelper.GetValue<decimal>(reader, "DiscountTotal"),
                 Total = SqlHelper.GetValue<decimal>(reader, "Total"),
+                DeliveryAddress = SqlHelper.GetValue<string?>(reader, "DeliveryAddress"),
                 CreatedAt = SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
                 Item = new OrderLineDto(
                     SqlHelper.GetValue<int>(reader, "OrderLineId"),
@@ -197,6 +199,7 @@ public sealed class OrderRepository : IOrderRepository
             first.DeliveryCharge,
             first.ClubcardSavings,
             first.Total,
+            first.DeliveryAddress,
             rows.Select(r => r.Item).ToList(),
             first.CreatedAt);
     }

@@ -86,6 +86,7 @@ public sealed class AdminOrderRepository : IAdminOrderRepository
             DeliveryCharge: SqlHelper.GetValue<decimal>(reader, "DeliveryCharge"),
             ClubcardSavings: SqlHelper.GetValue<decimal>(reader, "DiscountTotal"),
             Total: SqlHelper.GetValue<decimal>(reader, "Total"),
+            DeliveryAddress: null,
             Items: Array.Empty<OrderLineDto>(),
             CreatedAt: SqlHelper.GetValue<DateTime>(reader, "CreatedOn"));
 }

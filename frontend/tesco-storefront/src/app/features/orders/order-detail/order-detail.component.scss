@@ -1,10 +1,361 @@
 @use '../../../../styles/tokens' as *;
 @use '../../../../styles/mixins' as *;
 
-.order-detail-layout {
-  display: grid;
-  gap: $space-5;
-  margin-top: $space-4;
+// ── Page shell ────────────────────────────────────────────────────────────────
+.od-page {
+  flex: 1;
+  background: #f5f7fa;
+  padding: 2rem 1rem 3rem;
+  min-height: 100%;
+}
 
-  @include respond-to(lg) { grid-template-columns: 1fr 300px; align-items: start; }
+.od-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+// ── Loading / empty states ────────────────────────────────────────────────────
+.od-loading {
+  display: flex;
+  justify-content: center;
+  padding: 4rem 0;
+}
+
+.od-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 4rem 1rem;
+  text-align: center;
+
+  &__icon {
+    color: #cbd5e1;
+    margin-bottom: 0.5rem;
+  }
+
+  &__title {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  &__sub {
+    font-size: 0.875rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+  }
+}
+
+// ── Grid layout ───────────────────────────────────────────────────────────────
+.od-grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 1rem;
+
+  @include respond-to(lg) {
+    grid-template-columns: 1fr 300px;
+    align-items: start;
+  }
+}
+
+.od-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.od-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.od-card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 6px 24px rgba(0, 93, 170, 0.06);
+  padding: 1.375rem 1.5rem;
+
+  &--header {
+    border-left: 4px solid #005DAA;
+  }
+}
+
+// ── Section title inside cards ────────────────────────────────────────────────
+.od-section-title {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  svg {
+    color: #005DAA;
+    flex-shrink: 0;
+  }
+}
+
+// ── Order header ──────────────────────────────────────────────────────────────
+.od-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+
+  &__left { flex: 1; }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.2rem;
+
+    span { color: #005DAA; }
+  }
+
+  &__date {
+    font-size: 0.8125rem;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+  }
+
+  &__delivery {
+    font-size: 0.8125rem;
+    color: #374151;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+
+    svg { color: #005DAA; flex-shrink: 0; }
+  }
+}
+
+// ── Status badge ──────────────────────────────────────────────────────────────
+.od-status {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+
+  &--pending     { background: #fef3c7; color: #92400e; }
+  &--confirmed   { background: #dbeafe; color: #1e40af; }
+  &--picking     { background: #ede9fe; color: #5b21b6; }
+  &--packed      { background: #cffafe; color: #164e63; }
+  &--delivery    { background: #ffedd5; color: #9a3412; }
+  &--delivered   { background: #dcfce7; color: #14532d; }
+  &--cancelled   { background: #fee2e2; color: #991b1b; }
+}
+
+// ── Items list ────────────────────────────────────────────────────────────────
+.od-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.od-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child { border-bottom: none; padding-bottom: 0; }
+  &:first-child { padding-top: 0; }
+
+  &__img {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    background: #f8fafc;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__info { flex: 1; min-width: 0; }
+
+  &__name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__qty {
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+
+  &__total {
+    flex-shrink: 0;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+}
+
+// ── Delivery address ──────────────────────────────────────────────────────────
+.od-address {
+  font-style: normal;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #374151;
+}
+
+.od-no-data {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+// ── Order totals ──────────────────────────────────────────────────────────────
+.od-totals {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    font-size: 0.875rem;
+    color: #374151;
+
+    &--savings {
+      color: #005DAA;
+      font-weight: 600;
+    }
+
+    &--grand {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+      padding-top: 0.6rem;
+    }
+  }
+
+  &__divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 0.4rem 0;
+  }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+.od-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.od-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.375rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+
+  &--primary {
+    background: #005DAA;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 93, 170, 0.28);
+
+    &:hover { background: #003f7d; transform: translateY(-1px); }
+    &:active { transform: translateY(0); }
+  }
+
+  &--danger {
+    background: #dc2626;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.22);
+
+    &:hover:not(:disabled) { background: #b91c1c; transform: translateY(-1px); }
+    &:active:not(:disabled) { transform: translateY(0); }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+
+  &__spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: od-spin 0.7s linear infinite;
+  }
+}
+
+// ── Back link ─────────────────────────────────────────────────────────────────
+.od-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #005DAA;
+  text-decoration: none;
+  padding: 0.5rem 0;
+
+  &:hover {
+    text-decoration: underline;
+    color: #003f7d;
+  }
+}
+
+@keyframes od-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 520px) {
+  .od-page { padding: 1rem 0.75rem 2rem; }
+
+  .od-card { padding: 1.125rem 1.125rem; }
+
+  .od-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
 }

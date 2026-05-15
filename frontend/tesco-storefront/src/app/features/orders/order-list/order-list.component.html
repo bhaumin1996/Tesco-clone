@@ -1,37 +1,145 @@
-<div class="page-container page-content">
-  <app-breadcrumb [items]="[{ label: 'Home', url: '/' }, { label: 'Account', url: '/account' }, { label: 'My Orders' }]" />
-  <h1 style="font-size: 1.5rem; margin-bottom: 1.5rem">My Orders</h1>
+<div class="ol-page">
+  <div class="ol-wrap">
 
-  @if (loading()) {
-    <app-spinner size="lg" />
-  } @else if (!result()?.items?.length) {
-    <div style="text-align: center; padding: 3rem 0; color: #5f6368">
-      <p>You haven't placed any orders yet.</p>
-      <a routerLink="/departments" class="button button--primary" style="margin-top: 1rem">Start shopping</a>
+    <app-breadcrumb [items]="[
+      { label: 'Home', url: '/' },
+      { label: 'Account', url: '/account' },
+      { label: 'My Orders' }
+    ]" />
+
+    <!-- ── Page header ──────────────────────────────────── -->
+    <div class="ol-hero">
+      <div class="ol-hero__icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+      </div>
+      <div class="ol-hero__text">
+        <h1 class="ol-hero__title">My Orders</h1>
+        @if (!loading() && (result()?.totalCount ?? 0) > 0) {
+          <p class="ol-hero__sub">{{ result()!.totalCount }} order{{ result()!.totalCount !== 1 ? 's' : '' }} placed</p>
+        }
+      </div>
+      <a routerLink="/departments" class="ol-cta-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Shop now
+      </a>
     </div>
-  } @else {
-    <div class="orders-list">
-      @for (order of result()!.items; track order.id) {
-        <a [routerLink]="['/account/orders', order.id]" class="order-card card">
-          <div class="order-card__header">
-            <div>
-              <p class="order-card__number">Order #{{ order.orderNumber }}</p>
-              <p class="order-card__date">{{ order.createdAt | date:'d MMMM yyyy' }}</p>
+
+    <!-- ── Loading ─────────────────────────────────────── -->
+    @if (loading()) {
+      <div class="ol-loading">
+        <app-spinner size="lg" />
+        <p class="ol-loading__text">Loading your orders…</p>
+      </div>
+
+    } @else if (!result()?.items?.length) {
+
+      <!-- ── Empty state ──────────────────────────────── -->
+      <div class="ol-empty">
+        <div class="ol-empty__ring">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.4">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+        </div>
+        <h2 class="ol-empty__title">No orders yet</h2>
+        <p class="ol-empty__sub">Everything you order will appear here.</p>
+        <a routerLink="/departments" class="ol-cta-btn">Browse products</a>
+      </div>
+
+    } @else {
+
+      <!-- ── Orders list ──────────────────────────────── -->
+      <div class="ol-list">
+        @for (order of result()!.items; track order.id) {
+
+          <a [routerLink]="['/account/orders', order.id]" class="ol-card">
+
+            <!-- Left accent stripe (colour-coded by status) -->
+            <span class="ol-card__stripe ol-card__stripe--{{ statusClass(order.status) }}"></span>
+
+            <div class="ol-card__inner">
+
+              <!-- ── Top row: number · date · badge ────── -->
+              <div class="ol-card__top">
+                <div class="ol-card__id-group">
+                  <span class="ol-card__label">Order</span>
+                  <span class="ol-card__number">#{{ order.orderNumber }}</span>
+                </div>
+                <span class="ol-status ol-status--{{ statusClass(order.status) }}">{{ order.status }}</span>
+              </div>
+
+              <p class="ol-card__date">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Placed {{ order.createdAt | date:'d MMMM yyyy, h:mm a' }}
+              </p>
+
+              <!-- ── Items preview ─────────────────────── -->
+              @if (order.items?.length) {
+                <div class="ol-card__items-preview">
+                  @for (item of order.items.slice(0, 3); track item.id) {
+                    <div class="ol-preview-item">
+                      @if (item.imageUrl) {
+                        <img class="ol-preview-item__img" [src]="item.imageUrl" [alt]="item.productName" loading="lazy" />
+                      } @else {
+                        <div class="ol-preview-item__img ol-preview-item__img--placeholder">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        </div>
+                      }
+                      <span class="ol-preview-item__name">{{ item.productName }}</span>
+                      <span class="ol-preview-item__qty">× {{ item.quantity }}</span>
+                    </div>
+                  }
+                  @if (order.items.length > 3) {
+                    <p class="ol-card__more">+ {{ order.items.length - 3 }} more item{{ order.items.length - 3 !== 1 ? 's' : '' }}</p>
+                  }
+                </div>
+              }
+
+              <!-- ── Divider ────────────────────────────── -->
+              <div class="ol-card__divider"></div>
+
+              <!-- ── Footer row: meta · total · cta ──────── -->
+              <div class="ol-card__foot">
+                <div class="ol-card__foot-meta">
+                  <span class="ol-card__chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                    {{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}
+                  </span>
+                  @if (order.deliveryDate) {
+                    <span class="ol-card__chip">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                      {{ order.deliveryDate | date:'EEE d MMM' }}
+                    </span>
+                  }
+                </div>
+                <div class="ol-card__foot-right">
+                  <span class="ol-card__total">£{{ order.total | number:'1.2-2' }}</span>
+                  <span class="ol-card__view-btn">
+                    View
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+                  </span>
+                </div>
+              </div>
+
             </div>
-            <span class="badge" [class]="'badge--' + (statusColors[order.status] ?? 'grey')">{{ order.status }}</span>
-          </div>
-          <div class="order-card__body">
-            <p class="order-card__items">{{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}</p>
-            @if (order.deliveryDate) {
-              <p class="order-card__delivery">Delivery: {{ order.deliveryDate | date:'EEE d MMM' }}</p>
-            }
-            <p class="order-card__total">Total: £{{ order.total | number:'1.2-2' }}</p>
-          </div>
-        </a>
+          </a>
+
+        }
+      </div>
+
+      <!-- ── Pagination ────────────────────────────────── -->
+      @if (result()!.totalPages > 1) {
+        <div class="ol-pagination">
+          <app-pagination
+            [currentPage]="currentPage()"
+            [totalPages]="result()!.totalPages"
+            (pageChange)="onPageChange($event)" />
+        </div>
       }
-    </div>
-    <div style="display: flex; justify-content: center; margin-top: 1.5rem">
-      <app-pagination [currentPage]="currentPage()" [totalPages]="result()!.totalPages" (pageChange)="onPageChange($event)" />
-    </div>
-  }
+
+    }
+  </div>
 </div>

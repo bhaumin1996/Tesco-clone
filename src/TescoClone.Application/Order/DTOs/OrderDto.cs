@@ -10,5 +10,6 @@ public sealed record OrderDto(
     decimal DeliveryCharge,
     decimal ClubcardSavings,
     decimal Total,
+    string? DeliveryAddress,
     IReadOnlyList<OrderLineDto> Items,
     DateTime CreatedAt);

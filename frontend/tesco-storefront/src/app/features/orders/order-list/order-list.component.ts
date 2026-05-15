@@ -13,6 +13,7 @@ import { PagedResult } from '../../../core/models/catalogue.model';
   standalone: true,
   imports: [CommonModule, RouterLink, SpinnerComponent, BreadcrumbComponent, PaginationComponent],
   templateUrl: './order-list.component.html',
+  styleUrl: './order-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OrderListComponent implements OnInit {
@@ -21,11 +22,6 @@ export class OrderListComponent implements OnInit {
   protected result = signal<PagedResult<Order> | null>(null);
   protected loading = signal(true);
   protected currentPage = signal(1);
-
-  readonly statusColors: Record<OrderStatus, string> = {
-    Pending: 'grey', Confirmed: 'blue', Picking: 'yellow',
-    Packed: 'yellow', OutForDelivery: 'blue', Delivered: 'green', Cancelled: 'red'
-  };
 
   ngOnInit(): void { this._load(); }
 
@@ -38,4 +34,17 @@ export class OrderListComponent implements OnInit {
   }
 
   protected onPageChange(p: number): void { this.currentPage.set(p); this._load(); }
+
+  protected statusClass(status: OrderStatus): string {
+    const map: Record<OrderStatus, string> = {
+      Pending: 'pending',
+      Confirmed: 'confirmed',
+      Picking: 'picking',
+      Packed: 'packed',
+      OutForDelivery: 'delivery',
+      Delivered: 'delivered',
+      Cancelled: 'cancelled'
+    };
+    return map[status] ?? 'pending';
+  }
 }
