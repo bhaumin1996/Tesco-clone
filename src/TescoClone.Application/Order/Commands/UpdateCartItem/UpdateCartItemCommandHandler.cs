@@ -28,7 +28,7 @@ public sealed class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartIte
         var cart = await _cartRepository.GetByUserIdAsync(_currentUser.UserId, cancellationToken)
             ?? throw new NotFoundException("Cart", _currentUser.UserId);
 
-        var exists = cart.Items.Any(i => i.ProductVariantId == request.ProductVariantId);
+        var exists = cart.Items.Any(i => i.ProductId == request.ProductVariantId);
         if (!exists)
             throw new NotFoundException("CartItem", request.ProductVariantId);
 

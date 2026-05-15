@@ -31,7 +31,7 @@ public sealed class CartController : ControllerBase
     public async Task<IActionResult> GetCart(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetCartQuery(_currentUser.UserId), cancellationToken);
-        return Ok(result ?? new CartDto(0, _currentUser.UserId, [], 0));
+        return Ok(result ?? new CartDto(0, _currentUser.UserId, [], 0, 0, 0, 0, 0, false));
     }
 
     [HttpPost("items")]
@@ -58,12 +58,12 @@ public sealed class CartController : ControllerBase
     }
 
     [HttpDelete("items/{productVariantId:int}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RemoveItem(int productVariantId, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new RemoveCartItemCommand(productVariantId), cancellationToken);
-        return NoContent();
+        var result = await _mediator.Send(new RemoveCartItemCommand(productVariantId), cancellationToken);
+        return Ok(result);
     }
 
     [HttpDelete]

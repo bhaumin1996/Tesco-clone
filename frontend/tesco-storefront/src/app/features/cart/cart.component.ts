@@ -28,13 +28,13 @@ export class CartComponent implements OnInit {
 
   protected updateQuantity(item: CartItem, qty: number): void {
     if (qty === 0) {
-      this.removeItem(item.id);
+      this.removeItem(item.productId);
     } else {
-      this.cartService.updateItem({ itemId: item.id, quantity: qty }).subscribe();
+      this.cartService.updateItem({ itemId: item.productId, quantity: qty }).subscribe();
     }
   }
 
-  protected removeItem(itemId: number): void {
-    this.cartService.removeItem(itemId).subscribe();
+  protected removeItem(productId: number): void {
+    this.cartService.removeItem(productId).subscribe();
   }
 }

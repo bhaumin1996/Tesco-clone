@@ -4,4 +4,9 @@ public sealed record CartDto(
     int Id,
     int UserId,
     IReadOnlyList<CartItemDto> Items,
-    decimal Total);
+    decimal Subtotal,
+    decimal ClubcardSavings,
+    decimal PromotionSavings,
+    decimal DeliveryCharge,
+    decimal Total,
+    bool MinimumOrderMet);

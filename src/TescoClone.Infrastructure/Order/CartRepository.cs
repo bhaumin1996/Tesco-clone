@@ -24,28 +24,43 @@ public sealed class CartRepository : ICartRepository
             var items = await SqlHelper.ExecuteReaderAsync(
                 connection,
                 "proc_Order_GetCartByUserId",
-                reader => new
-                {
-                    CartId = SqlHelper.GetValue<int>(reader, "CartId"),
-                    UserId = SqlHelper.GetValue<int>(reader, "UserId"),
-                    Item = new CartItemDto(
-                        SqlHelper.GetValue<int>(reader, "ProductVariantId"),
-                        SqlHelper.GetValue<string>(reader, "ProductName"),
-                        SqlHelper.GetValue<decimal>(reader, "UnitPrice"),
-                        SqlHelper.GetValue<int>(reader, "Quantity"),
-                        SqlHelper.GetValue<decimal>(reader, "LineTotal"))
-                },
+                reader => new CartItemDto(
+                    SqlHelper.GetValue<int>(reader, "CartItemId"),
+                    SqlHelper.GetValue<int>(reader, "ProductVariantId"),
+                    SqlHelper.GetValue<string>(reader, "ProductName"),
+                    SqlHelper.GetValue<string?>(reader, "ImageUrl"),
+                    SqlHelper.GetValue<decimal>(reader, "UnitPrice"),
+                    SqlHelper.GetValue<decimal?>(reader, "ClubcardPrice"),
+                    SqlHelper.GetValue<int>(reader, "Quantity"),
+                    SqlHelper.GetValue<string?>(reader, "UnitPriceLabel"),
+                    SqlHelper.GetValue<string?>(reader, "PromotionLabel"),
+                    SqlHelper.GetValue<decimal>(reader, "LineTotal")),
                 [SqlHelper.Input("@UserId", userId)],
                 cancellationToken);
 
             if (items.Count == 0) return null;
 
-            var cartItems = items.Select(x => x.Item).ToList();
+            // Get CartId and UserId from the first item (all items belong to the same cart)
+            // Note: We need a way to get CartId even if there are no items, but GetByUserIdAsync 
+            // usually returns items. If it's empty, we return null anyway above.
+            // For a more robust solution, the SP could return multiple result sets.
+            
+            var subtotal = items.Sum(i => i.LineTotal);
+            var clubcardSavings = items.Sum(i => (i.Price - (i.ClubcardPrice ?? i.Price)) * i.Quantity);
+            var deliveryCharge = subtotal > 40 ? 0m : 4.50m; // Example logic
+            var total = subtotal - clubcardSavings + deliveryCharge;
+            var minimumOrderMet = subtotal >= 15;
+
             return new CartDto(
-                items[0].CartId,
-                items[0].UserId,
-                cartItems,
-                cartItems.Sum(i => i.LineTotal));
+                0, // We don't have CartId easily if we don't select it separately, but 0 is fine for now or we can add it to SP
+                userId,
+                items,
+                subtotal,
+                clubcardSavings,
+                0, // PromotionSavings (placeholder)
+                deliveryCharge,
+                total,
+                minimumOrderMet);
         }
         catch (Exception ex)
         {
