@@ -25,17 +25,17 @@ public sealed class AddToCartCommandHandler : IRequestHandler<AddToCartCommand, 
 
     public async Task<CartDto> Handle(AddToCartCommand request, CancellationToken cancellationToken)
     {
-        var product = await _productRepository.GetByIdAsync(request.ProductVariantId, cancellationToken)
-            ?? throw new NotFoundException(nameof(Domain.Catalogue.Product), request.ProductVariantId);
+        var product = await _productRepository.GetByIdAsync(request.ProductId, cancellationToken)
+            ?? throw new NotFoundException(nameof(Domain.Catalogue.Product), request.ProductId);
 
         if (!product.IsAvailable)
             throw new ConflictException("Product is currently unavailable.");
 
         await _cartRepository.UpsertItemAsync(
             _currentUser.UserId,
-            request.ProductVariantId,
+            request.ProductId,
             product.Name,
-            product.BasePrice,
+            product.Price,
             request.Quantity,
             _currentUser.UserId,
             cancellationToken);

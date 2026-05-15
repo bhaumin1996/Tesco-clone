@@ -33,9 +33,19 @@ export class ProductDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this._route.params.subscribe(p => {
+      const id = +p['id'];
       this.loading.set(true);
-      this._catalogue.getProductById(+p['id']).subscribe({
-        next: p => { this.product.set(p); this.loading.set(false); },
+      this._catalogue.getProductById(id).subscribe({
+        next: product => {
+          this.product.set(product);
+          this._catalogue.getVariants(id).subscribe({
+            next: variants => {
+              this.product.update(existing => existing ? { ...existing, variants } : null);
+              this.loading.set(false);
+            },
+            error: () => this.loading.set(false)
+          });
+        },
         error: () => { this.error.set(true); this.loading.set(false); }
       });
     });

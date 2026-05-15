@@ -30,23 +30,25 @@ export interface ProductSummary {
 }
 
 export interface ProductDetail extends ProductSummary {
-  sku: string;
-  description: string;
+  sku?: string;
+  description?: string;
   ingredients?: string;
   nutritionalInfo?: NutritionalInfo;
   allergens?: string;
   storageInstructions?: string;
   weight?: string;
   countryOfOrigin?: string;
-  dietaryTags: string[];
-  images: string[];
-  variants: ProductVariant[];
+  dietaryTags?: string[];
+  images?: string[];
+  variants?: ProductVariant[];
 }
 
 export interface ProductVariant {
   id: number;
-  name: string;
-  price: number;
+  sku: string;
+  variantName?: string;
+  priceModifier: number;
+  stockQuantity: number;
   isInStock: boolean;
 }
 

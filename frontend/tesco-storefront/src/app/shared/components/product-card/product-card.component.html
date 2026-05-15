@@ -38,7 +38,7 @@
         }
       </div>
 
-      @if (product.averageRating > 0) {
+      @if (product.averageRating && product.averageRating > 0) {
         <div class="product-card__rating">
           <span class="product-card__stars" [style.--rating]="product.averageRating">★★★★★</span>
           <span class="product-card__review-count">({{ product.reviewCount }})</span>

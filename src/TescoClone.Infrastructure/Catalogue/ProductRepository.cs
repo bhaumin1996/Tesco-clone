@@ -123,7 +123,7 @@ public sealed class ProductRepository : IProductRepository
             SqlHelper.GetValue<string>(reader, "Name"),
             SqlHelper.GetValue<string>(reader, "Slug"),
             SqlHelper.GetNullableString(reader, "Description"),
-            SqlHelper.GetValue<decimal>(reader, "BasePrice"),
+            SqlHelper.GetValue<decimal>(reader, "BasePrice"),  // SQL column stays BasePrice
             SqlHelper.GetNullableValue<decimal>(reader, "ClubcardPrice"),
             SqlHelper.GetNullableString(reader, "ImageUrl"),
             SqlHelper.GetValue<bool>(reader, "IsAvailable"),

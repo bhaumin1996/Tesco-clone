@@ -6,6 +6,7 @@ using TescoClone.Application.Order.Commands.AddToCart;
 using TescoClone.Application.Order.Commands.ClearCart;
 using TescoClone.Application.Order.Commands.RemoveCartItem;
 using TescoClone.Application.Order.Commands.UpdateCartItem;
+using TescoClone.Application.Order.DTOs;
 using TescoClone.Application.Order.Queries.GetCart;
 
 namespace TescoClone.API.Controllers;
@@ -30,7 +31,7 @@ public sealed class CartController : ControllerBase
     public async Task<IActionResult> GetCart(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetCartQuery(_currentUser.UserId), cancellationToken);
-        return Ok(result);
+        return Ok(result ?? new CartDto(0, _currentUser.UserId, [], 0));
     }
 
     [HttpPost("items")]

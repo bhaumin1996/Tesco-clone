@@ -6,7 +6,7 @@ public sealed class AddToCartCommandValidator : AbstractValidator<AddToCartComma
 {
     public AddToCartCommandValidator()
     {
-        RuleFor(x => x.ProductVariantId).GreaterThan(0);
+        RuleFor(x => x.ProductId).GreaterThan(0);
         RuleFor(x => x.Quantity).InclusiveBetween(1, 99);
     }
 }

@@ -9,7 +9,7 @@ public sealed record ProductDto(
     string Name,
     string Slug,
     string? Description,
-    decimal BasePrice,
+    decimal Price,
     decimal? ClubcardPrice,
     string? ImageUrl,
     bool IsAvailable,

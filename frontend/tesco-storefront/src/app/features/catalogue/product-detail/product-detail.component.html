@@ -14,7 +14,7 @@
       <!-- Gallery -->
       <div class="pdp-gallery">
         <div class="pdp-gallery__main">
-          @if (p.images.length > 0) {
+          @if (p.images && p.images.length > 0) {
             <img [src]="p.images[selectedImage()]" [alt]="p.name" class="pdp-gallery__img" />
           } @else if (p.imageUrl) {
             <img [src]="p.imageUrl" [alt]="p.name" class="pdp-gallery__img" />
@@ -26,7 +26,7 @@
             </div>
           }
         </div>
-        @if (p.images.length > 1) {
+        @if (p.images && p.images.length > 1) {
           <div class="pdp-gallery__thumbs">
             @for (img of p.images; track img; let i = $index) {
               <button class="pdp-gallery__thumb" [class.active]="i === selectedImage()" (click)="selectedImage.set(i)">
@@ -43,7 +43,7 @@
         <h1 class="pdp-info__title">{{ p.name }}</h1>
 
         <!-- Dietary tags -->
-        @if (p.dietaryTags.length > 0) {
+        @if (p.dietaryTags && p.dietaryTags.length > 0) {
           <div class="pdp-info__tags">
             @for (tag of p.dietaryTags; track tag) {
               <span class="badge badge--outline-blue">{{ tag }}</span>
@@ -52,7 +52,7 @@
         }
 
         <!-- Rating -->
-        @if (p.averageRating > 0) {
+        @if (p.averageRating && p.averageRating > 0) {
           <div class="pdp-info__rating">
             <span class="pdp-stars">★★★★★</span>
             <span class="pdp-info__review-count">{{ p.reviewCount }} reviews</span>
@@ -74,13 +74,13 @@
         </div>
 
         <!-- Variants -->
-        @if (p.variants.length > 0) {
+        @if (p.variants && p.variants.length > 0) {
           <div class="pdp-variants">
             <p class="pdp-variants__label">Size:</p>
             <div class="pdp-variants__options">
               @for (v of p.variants; track v.id) {
                 <button class="pdp-variants__chip" [class.active]="true" [disabled]="!v.isInStock">
-                  {{ v.name }}
+                  {{ v.variantName || v.sku }}
                 </button>
               }
             </div>

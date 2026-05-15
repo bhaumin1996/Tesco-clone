@@ -11,7 +11,7 @@ export class CartService {
   private readonly _cart = signal<Cart | null>(null);
 
   readonly cart = this._cart.asReadonly();
-  readonly itemCount = computed(() => this._cart()?.itemCount ?? 0);
+  readonly itemCount = computed(() => this._cart()?.items?.reduce((sum, i) => sum + i.quantity, 0) ?? 0);
   readonly total = computed(() => this._cart()?.total ?? 0);
 
   private get baseUrl() { return `${environment.apiUrl}/cart`; }

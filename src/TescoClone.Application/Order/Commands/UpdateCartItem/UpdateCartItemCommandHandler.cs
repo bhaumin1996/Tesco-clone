@@ -39,7 +39,7 @@ public sealed class UpdateCartItemCommandHandler : IRequestHandler<UpdateCartIte
             _currentUser.UserId,
             request.ProductVariantId,
             product.Name,
-            product.BasePrice,
+            product.Price,
             request.Quantity,
             _currentUser.UserId,
             cancellationToken);
