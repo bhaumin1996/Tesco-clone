@@ -14,11 +14,12 @@ interface DashboardStats {
 }
 
 interface RecentOrder {
-  orderId: number;
+  id: number;
+  orderNumber: string;
   customerName: string;
   total: number;
   status: string;
-  createdOn: string;
+  createdAt: string;
 }
 
 @Component({

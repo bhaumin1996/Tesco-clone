@@ -34,7 +34,6 @@
           <tr>
             <th>Order #</th>
             <th>Customer</th>
-            <th>Email</th>
             <th>Total</th>
             <th>Status</th>
             <th>Date</th>
@@ -42,32 +41,31 @@
           </tr>
         </thead>
         <tbody>
-          @for (o of orders(); track o.orderId) {
+          @for (o of orders(); track o.id) {
             <tr>
-              <td><span class="fw-semibold">#{{ o.orderId }}</span></td>
+              <td><span class="fw-semibold">{{ o.orderNumber }}</span></td>
               <td>{{ o.customerName }}</td>
-              <td class="text-secondary-color">{{ o.customerEmail }}</td>
               <td class="fw-semibold">£{{ o.total | number:'1.2-2' }}</td>
               <td>
                 <select class="form-control" style="min-width:130px;font-size:0.8125rem;padding:0.25rem 0.5rem"
                         [value]="o.status"
-                        (change)="updateStatus(o.orderId, $any($event.target).value)">
+                        (change)="updateStatus(o.id, $any($event.target).value)">
                   @for (s of statuses; track s) {
                     <option [value]="s" [selected]="s === o.status">{{ s }}</option>
                   }
                 </select>
               </td>
-              <td class="text-secondary-color">{{ o.createdOn | date:'dd MMM yyyy' }}</td>
+              <td class="text-secondary-color">{{ o.createdAt | date:'dd MMM yyyy' }}</td>
               <td>
                 @if (o.status !== 'Refunded' && o.status !== 'Cancelled') {
-                  <button class="table-btn table-btn--danger" (click)="refund(o.orderId)">
+                  <button class="table-btn table-btn--danger" (click)="refund(o.id)">
                     <i class="bi bi-arrow-counterclockwise me-1"></i>Refund
                   </button>
                 }
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="7" class="admin-empty">No orders found.</td></tr>
+            <tr><td colspan="6" class="admin-empty">No orders found.</td></tr>
           }
         </tbody>
       </table>

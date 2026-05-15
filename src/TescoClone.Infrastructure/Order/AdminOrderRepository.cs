@@ -88,5 +88,6 @@ public sealed class AdminOrderRepository : IAdminOrderRepository
             Total: SqlHelper.GetValue<decimal>(reader, "Total"),
             DeliveryAddress: null,
             Items: Array.Empty<OrderLineDto>(),
-            CreatedAt: SqlHelper.GetValue<DateTime>(reader, "CreatedOn"));
+            CreatedAt: SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
+            CustomerName: SqlHelper.GetValue<string?>(reader, "CustomerName"));
 }

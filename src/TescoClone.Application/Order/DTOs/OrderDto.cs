@@ -12,4 +12,5 @@ public sealed record OrderDto(
     decimal Total,
     string? DeliveryAddress,
     IReadOnlyList<OrderLineDto> Items,
-    DateTime CreatedAt);
+    DateTime CreatedAt,
+    string? CustomerName = null);

@@ -273,3 +273,18 @@ BEGIN
     END CATCH
 END
 GO
+
+-- =========================================================
+-- Record migration
+-- =========================================================
+BEGIN TRY
+    BEGIN TRANSACTION;
+    IF NOT EXISTS (SELECT 1 FROM t.tblMigration WHERE Version = 'V043')
+        INSERT INTO t.tblMigration (Version, Description)
+        VALUES ('V043', 'FixOrderLineStoredProcedures');
+    COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+    THROW;
+END CATCH

@@ -6,12 +6,12 @@ import { environment } from '../../../environments/environment';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 interface OrderRow {
-  orderId: number;
+  id: number;
+  orderNumber: string;
   customerName: string;
-  customerEmail: string;
   total: number;
   status: string;
-  createdOn: string;
+  createdAt: string;
 }
 
 interface PagedResult<T> { items: T[]; totalPages: number; pageNumber: number; }
@@ -65,7 +65,7 @@ export class AdminOrdersComponent implements OnInit {
   protected updateStatus(orderId: number, status: string): void {
     this._http.patch(`${this._base}/${orderId}/status`, { status }).subscribe({
       next: () => {
-        this.orders.update(list => list.map(o => o.orderId === orderId ? { ...o, status } : o));
+        this.orders.update(list => list.map(o => o.id === orderId ? { ...o, status } : o));
         this.message.set('Status updated.');
         setTimeout(() => this.message.set(''), 3000);
       },

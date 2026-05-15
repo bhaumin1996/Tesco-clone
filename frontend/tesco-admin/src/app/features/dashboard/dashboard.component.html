@@ -140,17 +140,17 @@
             </tr>
           </thead>
           <tbody>
-            @for (order of recentOrders(); track order.orderId) {
+            @for (order of recentOrders(); track order.id) {
               <tr>
-                <td><span class="fw-semibold">#{{ order.orderId }}</span></td>
+                <td><span class="fw-semibold">{{ order.orderNumber }}</span></td>
                 <td>{{ order.customerName }}</td>
                 <td class="fw-semibold">£{{ order.total | number:'1.2-2' }}</td>
                 <td>
                   <span class="status-badge status--{{ order.status | lowercase }}">{{ order.status }}</span>
                 </td>
-                <td class="text-secondary-color">{{ order.createdOn | date:'dd MMM yyyy' }}</td>
+                <td class="text-secondary-color">{{ order.createdAt | date:'dd MMM yyyy' }}</td>
                 <td>
-                  <a [routerLink]="['/orders', order.orderId]" class="table-btn">
+                  <a [routerLink]="['/orders', order.id]" class="table-btn">
                     <i class="bi bi-eye me-1"></i>View
                   </a>
                 </td>
