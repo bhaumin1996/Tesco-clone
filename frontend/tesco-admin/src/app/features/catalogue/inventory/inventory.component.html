@@ -1,22 +1,246 @@
 <div class="admin-page-header">
   <h1 class="admin-page-header__title">Inventory</h1>
+  <button class="button button--primary global-add-btn" (click)="openGlobalAdd()">
+    <i class="bi bi-plus-circle-fill"></i> Add New Stock
+  </button>
 </div>
 
 @if (message()) {
-  <div class="admin-alert admin-alert--success">{{ message() }}</div>
+  <div class="admin-alert" [class.admin-alert--success]="messageType() === 'success'" [class.admin-alert--error]="messageType() === 'error'">
+    {{ message() }}
+  </div>
 }
 
-@if (addTarget()) {
-  <div class="admin-card inv-adjust-card inv-adjust-card--add">
-    <div class="inv-adjust-card__header">
+<!-- ══════════════════════════════════════════════════════════
+     Global First-Time Inventory Add Panel
+     ══════════════════════════════════════════════════════════ -->
+@if (globalAddOpen()) {
+  <div class="admin-card global-add-card">
+
+    <div class="global-add-card__header">
       <div>
-        <h2 class="inv-adjust-card__title">Add Stock — {{ addTarget()!.productName }}</h2>
-        <p class="inv-adjust-card__meta">SKU: {{ addTarget()!.sku }} &nbsp;·&nbsp; Current stock: <strong>{{ addTarget()!.stockQuantity }}</strong></p>
+        <h2 class="global-add-card__title">
+          <i class="bi bi-plus-circle-fill me-1"></i>Add New Product Inventory
+        </h2>
+        <p class="global-add-card__meta">
+          Use this to register stock for a product that has no inventory record yet.
+          This creates a new product variant with its initial quantity.
+        </p>
       </div>
-      <button type="button" class="inv-adjust-card__close" (click)="addTarget.set(null)" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+      <button type="button" class="panel-close-btn" (click)="closeGlobalAdd()" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="newVariantForm" (ngSubmit)="submitNewVariant()">
+
+      <!-- ── Step 1: Select Product ──────────────────────────── -->
+      <div class="global-add-card__section">
+        <h3 class="global-add-card__step-label">
+          <span class="step-num">1</span> Select Product
+        </h3>
+
+        <div class="form-group product-search-group">
+          <label class="form-label">
+            Search by product name <span class="form-label__required">*</span>
+          </label>
+          <div class="product-search-wrap">
+            <i class="bi bi-search product-search-wrap__icon"></i>
+            <input
+              class="form-control product-search-wrap__input"
+              [class.product-search-wrap__input--locked]="!!selectedProduct()"
+              type="text"
+              placeholder="Type at least 2 characters…"
+              [value]="productSearchTerm()"
+              [readOnly]="!!selectedProduct()"
+              (input)="onProductSearchInput($any($event.target).value)"
+              autocomplete="off"
+            />
+            @if (productSearchLoading()) {
+              <span class="product-search-wrap__spinner"><i class="bi bi-arrow-repeat spin"></i></span>
+            }
+            @if (selectedProduct()) {
+              <button
+                type="button"
+                class="product-search-wrap__clear"
+                (click)="clearProductSelection()"
+                title="Clear selection"
+                aria-label="Clear product selection"
+              >
+                <i class="bi bi-x-circle-fill"></i>
+              </button>
+            }
+          </div>
+
+          <!-- Suggestions dropdown -->
+          @if (!selectedProduct() && productSearchResults().length > 0) {
+            <ul class="product-suggestions">
+              @for (p of productSearchResults(); track p.id) {
+                <li class="product-suggestions__item" (mousedown)="selectProduct(p)">
+                  <span class="product-suggestions__name">{{ p.name }}</span>
+                  <span class="product-suggestions__meta">
+                    {{ p.categoryName }}
+                    &nbsp;·&nbsp; £{{ p.basePrice | number:'1.2-2' }}
+                    @if (!p.isAvailable) {
+                      <span class="badge badge--grey ms-1">Unavailable</span>
+                    }
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+
+          @if (!selectedProduct() && productSearchTerm().length >= 2 && !productSearchLoading() && productSearchResults().length === 0) {
+            <p class="product-suggestions__empty">
+              <i class="bi bi-info-circle me-1"></i>No products found for "{{ productSearchTerm() }}"
+            </p>
+          }
+        </div>
+
+        <!-- Selected product summary card -->
+        @if (selectedProduct()) {
+          <div class="selected-product-card">
+            <i class="bi bi-check-circle-fill selected-product-card__icon"></i>
+            <div class="selected-product-card__grid">
+              <div class="selected-product-card__field">
+                <span class="selected-product-card__label">Product</span>
+                <span class="selected-product-card__value">{{ selectedProduct()!.name }}</span>
+              </div>
+              <div class="selected-product-card__field">
+                <span class="selected-product-card__label">Category</span>
+                <span class="selected-product-card__value">{{ selectedProduct()!.categoryName }}</span>
+              </div>
+              <div class="selected-product-card__field">
+                <span class="selected-product-card__label">Base Price</span>
+                <span class="selected-product-card__value">£{{ selectedProduct()!.basePrice | number:'1.2-2' }}</span>
+              </div>
+              <div class="selected-product-card__field">
+                <span class="selected-product-card__label">Existing Stock</span>
+                <span class="selected-product-card__value">{{ selectedProduct()!.stockQuantity }} units</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- ── Step 2: Variant & Stock Details ────────────────── -->
+      @if (selectedProduct()) {
+        <div class="global-add-card__section">
+          <h3 class="global-add-card__step-label">
+            <span class="step-num">2</span> Variant & Stock Details
+          </h3>
+
+          <div class="global-add-card__fields">
+
+            <div class="form-group">
+              <label class="form-label">
+                SKU (Stock Keeping Unit) <span class="form-label__required">*</span>
+              </label>
+              <input
+                class="form-control form-control--mono"
+                type="text"
+                formControlName="sku"
+                placeholder="e.g. MLK-WHLF-2L-001"
+                autocomplete="off"
+              />
+              @if (newVariantForm.get('sku')!.invalid && newVariantForm.get('sku')!.touched) {
+                <span class="form-error"><i class="bi bi-exclamation-circle me-1"></i>SKU is required (max 100 characters).</span>
+              }
+              <span class="form-hint">Must be unique across all products.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Variant Name <span class="form-label__hint">(optional)</span>
+              </label>
+              <input
+                class="form-control"
+                type="text"
+                formControlName="variantName"
+                placeholder="e.g. 2 Litre, Red, Size M…"
+              />
+              <span class="form-hint">Leave blank if there is only one variant of this product.</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Barcode <span class="form-label__hint">(optional)</span>
+              </label>
+              <input
+                class="form-control form-control--mono"
+                type="text"
+                formControlName="barcode"
+                placeholder="e.g. 5011546549842"
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Initial Stock Quantity <span class="form-label__required">*</span>
+              </label>
+              <input
+                type="number"
+                class="form-control form-control--lg"
+                formControlName="initialQuantity"
+                min="0"
+                placeholder="e.g. 100"
+              />
+              @if (newVariantForm.get('initialQuantity')!.invalid && newVariantForm.get('initialQuantity')!.touched) {
+                <span class="form-error"><i class="bi bi-exclamation-circle me-1"></i>Enter 0 or more.</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                Low Stock Alert Threshold <span class="form-label__required">*</span>
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                formControlName="lowStockThreshold"
+                min="0"
+                placeholder="e.g. 10"
+              />
+              @if (newVariantForm.get('lowStockThreshold')!.invalid && newVariantForm.get('lowStockThreshold')!.touched) {
+                <span class="form-error"><i class="bi bi-exclamation-circle me-1"></i>Enter 0 or more.</span>
+              }
+              <span class="form-hint">You'll see a "Low Stock" warning when stock falls to or below this level.</span>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="global-add-card__actions">
+          <button type="submit" class="button button--primary button--lg">
+            <i class="bi bi-plus-circle-fill me-1"></i>Create Inventory Record
+          </button>
+          <button type="button" class="button button--secondary" (click)="closeGlobalAdd()">Cancel</button>
+        </div>
+      }
+
+    </form>
+  </div>
+}
+
+<!-- ══════════════════════════════════════════════════════════
+     Per-row: Add Stock Panel (existing variant)
+     ══════════════════════════════════════════════════════════ -->
+@if (addTarget()) {
+  <div class="admin-card inv-panel inv-panel--add">
+    <div class="inv-panel__header">
+      <div>
+        <h2 class="inv-panel__title">Add Stock — {{ addTarget()!.productName }}</h2>
+        <p class="inv-panel__meta">
+          SKU: <strong>{{ addTarget()!.sku }}</strong>
+          &nbsp;·&nbsp; Current stock: <strong>{{ addTarget()!.stockQuantity }}</strong>
+        </p>
+      </div>
+      <button type="button" class="panel-close-btn" (click)="addTarget.set(null)" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </div>
     <form [formGroup]="addForm" (ngSubmit)="submitAdd()">
-      <div class="inv-adjust-card__body">
+      <div class="inv-panel__body">
         <div class="form-group">
           <label class="form-label">Quantity to add <span class="form-label__required">*</span></label>
           <input type="number" class="form-control form-control--lg" formControlName="quantity" min="1" placeholder="e.g. 50" autofocus />
@@ -29,7 +253,7 @@
           <input class="form-control" formControlName="reason" placeholder="e.g. Delivery received" />
         </div>
       </div>
-      <div class="inv-adjust-card__actions">
+      <div class="inv-panel__actions">
         <button type="submit" class="button button--primary"><i class="bi bi-plus-circle me-1"></i>Add Stock</button>
         <button type="button" class="button button--secondary" (click)="addTarget.set(null)">Cancel</button>
       </div>
@@ -37,30 +261,41 @@
   </div>
 }
 
+<!-- ══════════════════════════════════════════════════════════
+     Per-row: Adjust Stock Panel (existing variant)
+     ══════════════════════════════════════════════════════════ -->
 @if (adjustTarget()) {
-  <div class="admin-card inv-adjust-card">
-    <div class="inv-adjust-card__header">
+  <div class="admin-card inv-panel">
+    <div class="inv-panel__header">
       <div>
-        <h2 class="inv-adjust-card__title">Adjust Stock — {{ adjustTarget()!.productName }}</h2>
-        <p class="inv-adjust-card__meta">SKU: {{ adjustTarget()!.sku }} &nbsp;·&nbsp; Current stock: <strong>{{ adjustTarget()!.stockQuantity }}</strong></p>
+        <h2 class="inv-panel__title">Adjust Stock — {{ adjustTarget()!.productName }}</h2>
+        <p class="inv-panel__meta">
+          SKU: <strong>{{ adjustTarget()!.sku }}</strong>
+          &nbsp;·&nbsp; Current stock: <strong>{{ adjustTarget()!.stockQuantity }}</strong>
+        </p>
       </div>
-      <button type="button" class="inv-adjust-card__close" (click)="adjustTarget.set(null)" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+      <button type="button" class="panel-close-btn" (click)="adjustTarget.set(null)" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </div>
     <form [formGroup]="adjustForm" (ngSubmit)="submitAdjust()">
-      <div class="inv-adjust-card__body">
+      <div class="inv-panel__body">
         <div class="form-group">
-          <label class="form-label">Adjustment quantity <span class="form-label__hint">(positive = add, negative = remove)</span></label>
+          <label class="form-label">
+            Adjustment quantity
+            <span class="form-label__hint">(positive = add, negative = remove)</span>
+          </label>
           <input type="number" class="form-control" formControlName="quantity" />
         </div>
         <div class="form-group">
           <label class="form-label">Reason <span class="form-label__required">*</span></label>
-          <input class="form-control" formControlName="reason" placeholder="e.g. Delivery received" />
+          <input class="form-control" formControlName="reason" placeholder="e.g. Damaged goods, Stock correction" />
           @if (adjustForm.get('reason')!.invalid && adjustForm.get('reason')!.touched) {
             <span class="form-error">Reason is required.</span>
           }
         </div>
       </div>
-      <div class="inv-adjust-card__actions">
+      <div class="inv-panel__actions">
         <button type="submit" class="button button--primary">Apply Adjustment</button>
         <button type="button" class="button button--secondary" (click)="adjustTarget.set(null)">Cancel</button>
       </div>
@@ -68,10 +303,19 @@
   </div>
 }
 
+<!-- ══════════════════════════════════════════════════════════
+     Inventory Table
+     ══════════════════════════════════════════════════════════ -->
 <div class="admin-card">
   <div class="admin-search-bar">
     <i class="bi bi-search admin-search-bar__icon"></i>
-    <input class="admin-search-bar__input" type="search" placeholder="Search by SKU or product name…" [value]="searchQuery()" (input)="onSearch($any($event.target).value)" />
+    <input
+      class="admin-search-bar__input"
+      type="search"
+      placeholder="Filter by SKU or product name…"
+      [value]="searchQuery()"
+      (input)="onSearch($any($event.target).value)"
+    />
   </div>
 
   @if (loading()) {
@@ -79,12 +323,19 @@
   } @else {
     <table class="admin-table">
       <thead>
-        <tr><th>SKU</th><th>Product</th><th>Stock</th><th>Low Stock Threshold</th><th>Status</th><th>Actions</th></tr>
+        <tr>
+          <th>SKU</th>
+          <th>Product</th>
+          <th>Stock</th>
+          <th>Low Stock Threshold</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
       </thead>
       <tbody>
-        @for (item of pagedItems(); track item.productId) {
+        @for (item of pagedItems(); track item.productVariantId) {
           <tr [class.inv-row--low]="item.isLowStock">
-            <td>{{ item.sku }}</td>
+            <td class="cell--mono">{{ item.sku }}</td>
             <td>{{ item.productName }}</td>
             <td>{{ item.stockQuantity }}</td>
             <td>{{ item.lowStockThreshold }}</td>
@@ -96,12 +347,16 @@
               }
             </td>
             <td class="inv-actions">
-              <button class="table-btn table-btn--add" (click)="openAdd(item)" title="Add stock"><i class="bi bi-plus-circle"></i> Add</button>
-              <button class="table-btn" (click)="openAdjust(item)" title="Adjust stock"><i class="bi bi-sliders"></i> Adjust</button>
+              <button class="table-btn table-btn--add" (click)="openAdd(item)" title="Add stock">
+                <i class="bi bi-plus-circle"></i> Add
+              </button>
+              <button class="table-btn" (click)="openAdjust(item)" title="Adjust stock">
+                <i class="bi bi-sliders"></i> Adjust
+              </button>
             </td>
           </tr>
         } @empty {
-          <tr><td colspan="6" class="admin-empty">No inventory data found.</td></tr>
+          <tr><td colspan="6" class="admin-empty">No inventory records found.</td></tr>
         }
       </tbody>
     </table>
@@ -109,14 +364,22 @@
     @if (totalPages() > 1) {
       <div class="admin-pagination">
         <span class="admin-pagination__info">
-          Showing {{ (currentPage() - 1) * pageSize + 1 }}–{{ currentPage() * pageSize < filteredItems().length ? currentPage() * pageSize : filteredItems().length }} of {{ filteredItems().length }}
+          Showing
+          {{ (currentPage() - 1) * pageSize + 1 }}–{{ currentPage() * pageSize < filteredItems().length ? currentPage() * pageSize : filteredItems().length }}
+          of {{ filteredItems().length }}
         </span>
         <div class="admin-pagination__controls">
-          <button class="pagination-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)"><i class="bi bi-chevron-left"></i></button>
+          <button class="pagination-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">
+            <i class="bi bi-chevron-left"></i>
+          </button>
           @for (p of pageNumbers(); track p) {
-            <button class="pagination-btn" [class.pagination-btn--active]="p === currentPage()" (click)="goToPage(p)">{{ p }}</button>
+            <button class="pagination-btn" [class.pagination-btn--active]="p === currentPage()" (click)="goToPage(p)">
+              {{ p }}
+            </button>
           }
-          <button class="pagination-btn" [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)"><i class="bi bi-chevron-right"></i></button>
+          <button class="pagination-btn" [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)">
+            <i class="bi bi-chevron-right"></i>
+          </button>
         </div>
       </div>
     }

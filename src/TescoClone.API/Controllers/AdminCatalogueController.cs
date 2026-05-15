@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TescoClone.API.Authorization;
 using TescoClone.Application.Catalogue.Commands.AdjustInventory;
+using TescoClone.Application.Catalogue.Commands.CreateProductVariant;
 using TescoClone.Application.Catalogue.Commands.CreateCategory;
 using TescoClone.Application.Catalogue.Commands.CreateDepartment;
 using TescoClone.Application.Catalogue.Commands.CreateProduct;
@@ -210,6 +211,28 @@ public sealed class AdminCatalogueController : ControllerBase
         await _mediator.Send(new AdjustInventoryCommand(request.ProductVariantId, request.Quantity, _currentUser.UserId), cancellationToken);
         return NoContent();
     }
+
+    [HttpPost("/api/v1/admin/inventory")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> CreateProductVariant([FromBody] CreateProductVariantRequest request, CancellationToken cancellationToken)
+    {
+        var command = new CreateProductVariantCommand(
+            request.ProductId,
+            request.Sku,
+            request.VariantName,
+            request.Barcode,
+            request.InitialQuantity,
+            request.LowStockThreshold,
+            _currentUser.UserId);
+
+        var variantId = await _mediator.Send(command, cancellationToken);
+        return StatusCode(StatusCodes.Status201Created, new { variantId });
+    }
 }
 
 public sealed record CreateProductRequest(
@@ -221,6 +244,13 @@ public sealed record UpdateProductRequest(
     decimal BasePrice, decimal? ClubcardPrice, string? ImageUrl, bool IsAvailable);
 
 public sealed record AdjustInventoryRequest(int ProductVariantId, int Quantity, string? Reason);
+public sealed record CreateProductVariantRequest(
+    int ProductId,
+    string Sku,
+    string? VariantName,
+    string? Barcode,
+    int InitialQuantity,
+    int LowStockThreshold);
 
 public sealed record CreateDepartmentRequest(string Name);
 public sealed record UpdateDepartmentRequest(string Name);

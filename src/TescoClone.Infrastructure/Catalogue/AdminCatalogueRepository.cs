@@ -357,6 +357,32 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         }
     }
 
+    public async Task<int> CreateProductVariantAsync(int productId, string sku, string? variantName, string? barcode, int initialQuantity, int lowStockThreshold, int adminId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            return await SqlHelper.ExecuteScalarAsync(
+                connection,
+                "proc_Admin_CreateProductVariant",
+                [
+                    SqlHelper.Input("@ProductId", productId),
+                    SqlHelper.Input("@Sku", sku),
+                    SqlHelper.Input("@VariantName", variantName),
+                    SqlHelper.Input("@Barcode", barcode),
+                    SqlHelper.Input("@InitialQuantity", initialQuantity),
+                    SqlHelper.Input("@LowStockThreshold", lowStockThreshold),
+                    SqlHelper.Input("@AdminId", adminId)
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in CreateProductVariantAsync for productId: {ProductId}, sku: {Sku}", productId, sku);
+            throw;
+        }
+    }
+
     private static AdminProductDto MapAdminProduct(Microsoft.Data.SqlClient.SqlDataReader reader) =>
         new(
             Id: SqlHelper.GetValue<int>(reader, "Id"),

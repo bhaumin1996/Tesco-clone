@@ -19,4 +19,5 @@ public interface IAdminCatalogueRepository
     Task UpdateDepartmentAsync(int departmentId, string name, int adminId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<AdminInventoryDto>> GetInventoryAsync(CancellationToken cancellationToken = default);
     Task AdjustInventoryAsync(int productVariantId, int quantityDelta, int adminId, CancellationToken cancellationToken = default);
+    Task<int> CreateProductVariantAsync(int productId, string sku, string? variantName, string? barcode, int initialQuantity, int lowStockThreshold, int adminId, CancellationToken cancellationToken = default);
 }
