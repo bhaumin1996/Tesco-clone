@@ -4,7 +4,7 @@
 
 .analytics-filters {
   display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap;
-  &__btn { align-self: flex-end; }
+  &__btn-group { display: flex; flex-direction: column; }
 }
 
 .analytics-stats {

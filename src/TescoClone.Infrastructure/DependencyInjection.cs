@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using TescoClone.Application.Analytics.Interfaces;
 using TescoClone.Application.Catalogue.Interfaces;
 using TescoClone.Application.Common.Abstractions;
 using TescoClone.Application.Content.Interfaces;
@@ -8,6 +9,7 @@ using TescoClone.Application.Loyalty.Interfaces;
 using TescoClone.Application.Marketplace.Interfaces;
 using TescoClone.Application.Order.Interfaces;
 using TescoClone.Application.Promotions.Interfaces;
+using TescoClone.Infrastructure.Analytics;
 using TescoClone.Infrastructure.Catalogue;
 using TescoClone.Infrastructure.Common;
 using TescoClone.Infrastructure.Content;
@@ -62,6 +64,9 @@ public static class DependencyInjection
 
         // Marketplace
         services.AddScoped<IMarketplaceRepository, MarketplaceRepository>();
+
+        // Analytics
+        services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
 
         // Audit and application log repositories
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();

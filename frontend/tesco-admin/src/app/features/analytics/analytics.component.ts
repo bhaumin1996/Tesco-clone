@@ -62,6 +62,18 @@ export class AdminAnalyticsComponent implements OnInit {
 
   protected exportCsv(): void {
     const { from, to } = this.filterForm.getRawValue();
-    window.open(`${this._base}/export?from=${from}&to=${to}`, '_blank');
+    this._http
+      .get(`${this._base}/export`, {
+        params: { from: from ?? '', to: to ?? '' },
+        responseType: 'blob'
+      })
+      .subscribe(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analytics-${from}-to-${to}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
   }
 }
