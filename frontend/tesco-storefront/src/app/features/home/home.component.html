@@ -1,6 +1,51 @@
 <main class="home" id="main-content">
 
-  <!-- ── Department Roundels ─────────────────────────────────────────────── -->
+  <!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+  <section class="home__hero" aria-label="Welcome to Tesco">
+    <div class="page-container home__hero-inner">
+      <div class="home__hero-content">
+        <span class="home__hero-pill">🛒 Now delivering near you</span>
+        <h1 class="home__hero-title">Great food.<br>Great prices.<br>Every day.</h1>
+        <p class="home__hero-sub">Shop groceries, household essentials and more — delivered to your door or ready to collect.</p>
+        <div class="home__hero-actions">
+          <a routerLink="/departments" class="home__hero-btn home__hero-btn--primary">Shop groceries</a>
+          <a routerLink="/delivery" class="home__hero-btn home__hero-btn--outline">Book a delivery</a>
+        </div>
+      </div>
+      <div class="home__hero-features" aria-hidden="true">
+        <div class="home__hero-feat">
+          <div class="home__hero-feat-icon">⚡</div>
+          <div class="home__hero-feat-text">
+            <strong>Whoosh delivery</strong>
+            <span>From 60 minutes</span>
+          </div>
+        </div>
+        <div class="home__hero-feat">
+          <div class="home__hero-feat-icon">💳</div>
+          <div class="home__hero-feat-text">
+            <strong>Clubcard</strong>
+            <span>Earn &amp; save points</span>
+          </div>
+        </div>
+        <div class="home__hero-feat">
+          <div class="home__hero-feat-icon">🏷️</div>
+          <div class="home__hero-feat-text">
+            <strong>Weekly offers</strong>
+            <span>New deals every week</span>
+          </div>
+        </div>
+        <div class="home__hero-feat">
+          <div class="home__hero-feat-icon">🚚</div>
+          <div class="home__hero-feat-text">
+            <strong>Free delivery</strong>
+            <span>With Delivery Saver</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Department Roundels ────────────────────────────────────────────────── -->
   <section class="home__roundels" aria-label="Shop by department">
     <div class="page-container">
       @if (loading()) {
@@ -27,7 +72,7 @@
                     <img [src]="dept.imageUrl" [alt]="dept.name" loading="lazy" />
                   } @else {
                     <div class="roundel__placeholder">
-                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#005DAA" stroke-width="1.5" aria-hidden="true">
+                      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#005DAA" stroke-width="1.5" aria-hidden="true">
                         <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
                       </svg>
                     </div>
@@ -38,12 +83,12 @@
             }
             <a routerLink="/departments" class="roundel">
               <div class="roundel__circle roundel__circle--all">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
                   <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
                 </svg>
               </div>
-              <span class="roundel__label">All Departments</span>
+              <span class="roundel__label">All Depts</span>
             </a>
           </div>
           <button class="roundel-scroll-btn roundel-scroll-btn--right" (click)="scrollDepts('right')" aria-label="Scroll right">
@@ -56,23 +101,28 @@
     </div>
   </section>
 
-  <!-- ── What's new this week? (3-col promo cards) ──────────────────────── -->
+  <!-- ── What's new this week (3-col editorial cards) ──────────────────────── -->
   <section class="home__section home__section--white">
     <div class="page-container">
       <div class="section-head">
-        <h2 class="section-head__title">What's new this week?</h2>
-        <a routerLink="/departments" class="section-head__link">Explore the range</a>
+        <div class="section-head__left">
+          <span class="section-eyebrow">🔥 Hot right now</span>
+          <h2 class="section-head__title">What's new this week?</h2>
+        </div>
+        <a routerLink="/departments" class="section-head__link">Explore the range <span aria-hidden="true">→</span></a>
       </div>
       <div class="promo-grid promo-grid--3">
         @for (card of newThisWeek; track card.title) {
           <a [routerLink]="card.url" class="promo-card">
             <div class="promo-card__img" [style.background]="card.bg">
               <span class="promo-card__img-icon" aria-hidden="true">{{ card.icon }}</span>
+              <div class="promo-card__img-overlay">
+                <h3 class="promo-card__overlay-title">{{ card.title }}</h3>
+              </div>
             </div>
             <div class="promo-card__body">
-              <h3 class="promo-card__title">{{ card.title }}</h3>
               <p class="promo-card__text">{{ card.text }}</p>
-              <span class="promo-card__cta">Shop now</span>
+              <span class="promo-card__cta">Shop now <span aria-hidden="true" class="promo-card__arrow">→</span></span>
             </div>
           </a>
         }
@@ -80,20 +130,26 @@
     </div>
   </section>
 
-  <!-- ── Top picks for you (4-col feature tiles) ────────────────────────── -->
+  <!-- ── Top picks for you (4-col feature tiles) ───────────────────────────── -->
   <section class="home__section home__section--grey">
     <div class="page-container">
       <div class="section-head">
-        <h2 class="section-head__title">Top picks for you</h2>
-        <a routerLink="/departments" class="section-head__link">See all</a>
+        <div class="section-head__left">
+          <span class="section-eyebrow">✨ Hand-picked for you</span>
+          <h2 class="section-head__title">Top picks for you</h2>
+        </div>
+        <a routerLink="/departments" class="section-head__link">See all <span aria-hidden="true">→</span></a>
       </div>
       <div class="promo-grid promo-grid--4">
         @for (card of topPicks; track card.title) {
           <a [routerLink]="card.url" class="feature-tile" [style.--tile-color]="card.color">
-            <div class="feature-tile__icon" aria-hidden="true">{{ card.icon }}</div>
+            <div class="feature-tile__top">
+              <span class="feature-tile__icon" aria-hidden="true">{{ card.icon }}</span>
+            </div>
             <div class="feature-tile__body">
               <h3 class="feature-tile__title">{{ card.title }}</h3>
               <p class="feature-tile__text">{{ card.text }}</p>
+              <span class="feature-tile__cta">Explore →</span>
             </div>
           </a>
         }
@@ -101,10 +157,15 @@
     </div>
   </section>
 
-  <!-- ── Ways to shop and save (3-col) ─────────────────────────────────── -->
+  <!-- ── Ways to shop and save (3-col) ─────────────────────────────────────── -->
   <section class="home__section home__section--white">
     <div class="page-container">
-      <h2 class="section-head__title">Ways to shop and save</h2>
+      <div class="section-head">
+        <div class="section-head__left">
+          <span class="section-eyebrow">💰 Smart shopping</span>
+          <h2 class="section-head__title">Ways to shop and save</h2>
+        </div>
+      </div>
       <div class="promo-grid promo-grid--3">
         @for (item of waysToSave; track item.title) {
           <a [routerLink]="item.url" class="save-tile">
@@ -114,7 +175,7 @@
             <div class="save-tile__body">
               <h3 class="save-tile__title">{{ item.title }}</h3>
               <p class="save-tile__text">{{ item.text }}</p>
-              <span class="save-tile__link">Find out more</span>
+              <span class="save-tile__link">Find out more →</span>
             </div>
           </a>
         }
@@ -122,8 +183,9 @@
     </div>
   </section>
 
-  <!-- ── Clubcard banner ───────────────────────────────────────────────── -->
+  <!-- ── Clubcard banner ────────────────────────────────────────────────────── -->
   <section class="home__clubcard-banner" aria-label="Tesco Clubcard promotion">
+    <div class="clubcard-banner__bg-dots" aria-hidden="true"></div>
     <div class="page-container">
       <div class="clubcard-banner">
         <div class="clubcard-banner__content">
@@ -133,9 +195,14 @@
             Get 1 point for every £1 you spend. Collect points, get vouchers and unlock
             exclusive Clubcard Prices throughout the store.
           </p>
+          <ul class="clubcard-banner__perks">
+            <li>✔ 1 point per £1 spent</li>
+            <li>✔ Clubcard Prices in store &amp; online</li>
+            <li>✔ Exclusive vouchers &amp; rewards</li>
+          </ul>
           <div class="clubcard-banner__actions">
-            <a routerLink="/auth/register" class="button button--primary">Join for free</a>
-            <a routerLink="/account/clubcard" class="button button--secondary">Find out more</a>
+            <a routerLink="/auth/register" class="home__hero-btn home__hero-btn--primary">Join for free</a>
+            <a routerLink="/account/clubcard" class="home__hero-btn home__hero-btn--outline-dark">Find out more</a>
           </div>
         </div>
         <div class="clubcard-banner__card-wrap" aria-hidden="true">
@@ -148,15 +215,21 @@
             <span class="clubcard-mock__number">**** **** **** 1234</span>
             <span class="clubcard-mock__name">YOUR NAME</span>
           </div>
+          <div class="clubcard-mock clubcard-mock--back" aria-hidden="true"></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ── Discover more from Tesco (3-col) ──────────────────────────────── -->
+  <!-- ── Discover more from Tesco (3-col) ──────────────────────────────────── -->
   <section class="home__section home__section--grey">
     <div class="page-container">
-      <h2 class="section-head__title">Discover more from Tesco</h2>
+      <div class="section-head">
+        <div class="section-head__left">
+          <span class="section-eyebrow">🌟 Explore</span>
+          <h2 class="section-head__title">Discover more from Tesco</h2>
+        </div>
+      </div>
       <div class="promo-grid promo-grid--3">
         @for (item of discoverMore; track item.title) {
           <a [routerLink]="item.url" class="discover-card">
@@ -166,7 +239,7 @@
             <div class="discover-card__body">
               <h3 class="discover-card__title">{{ item.title }}</h3>
               <p class="discover-card__text">{{ item.text }}</p>
-              <span class="discover-card__cta">{{ item.cta }}</span>
+              <span class="discover-card__cta">{{ item.cta }} →</span>
             </div>
           </a>
         }
@@ -174,11 +247,14 @@
     </div>
   </section>
 
-  <!-- ── Shop by brand (horizontal scroll roundels) ────────────────────── -->
+  <!-- ── Shop by brand (horizontal scroll) ─────────────────────────────────── -->
   <section class="home__section home__section--white" aria-label="Shop by brand">
     <div class="page-container">
       <div class="section-head">
-        <h2 class="section-head__title">Shop by brand</h2>
+        <div class="section-head__left">
+          <span class="section-eyebrow">🏆 Top brands</span>
+          <h2 class="section-head__title">Shop by brand</h2>
+        </div>
         <span class="section-head__count">{{ brandRoundels.length }} brands</span>
       </div>
       <div class="roundel-scroll-wrapper">
@@ -192,13 +268,7 @@
             <a [routerLink]="['/search']" [queryParams]="{ brand: brand.name }" class="roundel">
               <div class="roundel__circle roundel__circle--brand" [style.background]="brand.bgColor">
                 @if (brand.imageUrl && !brandImgErrors().has(brand.slug)) {
-                  <img
-                    [src]="brand.imageUrl"
-                    [alt]="brand.name"
-                    loading="lazy"
-                    class="roundel__brand-logo"
-                    (error)="onBrandImgError(brand.slug)"
-                  />
+                  <img [src]="brand.imageUrl" [alt]="brand.name" loading="lazy" class="roundel__brand-logo" (error)="onBrandImgError(brand.slug)" />
                 } @else {
                   <span class="roundel__brand-initial">{{ brand.name[0] }}</span>
                 }
@@ -216,18 +286,23 @@
     </div>
   </section>
 
-  <!-- ── Community / CSR row (3-col) ───────────────────────────────────── -->
+  <!-- ── Community / CSR (3-col) ───────────────────────────────────────────── -->
   <section class="home__section home__section--grey" aria-label="Tesco community initiatives">
     <div class="page-container">
-      <h2 class="section-head__title">We're here to help</h2>
+      <div class="section-head">
+        <div class="section-head__left">
+          <span class="section-eyebrow">💚 Community</span>
+          <h2 class="section-head__title">We're here to help</h2>
+        </div>
+      </div>
       <div class="promo-grid promo-grid--3">
         @for (item of communityItems; track item.title) {
           <div class="community-card">
-            <span class="community-card__icon" aria-hidden="true">{{ item.icon }}</span>
-            <div>
+            <div class="community-card__icon-wrap" aria-hidden="true">{{ item.icon }}</div>
+            <div class="community-card__body">
               <h3 class="community-card__title">{{ item.title }}</h3>
               <p class="community-card__text">{{ item.text }}</p>
-              <a [routerLink]="item.url" class="community-card__link">{{ item.cta }}</a>
+              <a [routerLink]="item.url" class="community-card__link">{{ item.cta }} →</a>
             </div>
           </div>
         }
@@ -235,14 +310,19 @@
     </div>
   </section>
 
-  <!-- ── Services row (4-col: Bank, Insurance, Travel, Gift Cards) ──────── -->
+  <!-- ── Services (4-col) ──────────────────────────────────────────────────── -->
   <section class="home__section home__section--blue" aria-label="Tesco financial services">
     <div class="page-container">
-      <h2 class="section-head__title section-head__title--white">Even more to explore</h2>
+      <div class="section-head">
+        <div class="section-head__left">
+          <span class="section-eyebrow section-eyebrow--light">🌐 More from us</span>
+          <h2 class="section-head__title section-head__title--white">Even more to explore</h2>
+        </div>
+      </div>
       <div class="promo-grid promo-grid--4">
         @for (svc of services; track svc.title) {
           <a [href]="svc.url" class="service-tile">
-            <span class="service-tile__icon" aria-hidden="true">{{ svc.icon }}</span>
+            <div class="service-tile__icon-wrap" aria-hidden="true">{{ svc.icon }}</div>
             <div>
               <h3 class="service-tile__title">{{ svc.title }}</h3>
               <p class="service-tile__text">{{ svc.text }}</p>

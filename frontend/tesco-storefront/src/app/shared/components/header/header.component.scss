@@ -285,10 +285,7 @@
 .header__dept-nav {
   background: $color-surface-alt;
   border-bottom: 1px solid $color-border;
-  overflow-x: auto;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar { display: none; }
+  overflow: hidden;
 
   @media (max-width: $breakpoint-lg) {
     display: none;
@@ -298,14 +295,17 @@
       background: $color-surface;
       border-bottom: none;
       padding: $space-3 0;
+      overflow: visible;
     }
   }
 }
 
 .header__dept-list {
   display: flex;
-  align-items: stretch;
-  white-space: nowrap;
+  align-items: center;
+  flex-wrap: wrap;
+  max-height: 5.25rem; // cap at 2 rows (~40px each)
+  overflow: hidden;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -321,7 +321,6 @@
   color: $color-ink;
   text-decoration: none;
   border-bottom: 3px solid transparent;
-  white-space: nowrap;
   transition: color 0.15s ease, border-color 0.15s ease;
 
   &:hover,
