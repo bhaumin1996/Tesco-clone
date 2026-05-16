@@ -37,9 +37,16 @@
 
       @if (totalAuditPages() > 1) {
         <div class="admin-pagination">
-          @for (p of auditPages(); track p) {
-            <button class="page-btn" [class.active]="p === auditPage()" (click)="goAudit(p)">{{ p }}</button>
-          }
+          <span class="admin-pagination__info">
+            Showing {{ (auditPage() - 1) * pageSize + 1 }}–{{ auditPage() * pageSize < totalAuditCount() ? auditPage() * pageSize : totalAuditCount() }} of {{ totalAuditCount() }}
+          </span>
+          <div class="admin-pagination__controls">
+            <button class="pagination-btn" [disabled]="auditPage() === 1" (click)="goAudit(auditPage() - 1)"><i class="bi bi-chevron-left"></i></button>
+            @for (p of auditPages(); track p) {
+              <button class="pagination-btn" [class.pagination-btn--active]="p === auditPage()" (click)="goAudit(p)">{{ p }}</button>
+            }
+            <button class="pagination-btn" [disabled]="auditPage() === totalAuditPages()" (click)="goAudit(auditPage() + 1)"><i class="bi bi-chevron-right"></i></button>
+          </div>
         </div>
       }
     </div>
@@ -74,9 +81,16 @@
 
       @if (totalLogPages() > 1) {
         <div class="admin-pagination">
-          @for (p of logPages(); track p) {
-            <button class="page-btn" [class.active]="p === logPage()" (click)="goLog(p)">{{ p }}</button>
-          }
+          <span class="admin-pagination__info">
+            Showing {{ (logPage() - 1) * pageSize + 1 }}–{{ logPage() * pageSize < totalLogCount() ? logPage() * pageSize : totalLogCount() }} of {{ totalLogCount() }}
+          </span>
+          <div class="admin-pagination__controls">
+            <button class="pagination-btn" [disabled]="logPage() === 1" (click)="goLog(logPage() - 1)"><i class="bi bi-chevron-left"></i></button>
+            @for (p of logPages(); track p) {
+              <button class="pagination-btn" [class.pagination-btn--active]="p === logPage()" (click)="goLog(p)">{{ p }}</button>
+            }
+            <button class="pagination-btn" [disabled]="logPage() === totalLogPages()" (click)="goLog(logPage() + 1)"><i class="bi bi-chevron-right"></i></button>
+          </div>
         </div>
       }
     </div>

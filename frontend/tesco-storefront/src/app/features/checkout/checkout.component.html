@@ -105,86 +105,95 @@
         }
 
         <!-- Step 2: Payment -->
-        @if (step() === 2) {
-          <div class="chk-card">
-            <div class="chk-card__head">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-              <h2 class="chk-card__title">Payment details</h2>
-            </div>
-            <form [formGroup]="paymentForm" novalidate class="chk-card__body">
-
-              <div class="form-group">
-                <label class="form-label" for="cardNumber">Card number</label>
-                <div class="input-wrapper">
-                  <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                  <input id="cardNumber" type="text" class="form-control"
-                    [class.is-invalid]="paymentForm.get('cardNumber')?.touched && paymentForm.get('cardNumber')?.invalid"
-                    formControlName="cardNumber" placeholder="1234 5678 9012 3456" maxlength="16" autocomplete="cc-number" />
-                </div>
-                @if (paymentForm.get('cardNumber')?.touched && paymentForm.get('cardNumber')?.invalid) {
-                  <span class="form-error" role="alert">Enter a valid 16-digit card number</span>
-                }
-              </div>
-
-              <div class="chk-row">
-                <div class="form-group">
-                  <label class="form-label" for="expiry">Expiry date</label>
-                  <input id="expiry" type="text" class="form-control"
-                    [class.is-invalid]="paymentForm.get('expiryDate')?.touched && paymentForm.get('expiryDate')?.invalid"
-                    formControlName="expiryDate" placeholder="MM/YY" autocomplete="cc-exp" />
-                  @if (paymentForm.get('expiryDate')?.touched && paymentForm.get('expiryDate')?.invalid) {
-                    <span class="form-error" role="alert">Invalid date (MM/YY)</span>
-                  }
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="cvv">CVV</label>
-                  <div class="input-wrapper">
-                    <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    <input id="cvv" type="text" class="form-control"
-                      [class.is-invalid]="paymentForm.get('cvv')?.touched && paymentForm.get('cvv')?.invalid"
-                      formControlName="cvv" placeholder="123" maxlength="4" autocomplete="cc-csc" />
-                  </div>
-                  @if (paymentForm.get('cvv')?.touched && paymentForm.get('cvv')?.invalid) {
-                    <span class="form-error" role="alert">Invalid CVV</span>
-                  }
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" for="nameOnCard">Name on card</label>
-                <input id="nameOnCard" type="text" class="form-control"
-                  [class.is-invalid]="paymentForm.get('nameOnCard')?.touched && paymentForm.get('nameOnCard')?.invalid"
-                  formControlName="nameOnCard" autocomplete="cc-name" placeholder="As it appears on your card" />
-                @if (paymentForm.get('nameOnCard')?.touched && paymentForm.get('nameOnCard')?.invalid) {
-                  <span class="form-error" role="alert">Name on card is required</span>
-                }
-              </div>
-
-              <div class="chk-checks">
-                <label class="chk-check">
-                  <input type="checkbox" class="chk-check__input" formControlName="acceptSubstitutions" />
-                  <span class="chk-check__box"></span>
-                  <span class="chk-check__text">I accept suitable substitutions if any item is unavailable</span>
-                </label>
-                @if (cartService.cart()?.hasAgeRestrictedItems) {
-                  <label class="chk-check" [class.chk-check--error]="paymentForm.get('ageConfirmed')?.touched && paymentForm.get('ageConfirmed')?.invalid">
-                    <input type="checkbox" class="chk-check__input" formControlName="ageConfirmed" id="ageConfirmed" />
-                    <span class="chk-check__box"></span>
-                    <span class="chk-check__text">I confirm I am 18 or over and all recipients of age-restricted products are 18 or over</span>
-                  </label>
-                  @if (paymentForm.get('ageConfirmed')?.touched && paymentForm.get('ageConfirmed')?.invalid) {
-                    <span class="form-error" role="alert">You must confirm your age</span>
-                  }
-                }
-              </div>
-
-              <div class="chk-secure-note">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Your payment details are encrypted and secure.
-              </div>
-            </form>
+        <div class="chk-card" [hidden]="step() !== 2">
+          <div class="chk-card__head">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <h2 class="chk-card__title">Payment details</h2>
           </div>
-        }
+          <form [formGroup]="paymentForm" novalidate class="chk-card__body">
+
+            <!-- Saved Cards List -->
+            @if (savedCards().length > 0) {
+              <div class="saved-cards">
+                <p class="form-label">Select a saved card</p>
+                <div class="saved-cards__list">
+                  @for (card of savedCards(); track card.id) {
+                    <label class="saved-card-item" [class.is-selected]="paymentForm.get('selectedCardId')?.value === card.id.toString()">
+                      <input type="radio" formControlName="selectedCardId" [value]="card.id.toString()" (change)="toggleNewCard(false)">
+                      <div class="saved-card-item__info">
+                        <span class="saved-card-item__brand">{{ card.brand | titlecase }}</span>
+                        <span class="saved-card-item__number">•••• {{ card.last4 }}</span>
+                        <span class="saved-card-item__expiry">Exp: {{ card.expiryMonth }}/{{ card.expiryYear }}</span>
+                      </div>
+                      @if (card.isDefault) {
+                        <span class="saved-card-item__default">Default</span>
+                      }
+                    </label>
+                  }
+                  <label class="saved-card-item saved-card-item--new" [class.is-selected]="paymentForm.get('selectedCardId')?.value === 'new'">
+                    <input type="radio" formControlName="selectedCardId" value="new" (change)="toggleNewCard(true)">
+                    <span class="saved-card-item__text">Use a new card</span>
+                  </label>
+                </div>
+              </div>
+            }
+
+            @if (showNewCardForm()) {
+              <div class="new-card-form">
+                <div class="form-group">
+                  <label class="form-label" for="nameOnCard">Name on card</label>
+                  <input id="nameOnCard" type="text" class="form-control"
+                    [class.is-invalid]="paymentForm.get('nameOnCard')?.touched && paymentForm.get('nameOnCard')?.invalid"
+                    formControlName="nameOnCard" autocomplete="cc-name" placeholder="As it appears on your card" />
+                  @if (paymentForm.get('nameOnCard')?.touched && paymentForm.get('nameOnCard')?.invalid) {
+                    <span class="form-error" role="alert">Name on card is required</span>
+                  }
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Card details</label>
+                  <div class="stripe-card-container" [class.is-invalid]="cardError()">
+                    <ngx-stripe-card [options]="cardOptions" [elementsOptions]="elementsOptions" (change)="onCardChange($event)"></ngx-stripe-card>
+                  </div>
+                  @if (cardError()) {
+                    <span class="form-error" role="alert">{{ cardError() }}</span>
+                  }
+                </div>
+
+                <div class="chk-checks">
+                  <label class="chk-check">
+                    <input type="checkbox" class="chk-check__input" formControlName="saveCard" />
+                    <span class="chk-check__box"></span>
+                    <span class="chk-check__text">Save this card for future use</span>
+                  </label>
+                </div>
+              </div>
+            }
+
+            <div class="chk-checks chk-checks--extra">
+              <label class="chk-check">
+                <input type="checkbox" class="chk-check__input" formControlName="acceptSubstitutions" />
+                <span class="chk-check__box"></span>
+                <span class="chk-check__text">I accept suitable substitutions if any item is unavailable</span>
+              </label>
+              @if (cartService.cart()?.hasAgeRestrictedItems) {
+                <label class="chk-check" [class.chk-check--error]="paymentForm.get('ageConfirmed')?.touched && paymentForm.get('ageConfirmed')?.invalid">
+                  <input type="checkbox" class="chk-check__input" formControlName="ageConfirmed" id="ageConfirmed" />
+                  <span class="chk-check__box"></span>
+                  <span class="chk-check__text">I confirm I am 18 or over and all recipients of age-restricted products are 18 or over</span>
+                </label>
+                @if (paymentForm.get('ageConfirmed')?.touched && paymentForm.get('ageConfirmed')?.invalid) {
+                  <span class="form-error" role="alert">You must confirm your age</span>
+                }
+              }
+            </div>
+
+            <div class="chk-secure-note">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Your payment details are encrypted and secure via Stripe.
+            </div>
+          </form>
+        </div>
 
         <!-- Step 3: Review -->
         @if (step() === 3) {

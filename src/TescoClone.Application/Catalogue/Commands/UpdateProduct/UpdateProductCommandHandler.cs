@@ -26,7 +26,8 @@ public sealed class UpdateProductCommandHandler : IRequestHandler<UpdateProductC
             request.BrandId, null,
             request.Name, existing.Slug, request.Description,
             request.BasePrice, request.ClubcardPrice, request.ImageUrl,
-            request.IsAvailable, 0, DateTime.UtcNow, DateTime.UtcNow);
+            request.IsAvailable, 0, DateTime.UtcNow, DateTime.UtcNow,
+            PlacedAndConfirmedCount: 0, PendingOrderCount: 0, RemainingStock: 0);
 
         await _adminCatalogueRepository.UpdateProductAsync(dto, request.AdminUserId, cancellationToken);
     }

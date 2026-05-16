@@ -7,7 +7,8 @@ public interface IPromotionRepository
 {
     Task<PaginatedResult<PromotionDto>> GetPromotionsAsync(bool? isActive, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     Task<PromotionDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
-    Task<int> CreateAsync(PromotionDto promotion, int adminId, CancellationToken cancellationToken = default);
+    Task<int> CreateAsync(PromotionDto promotion, int typeId, int adminId, CancellationToken cancellationToken = default);
     Task UpdateAsync(PromotionDto promotion, int adminId, CancellationToken cancellationToken = default);
     Task SoftDeleteAsync(int id, int adminId, CancellationToken cancellationToken = default);
+    Task<PaginatedResult<PromotionDto>> GetActivePromotionsForStorefrontAsync(int pageNumber, int pageSize, CancellationToken cancellationToken = default);
 }

@@ -26,4 +26,8 @@ export class OrderService {
   cancelOrder(id: number) {
     return this._http.post<void>(`${this.baseUrl}/${id}/cancel`, {});
   }
+
+  getInvoiceUrl(filename: string): string {
+    return `${environment.apiBaseUrl}/assets/invoices/${filename}`;
+  }
 }

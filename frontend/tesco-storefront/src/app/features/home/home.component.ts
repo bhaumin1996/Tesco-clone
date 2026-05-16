@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CatalogueService } from '../../core/services/catalogue.service';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
-import { Department, Brand } from '../../core/models/catalogue.model';
+import { Department, Brand, Banner } from '../../core/models/catalogue.model';
 import { ImageUrlPipe } from '../../shared/pipes/image-url.pipe';
 
 @Component({
@@ -17,11 +17,13 @@ import { ImageUrlPipe } from '../../shared/pipes/image-url.pipe';
 export class HomeComponent implements OnInit {
   @ViewChild('deptScroll') private readonly _deptScroll!: ElementRef<HTMLDivElement>;
   @ViewChild('brandScroll') private readonly _brandScroll!: ElementRef<HTMLDivElement>;
+  @ViewChild('bannerContainer') private readonly _bannerScroll!: ElementRef<HTMLDivElement>;
 
   private readonly _catalogue = inject(CatalogueService);
 
   protected departments = signal<Department[]>([]);
   protected brands = signal<Brand[]>([]);
+  protected banners = signal<Banner[]>([]);
   protected loading = signal(true);
 
   protected scrollDepts(dir: 'left' | 'right'): void {
@@ -30,6 +32,13 @@ export class HomeComponent implements OnInit {
 
   protected scrollBrands(dir: 'left' | 'right'): void {
     this._scroll(this._brandScroll, dir);
+  }
+
+  protected scrollBanners(direction: number): void {
+    const el = this._bannerScroll?.nativeElement;
+    if (!el) return;
+    const scrollAmount = direction * (el.offsetWidth * 0.8);
+    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   }
 
   private _scroll(ref: ElementRef<HTMLDivElement>, dir: 'left' | 'right'): void {
@@ -208,7 +217,12 @@ export class HomeComponent implements OnInit {
     });
 
     this._catalogue.getBrands().subscribe({
-      next: b => { this.brands.set(b); this.loading.set(false); },
+      next: b => { this.brands.set(b); },
+      error: () => {}
+    });
+
+    this._catalogue.getBanners().subscribe({
+      next: b => { this.banners.set(b); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
   }

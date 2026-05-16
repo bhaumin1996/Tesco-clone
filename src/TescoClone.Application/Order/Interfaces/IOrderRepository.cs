@@ -11,4 +11,5 @@ public interface IOrderRepository
     Task<PaginatedResult<OrderDto>> GetByUserIdAsync(int userId, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
     Task<int> CreateFromCartAsync(int userId, int? deliverySlotId, string? deliveryAddress, decimal deliveryCharge, int createdBy, CancellationToken cancellationToken = default);
     Task UpdateStatusAsync(int orderId, OrderStatus status, int modifiedBy, CancellationToken cancellationToken = default);
+    Task UpdateInvoicePathAsync(int orderId, string path, int modifiedBy, CancellationToken cancellationToken = default);
 }

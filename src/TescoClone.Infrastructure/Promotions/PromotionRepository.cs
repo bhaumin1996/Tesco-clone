@@ -58,7 +58,7 @@ public sealed class PromotionRepository : IPromotionRepository
             cancellationToken);
     }
 
-    public async Task<int> CreateAsync(PromotionDto promotion, int adminId, CancellationToken cancellationToken = default)
+    public async Task<int> CreateAsync(PromotionDto promotion, int typeId, int adminId, CancellationToken cancellationToken = default)
     {
         using var connection = _connectionFactory.CreateConnection();
         return await SqlHelper.ExecuteScalarAsync(
@@ -66,6 +66,7 @@ public sealed class PromotionRepository : IPromotionRepository
             "proc_Admin_CreatePromotion",
             [
                 SqlHelper.Input("@Name", promotion.Name),
+                SqlHelper.Input("@TypeId", typeId),
                 SqlHelper.InputNullable("@DiscountValue", promotion.DiscountValue),
                 SqlHelper.InputNullable("@DiscountPercent", promotion.DiscountPercent),
                 SqlHelper.InputNullable("@MinQuantity", promotion.MinQuantity),
@@ -96,6 +97,34 @@ public sealed class PromotionRepository : IPromotionRepository
             cancellationToken);
     }
 
+    public async Task<PaginatedResult<PromotionDto>> GetActivePromotionsForStorefrontAsync(
+        int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+
+        using var command = connection.CreateCommand();
+        command.CommandType = System.Data.CommandType.StoredProcedure;
+        command.CommandText = "proc_Promotions_GetActivePromotions";
+        command.Parameters.AddRange(new[]
+        {
+            SqlHelper.Input("@PageNumber", pageNumber),
+            SqlHelper.Input("@PageSize", pageSize)
+        });
+
+        using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        var items = new List<PromotionDto>();
+        int totalCount = 0;
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            totalCount = SqlHelper.GetValue<int>(reader, "TotalCount");
+            items.Add(MapPromotionStorefront(reader));
+        }
+
+        return new PaginatedResult<PromotionDto>(items, pageNumber, pageSize, totalCount);
+    }
+
     public async Task SoftDeleteAsync(int id, int adminId, CancellationToken cancellationToken = default)
     {
         using var connection = _connectionFactory.CreateConnection();
@@ -120,6 +149,22 @@ public sealed class PromotionRepository : IPromotionRepository
             StartsAt: SqlHelper.GetNullableValue<DateTime>(reader, "StartsAt"),
             EndsAt: SqlHelper.GetNullableValue<DateTime>(reader, "EndsAt"),
             IsActive: SqlHelper.GetValue<bool>(reader, "IsActive"),
+            RequiresClubcard: false,
             CreatedOn: SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
             ModifiedOn: SqlHelper.GetNullableValue<DateTime>(reader, "ModifiedOn"));
+
+    private static PromotionDto MapPromotionStorefront(SqlDataReader reader) =>
+        new(
+            Id: SqlHelper.GetValue<int>(reader, "Id"),
+            Name: SqlHelper.GetValue<string>(reader, "Name"),
+            TypeName: SqlHelper.GetValue<string>(reader, "TypeName"),
+            DiscountValue: SqlHelper.GetNullableValue<decimal>(reader, "DiscountValue"),
+            DiscountPercent: SqlHelper.GetNullableValue<decimal>(reader, "DiscountPercent"),
+            MinQuantity: SqlHelper.GetNullableValue<int>(reader, "MinQuantity"),
+            StartsAt: SqlHelper.GetNullableValue<DateTime>(reader, "StartsAt"),
+            EndsAt: SqlHelper.GetNullableValue<DateTime>(reader, "EndsAt"),
+            IsActive: SqlHelper.GetValue<bool>(reader, "IsActive"),
+            RequiresClubcard: SqlHelper.GetValue<bool>(reader, "RequiresClubcard"),
+            CreatedOn: DateTime.UtcNow,
+            ModifiedOn: null);
 }

@@ -2,6 +2,10 @@ import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/c
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { OrderService } from '../../../core/services/order.service';
+import { AddressService } from '../../../core/services/address.service';
+import { Address } from '../../../core/models/address.model';
+import { signal, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-account-dashboard',
@@ -20,7 +24,7 @@ import { AuthService } from '../../../core/services/auth.service';
           </div>
           <div class="acc-hero__stats">
             <div class="acc-stat">
-              <span class="acc-stat__value">0</span>
+              <span class="acc-stat__value">{{ orderCount() }}</span>
               <span class="acc-stat__label">Orders</span>
             </div>
             <div class="acc-stat acc-stat--clubcard">
@@ -87,7 +91,11 @@ import { AuthService } from '../../../core/services/auth.service';
             </div>
             <div class="acc-card__body">
               <h2 class="acc-card__title">Addresses</h2>
-              <p class="acc-card__desc">Manage your delivery addresses</p>
+              <p class="acc-card__desc" *ngIf="!defaultAddress()">Manage your delivery addresses</p>
+              <div class="acc-card__preview" *ngIf="defaultAddress()">
+                <span class="acc-card__preview-label">Default:</span>
+                <span class="acc-card__preview-text">{{ defaultAddress()?.addressLine1 }}, {{ defaultAddress()?.postcode }}</span>
+              </div>
             </div>
             <span class="acc-card__arrow">›</span>
           </a>
@@ -102,6 +110,20 @@ import { AuthService } from '../../../core/services/auth.service';
             <div class="acc-card__body">
               <h2 class="acc-card__title">Personal Details</h2>
               <p class="acc-card__desc">Update your name, email and password</p>
+            </div>
+            <span class="acc-card__arrow">›</span>
+          </a>
+
+          <a routerLink="/account/cards" class="acc-card acc-card--cyan">
+            <div class="acc-card__icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                <line x1="1" y1="10" x2="23" y2="10"/>
+              </svg>
+            </div>
+            <div class="acc-card__body">
+              <h2 class="acc-card__title">My Cards</h2>
+              <p class="acc-card__desc">Manage your saved payment methods</p>
             </div>
             <span class="acc-card__arrow">›</span>
           </a>
@@ -224,6 +246,10 @@ import { AuthService } from '../../../core/services/auth.service';
     }
     .acc-card:hover .acc-card__arrow { transform: translateX(4px); color: inherit; }
 
+    .acc-card__preview { margin-top: 0.4rem; background: #f9fafb; padding: 0.4rem 0.6rem; border-radius: 8px; border: 1px solid #f3f4f6; }
+    .acc-card__preview-label { display: block; font-size: 0.65rem; color: #9ca3af; text-transform: uppercase; font-weight: 700; margin-bottom: 0.1rem; }
+    .acc-card__preview-text { display: block; font-size: 0.75rem; color: #374151; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
     /* ── Colour themes ── */
     .acc-card--blue::before  { background: #00539f; }
     .acc-card--blue .acc-card__icon-wrap  { background: #e8f0fa; color: #00539f; }
@@ -250,11 +276,34 @@ import { AuthService } from '../../../core/services/auth.service';
     .acc-card--orange::before { background: #ea580c; }
     .acc-card--orange .acc-card__icon-wrap { background: #fff0e6; color: #ea580c; }
     .acc-card--orange:hover   { border-color: #ea580c; }
+
+    .acc-card--cyan::before { background: #0891b2; }
+    .acc-card--cyan .acc-card__icon-wrap { background: #ecfeff; color: #0891b2; }
+    .acc-card--cyan:hover   { border-color: #0891b2; }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AccountDashboardComponent {
+export class AccountDashboardComponent implements OnInit {
   protected readonly auth = inject(AuthService);
+  private readonly _orders = inject(OrderService);
+  private readonly _addressService = inject(AddressService);
+
+  protected orderCount = signal(0);
+  protected defaultAddress = signal<Address | null>(null);
+
+  ngOnInit(): void {
+    this._orders.getMyOrders(1, 1).subscribe({
+      next: r => this.orderCount.set(r.totalCount),
+      error: () => this.orderCount.set(0)
+    });
+
+    this._addressService.getAddresses().subscribe({
+      next: addrs => {
+        const def = addrs.find(a => a.isDefault) || addrs[0];
+        this.defaultAddress.set(def || null);
+      }
+    });
+  }
 
   protected readonly initials = computed(() => {
     const u = this.auth.user();

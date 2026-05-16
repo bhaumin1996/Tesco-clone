@@ -328,6 +328,9 @@
           <th>Product</th>
           <th>Stock</th>
           <th>Low Stock Threshold</th>
+          <th>Placed &amp; Confirmed</th>
+          <th>Pending</th>
+          <th>Remaining Stock</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -339,6 +342,13 @@
             <td>{{ item.productName }}</td>
             <td>{{ item.stockQuantity }}</td>
             <td>{{ item.lowStockThreshold }}</td>
+            <td class="cell--orders">{{ item.placedAndConfirmedCount }}</td>
+            <td class="cell--pending" [class.cell--pending-hi]="item.pendingOrderCount > 0">
+              {{ item.pendingOrderCount }}
+            </td>
+            <td class="cell--remaining" [class.cell--remaining-low]="item.remainingStock <= item.lowStockThreshold" [class.cell--remaining-neg]="item.remainingStock < 0">
+              {{ item.remainingStock }}
+            </td>
             <td>
               @if (item.isLowStock) {
                 <span class="status-badge status--error">Low Stock</span>
@@ -356,7 +366,7 @@
             </td>
           </tr>
         } @empty {
-          <tr><td colspan="6" class="admin-empty">No inventory records found.</td></tr>
+          <tr><td colspan="9" class="admin-empty">No inventory records found.</td></tr>
         }
       </tbody>
     </table>

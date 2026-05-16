@@ -51,8 +51,7 @@ export class AdminLayoutComponent {
       label: 'Commerce',
       items: [
         { label: 'Orders',      icon: 'bi-cart3',        route: '/orders' },
-        { label: 'Promotions',  icon: 'bi-tag',          route: '/promotions' },
-        { label: 'Marketplace', icon: 'bi-shop',         route: '/marketplace' }
+        { label: 'Promotions',  icon: 'bi-tag',          route: '/promotions' }
       ]
     },
     {

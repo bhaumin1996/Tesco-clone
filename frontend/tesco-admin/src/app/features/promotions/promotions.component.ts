@@ -5,13 +5,20 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 interface Promotion {
-  promotionId: number;
+  id: number;
   name: string;
-  type: string;
-  discountValue: number;
-  startDate: string;
-  endDate: string;
+  typeName: string;
+  discountValue: number | null;
+  discountPercent: number | null;
+  minQuantity: number | null;
+  startsAt: string | null;
+  endsAt: string | null;
   isActive: boolean;
+}
+
+interface PagedResponse<T> {
+  items: T[];
+  totalCount: number;
 }
 
 @Component({
@@ -31,6 +38,7 @@ export class AdminPromotionsComponent implements OnInit {
   protected showForm = signal(false);
   protected editId = signal<number | null>(null);
   protected message = signal('');
+  protected messageType = signal<'success' | 'error'>('success');
 
   protected searchQuery = signal('');
 
@@ -38,24 +46,35 @@ export class AdminPromotionsComponent implements OnInit {
   protected currentPage = signal(1);
   protected filteredPromotions = computed(() => {
     const q = this.searchQuery().toLowerCase();
-    return q ? this.promotions().filter(p =>
-      p.name.toLowerCase().includes(q) ||
-      p.type.toLowerCase().includes(q)
-    ) : this.promotions();
+    return q
+      ? this.promotions().filter(p => p.name.toLowerCase().includes(q) || p.typeName.toLowerCase().includes(q))
+      : this.promotions();
   });
   protected totalPages = computed(() => Math.max(1, Math.ceil(this.filteredPromotions().length / this.pageSize)));
-  protected pagedPromotions = computed(() => { const s = (this.currentPage() - 1) * this.pageSize; return this.filteredPromotions().slice(s, s + this.pageSize); });
+  protected pagedPromotions = computed(() => {
+    const s = (this.currentPage() - 1) * this.pageSize;
+    return this.filteredPromotions().slice(s, s + this.pageSize);
+  });
   protected pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1));
+
+  readonly promotionTypes = [
+    { id: 1, label: 'Percentage Discount' },
+    { id: 2, label: 'Fixed Amount Discount' },
+    { id: 3, label: 'Buy X Get Y' },
+    { id: 4, label: 'Multi Buy' },
+    { id: 5, label: 'Clubcard Price' },
+  ];
 
   protected form = this._fb.group({
     name: ['', Validators.required],
-    type: ['Percentage', Validators.required],
-    discountValue: [0, [Validators.required, Validators.min(0)]],
-    startDate: ['', Validators.required],
-    endDate: ['', Validators.required]
+    promotionTypeId: [1, Validators.required],
+    discountValue: [null as number | null],
+    discountPercent: [null as number | null],
+    minQuantity: [null as number | null],
+    startsAt: [null as string | null],
+    endsAt: [null as string | null],
+    isActive: [true],
   });
-
-  readonly types = ['Percentage', 'FixedAmount', 'BuyXGetY', 'FreeShipping'];
 
   private get _base() { return `${environment.apiUrl}/admin/promotions`; }
 
@@ -63,40 +82,95 @@ export class AdminPromotionsComponent implements OnInit {
 
   private _load(): void {
     this.loading.set(true);
-    this._http.get<Promotion[]>(this._base).subscribe({
-      next: r => { this.promotions.set(r); this.currentPage.set(1); this.loading.set(false); },
+    this._http.get<PagedResponse<Promotion>>(`${this._base}?pageNumber=1&pageSize=500`).subscribe({
+      next: r => { this.promotions.set(r.items); this.currentPage.set(1); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
   }
 
+  private _showMessage(text: string, type: 'success' | 'error'): void {
+    this.message.set(text);
+    this.messageType.set(type);
+    setTimeout(() => this.message.set(''), 3000);
+  }
+
   protected onSearch(term: string): void { this.searchQuery.set(term); this.currentPage.set(1); }
 
-  protected goToPage(page: number): void { if (page >= 1 && page <= this.totalPages()) this.currentPage.set(page); }
+  protected goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) this.currentPage.set(page);
+  }
 
-  protected openCreate(): void { this.editId.set(null); this.form.reset({ type: 'Percentage', discountValue: 0 }); this.showForm.set(true); }
+  protected openCreate(): void {
+    this.editId.set(null);
+    this.form.reset({ promotionTypeId: 1, isActive: true });
+    this.showForm.set(true);
+  }
 
   protected openEdit(p: Promotion): void {
-    this.editId.set(p.promotionId);
-    this.form.patchValue({ name: p.name, type: p.type, discountValue: p.discountValue, startDate: p.startDate.substring(0, 10), endDate: p.endDate.substring(0, 10) });
+    this.editId.set(p.id);
+    this.form.patchValue({
+      name: p.name,
+      discountValue: p.discountValue,
+      discountPercent: p.discountPercent,
+      minQuantity: p.minQuantity,
+      startsAt: p.startsAt ? p.startsAt.substring(0, 10) : null,
+      endsAt: p.endsAt ? p.endsAt.substring(0, 10) : null,
+      isActive: p.isActive,
+    });
     this.showForm.set(true);
   }
 
   protected save(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    const body = this.form.getRawValue();
-    const req = this.editId()
-      ? this._http.put(`${this._base}/${this.editId()}`, body)
-      : this._http.post(this._base, body);
+    const v = this.form.getRawValue();
+    const id = this.editId();
+    const req = id
+      ? this._http.put(`${this._base}/${id}`, {
+          name: v.name,
+          discountValue: v.discountValue || null,
+          discountPercent: v.discountPercent || null,
+          minQuantity: v.minQuantity || null,
+          startsAt: v.startsAt || null,
+          endsAt: v.endsAt || null,
+          isActive: v.isActive,
+        })
+      : this._http.post(this._base, {
+          name: v.name,
+          promotionTypeId: Number(v.promotionTypeId),
+          discountValue: v.discountValue || null,
+          discountPercent: v.discountPercent || null,
+          minQuantity: v.minQuantity || null,
+          startsAt: v.startsAt || null,
+          endsAt: v.endsAt || null,
+        });
     req.subscribe({
-      next: () => { this.showForm.set(false); this._load(); this.message.set('Promotion saved.'); setTimeout(() => this.message.set(''), 3000); },
-      error: () => this.message.set('Save failed.')
+      next: () => { this.showForm.set(false); this._load(); this._showMessage('Promotion saved.', 'success'); },
+      error: () => this._showMessage('Save failed.', 'error')
     });
   }
 
-  protected deactivate(id: number): void {
+  protected toggleActive(p: Promotion): void {
+    const activate = !p.isActive;
+    if (!activate && !confirm('Deactivate this promotion?')) return;
+    this._http.put(`${this._base}/${p.id}`, {
+      name: p.name,
+      discountValue: p.discountValue,
+      discountPercent: p.discountPercent,
+      minQuantity: p.minQuantity,
+      startsAt: p.startsAt,
+      endsAt: p.endsAt,
+      isActive: activate,
+    }).subscribe({
+      next: () => { this._load(); this._showMessage(activate ? 'Promotion activated.' : 'Promotion deactivated.', 'success'); },
+      error: () => this._showMessage('Action failed.', 'error')
+    });
+  }
+
+  protected delete(id: number): void {
+    if (!confirm('Permanently delete this promotion?')) return;
     this._http.delete(`${this._base}/${id}`).subscribe({
-      next: () => { this._load(); this.message.set('Promotion deactivated.'); setTimeout(() => this.message.set(''), 3000); },
-      error: () => this.message.set('Action failed.')
+      next: () => { this._load(); this._showMessage('Promotion deleted.', 'success'); },
+      error: () => this._showMessage('Delete failed.', 'error')
     });
   }
 }

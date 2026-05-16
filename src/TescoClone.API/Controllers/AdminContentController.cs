@@ -91,6 +91,17 @@ public sealed class AdminContentController : ControllerBase
         var result = await _contentRepository.GetBannersAsync(isActive, cancellationToken);
         return Ok(result);
     }
+    [HttpGet("banners/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetBanner(int id, CancellationToken cancellationToken = default)
+    {
+        var result = await _contentRepository.GetBannerByIdAsync(id, cancellationToken);
+        if (result is null) return NotFound();
+        return Ok(result);
+    }
 
     [HttpPost("banners")]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -98,7 +109,7 @@ public sealed class AdminContentController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateBanner([FromBody] CreateBannerRequest request, CancellationToken cancellationToken)
     {
-        var banner = new BannerDto(0, request.Title, null, request.ImageUrl, request.LinkUrl, request.DisplayOrder, true, null, null, DateTime.UtcNow, null);
+        var banner = new BannerDto(0, request.Title, null, request.ImageUrl, request.LinkUrl, request.DisplayOrder, true, request.StartsAt, request.EndsAt, DateTime.UtcNow, null);
         var id = await _contentRepository.CreateBannerAsync(banner, _currentUser.UserId, cancellationToken);
         return StatusCode(StatusCodes.Status201Created, new { id });
     }
@@ -112,7 +123,14 @@ public sealed class AdminContentController : ControllerBase
     {
         var banner = await _contentRepository.GetBannerByIdAsync(id, cancellationToken);
         if (banner is null) return NotFound();
-        var updated = banner with { Title = request.Title, ImageUrl = request.ImageUrl, LinkUrl = request.LinkUrl, DisplayOrder = request.DisplayOrder };
+        var updated = banner with { 
+            Title = request.Title, 
+            ImageUrl = request.ImageUrl, 
+            LinkUrl = request.LinkUrl, 
+            DisplayOrder = request.DisplayOrder,
+            StartsAt = request.StartsAt,
+            EndsAt = request.EndsAt
+        };
         await _contentRepository.UpdateBannerAsync(updated, _currentUser.UserId, cancellationToken);
         return NoContent();
     }
@@ -134,5 +152,5 @@ public sealed class AdminContentController : ControllerBase
 
 public sealed record CreatePageRequest(string Title, string Slug, string? Content, bool IsPublished);
 public sealed record UpdatePageRequest(string Title, string Slug, string? Content, bool IsPublished);
-public sealed record CreateBannerRequest(string Title, string? ImageUrl, string? LinkUrl, int DisplayOrder);
-public sealed record UpdateBannerRequest(string Title, string? ImageUrl, string? LinkUrl, int DisplayOrder);
+public sealed record CreateBannerRequest(string Title, string? ImageUrl, string? LinkUrl, int DisplayOrder, DateTime? StartsAt = null, DateTime? EndsAt = null);
+public sealed record UpdateBannerRequest(string Title, string? ImageUrl, string? LinkUrl, int DisplayOrder, DateTime? StartsAt = null, DateTime? EndsAt = null);

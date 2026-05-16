@@ -4,7 +4,7 @@
 </div>
 
 @if (message()) {
-  <div class="admin-alert admin-alert--success">{{ message() }}</div>
+  <div class="admin-alert" [class.admin-alert--success]="messageType() === 'success'" [class.admin-alert--error]="messageType() === 'error'">{{ message() }}</div>
 }
 
 @if (showForm()) {
@@ -12,6 +12,7 @@
     <h2 class="promo-form-card__title">{{ editId() ? 'Edit Promotion' : 'New Promotion' }}</h2>
     <form [formGroup]="form" (ngSubmit)="save()">
       <div class="promo-form-grid">
+
         <div class="form-group">
           <label class="form-label">Name</label>
           <input class="form-control" formControlName="name" />
@@ -19,24 +20,53 @@
             <span class="form-error">Name is required.</span>
           }
         </div>
+
+        @if (!editId()) {
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select class="form-control" formControlName="promotionTypeId">
+              @for (t of promotionTypes; track t.id) {
+                <option [value]="t.id">{{ t.label }}</option>
+              }
+            </select>
+          </div>
+        }
+
         <div class="form-group">
-          <label class="form-label">Type</label>
-          <select class="form-control" formControlName="type">
-            @for (t of types; track t) { <option [value]="t">{{ t }}</option> }
-          </select>
+          <label class="form-label">Discount value (£)</label>
+          <input type="number" class="form-control" formControlName="discountValue" step="0.01" min="0" placeholder="Optional" />
         </div>
+
         <div class="form-group">
-          <label class="form-label">Discount value</label>
-          <input type="number" class="form-control" formControlName="discountValue" step="0.01" />
+          <label class="form-label">Discount percent (%)</label>
+          <input type="number" class="form-control" formControlName="discountPercent" step="0.01" min="0.01" max="100" placeholder="Optional" />
         </div>
+
+        <div class="form-group">
+          <label class="form-label">Min quantity</label>
+          <input type="number" class="form-control" formControlName="minQuantity" min="1" placeholder="Optional" />
+        </div>
+
         <div class="form-group">
           <label class="form-label">Start date</label>
-          <input type="date" class="form-control" formControlName="startDate" />
+          <input type="date" class="form-control" formControlName="startsAt" />
         </div>
+
         <div class="form-group">
           <label class="form-label">End date</label>
-          <input type="date" class="form-control" formControlName="endDate" />
+          <input type="date" class="form-control" formControlName="endsAt" />
         </div>
+
+        @if (editId()) {
+          <div class="form-group promo-form-active">
+            <label class="form-label">Status</label>
+            <label class="promo-toggle">
+              <input type="checkbox" formControlName="isActive" />
+              <span>Active</span>
+            </label>
+          </div>
+        }
+
       </div>
       <div class="promo-form-card__actions">
         <button type="submit" class="button button--primary">Save</button>
@@ -57,28 +87,41 @@
   } @else {
     <table class="admin-table">
       <thead>
-        <tr><th>Name</th><th>Type</th><th>Discount</th><th>Start</th><th>End</th><th>Status</th><th>Actions</th></tr>
+        <tr>
+          <th>Name</th><th>Type</th><th>Discount</th><th>Min Qty</th>
+          <th>Starts</th><th>Ends</th><th>Status</th><th>Actions</th>
+        </tr>
       </thead>
       <tbody>
-        @for (p of pagedPromotions(); track p.promotionId) {
+        @for (p of pagedPromotions(); track p.id) {
           <tr>
             <td>{{ p.name }}</td>
-            <td>{{ p.type }}</td>
-            <td>{{ p.discountValue }}</td>
-            <td>{{ p.startDate | date:'dd MMM yyyy' }}</td>
-            <td>{{ p.endDate | date:'dd MMM yyyy' }}</td>
-            <td><span class="status-badge" [class.status--active]="p.isActive" [class.status--inactive]="!p.isActive">{{ p.isActive ? 'Active' : 'Inactive' }}</span></td>
+            <td>{{ p.typeName }}</td>
+            <td>
+              @if (p.discountPercent) { {{ p.discountPercent }}% }
+              @else if (p.discountValue) { £{{ p.discountValue }} }
+              @else { — }
+            </td>
+            <td>{{ p.minQuantity ?? '—' }}</td>
+            <td>{{ p.startsAt ? (p.startsAt | date:'dd MMM yyyy') : '—' }}</td>
+            <td>{{ p.endsAt ? (p.endsAt | date:'dd MMM yyyy') : '—' }}</td>
+            <td>
+              <span class="status-badge" [class.status--active]="p.isActive" [class.status--inactive]="!p.isActive">
+                {{ p.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
             <td>
               <div class="actions-cell">
                 <button class="table-btn" (click)="openEdit(p)">Edit</button>
-                @if (p.isActive) {
-                  <button class="table-btn table-btn--danger" (click)="deactivate(p.promotionId)">Deactivate</button>
-                }
+                <button class="table-btn" [class.table-btn--danger]="p.isActive" (click)="toggleActive(p)">
+                  {{ p.isActive ? 'Deactivate' : 'Activate' }}
+                </button>
+                <button class="table-btn table-btn--danger" (click)="delete(p.id)">Delete</button>
               </div>
             </td>
           </tr>
         } @empty {
-          <tr><td colspan="7" class="admin-empty">No promotions found.</td></tr>
+          <tr><td colspan="8" class="admin-empty">No promotions found.</td></tr>
         }
       </tbody>
     </table>
@@ -90,8 +133,8 @@
         </span>
         <div class="admin-pagination__controls">
           <button class="pagination-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)"><i class="bi bi-chevron-left"></i></button>
-          @for (p of pageNumbers(); track p) {
-            <button class="pagination-btn" [class.pagination-btn--active]="p === currentPage()" (click)="goToPage(p)">{{ p }}</button>
+          @for (n of pageNumbers(); track n) {
+            <button class="pagination-btn" [class.pagination-btn--active]="n === currentPage()" (click)="goToPage(n)">{{ n }}</button>
           }
           <button class="pagination-btn" [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)"><i class="bi bi-chevron-right"></i></button>
         </div>

@@ -26,6 +26,7 @@
       <table class="admin-table table table-hover align-middle mb-0">
         <thead>
           <tr>
+            <th class="col-no">#</th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'orderNumber'" (click)="sort('orderNumber')">Order # <i class="bi sort-icon" [ngClass]="sortIcon('orderNumber')"></i></th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'customerName'" (click)="sort('customerName')">Customer <i class="bi sort-icon" [ngClass]="sortIcon('customerName')"></i></th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'total'" (click)="sort('total')">Total <i class="bi sort-icon" [ngClass]="sortIcon('total')"></i></th>
@@ -35,13 +36,16 @@
           </tr>
         </thead>
         <tbody>
-          @for (o of orders(); track o.id) {
+          @for (o of orders(); track o.id; let i = $index) {
             <tr>
+              <td class="col-no text-muted">{{ startItem() + i }}</td>
               <td><span class="fw-semibold">{{ o.orderNumber }}</span></td>
               <td>{{ o.customerName }}</td>
               <td class="fw-semibold">£{{ o.total | number:'1.2-2' }}</td>
               <td>
                 <select class="status-select"
+                        [disabled]="terminalStatuses.has(o.status)"
+                        [class.status-select--locked]="terminalStatuses.has(o.status)"
                         (change)="updateStatus(o.id, $any($event.target).value)">
                   @for (s of statuses; track s) {
                     <option [value]="s" [selected]="s === o.status">{{ getStatusLabel(s) }}</option>
@@ -61,18 +65,33 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="6" class="admin-empty">No orders found.</td></tr>
+            <tr><td colspan="7" class="admin-empty">No orders found.</td></tr>
           }
         </tbody>
       </table>
     </div>
 
-    @if (totalPages() > 1) {
-      <div class="admin-pagination">
-        @for (page of pages(); track page) {
-          <button class="page-btn" [class.active]="page === currentPage()" (click)="goTo(page)">{{ page }}</button>
+    <div class="admin-pagination">
+      <span class="admin-pagination__info">
+        @if (totalCount() > 0) {
+          Showing {{ startItem() }}–{{ endItem() }} of {{ totalCount() }} orders
         }
+      </span>
+      <div class="admin-pagination__controls">
+        <button class="page-btn" [disabled]="currentPage() === 1" (click)="goTo(currentPage() - 1)" title="Previous">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+        @for (page of visiblePages(); track $index) {
+          @if (page === null) {
+            <span class="page-ellipsis">…</span>
+          } @else {
+            <button class="page-btn" [class.active]="page === currentPage()" (click)="goTo(page)">{{ page }}</button>
+          }
+        }
+        <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="goTo(currentPage() + 1)" title="Next">
+          <i class="bi bi-chevron-right"></i>
+        </button>
       </div>
-    }
+    </div>
   }
 </div>

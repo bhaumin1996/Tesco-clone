@@ -12,6 +12,7 @@ export interface Order {
   promotionSavings?: number;
   clubcardSavings: number;
   total: number;
+  invoiceUrl?: string;
 }
 
 export type OrderStatus = 'Placed' | 'Confirmed' | 'Picking' | 'Packed' | 'OutForDelivery' | 'Delivered' | 'Cancelled';
@@ -32,4 +33,6 @@ export interface PlaceOrderRequest {
   deliveryCharge: number;
   acceptSubstitutions: boolean;
   ageConfirmed: boolean;
+  paymentMethodId: string;
+  saveCard?: boolean;
 }

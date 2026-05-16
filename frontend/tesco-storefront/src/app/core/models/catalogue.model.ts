@@ -13,6 +13,15 @@ export interface Brand {
   logoUrl?: string;
 }
 
+export interface Banner {
+  id: number;
+  title: string;
+  subTitle?: string;
+  imageUrl?: string;
+  linkUrl?: string;
+  displayOrder: number;
+}
+
 export interface Category {
   id: number;
   departmentId: number;

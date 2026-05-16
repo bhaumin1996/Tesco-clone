@@ -19,8 +19,8 @@ public sealed class CreatePromotionCommandHandler : IRequestHandler<CreatePromot
             0, request.Name, string.Empty,
             request.DiscountValue, request.DiscountPercent,
             request.MinQuantity, request.StartsAt, request.EndsAt,
-            true, DateTime.UtcNow, null);
+            true, false, DateTime.UtcNow, null);
 
-        return _promotionRepository.CreateAsync(dto, request.AdminUserId, cancellationToken);
+        return _promotionRepository.CreateAsync(dto, request.PromotionTypeId, request.AdminUserId, cancellationToken);
     }
 }

@@ -1,0 +1,167 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+.banners-page {
+  padding-block: $space-6;
+
+  &__hero {
+    margin-bottom: $space-6;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: 700;
+    color: $color-tesco-blue;
+    margin-bottom: $space-2;
+  }
+
+  &__subtitle {
+    font-size: $font-size-md;
+    color: lighten($color-ink, 30%);
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: $space-6 0;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: $space-6 0;
+    color: lighten($color-ink, 20%);
+
+    p { margin-bottom: $space-4; }
+  }
+}
+
+.banners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: $space-5;
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.banner-card {
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid $color-border;
+  border-radius: 10px;
+  background: $color-surface;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  &__image-wrap {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: $color-surface-alt;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+
+    .banner-card:hover & {
+      transform: scale(1.03);
+    }
+  }
+
+  &__expiry-badge {
+    position: absolute;
+    top: $space-2;
+    right: $space-2;
+    background: $color-tesco-red;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__placeholder {
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $color-surface-blue;
+    font-size: 3rem;
+  }
+
+  &__body {
+    flex: 1;
+    padding: $space-4;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: 700;
+    color: $color-ink;
+    margin-bottom: $space-2;
+    @include line-clamp(2);
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: lighten($color-ink, 20%);
+    margin-bottom: $space-2;
+    @include line-clamp(3);
+  }
+
+  &__dates {
+    font-size: 0.75rem;
+    color: lighten($color-ink, 40%);
+    margin-top: $space-2;
+  }
+
+  &__footer {
+    padding: $space-3 $space-4;
+    border-top: 1px solid $color-border;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2 $space-4;
+  border-radius: 4px;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &--primary {
+    background: $color-tesco-blue;
+    color: #fff;
+    &:hover { background: $color-tesco-blue-dark; }
+  }
+
+  &--outline {
+    background: transparent;
+    border-color: $color-tesco-blue;
+    color: $color-tesco-blue;
+    &:hover { background: $color-surface-blue; }
+  }
+
+  &--full { width: 100%; }
+}

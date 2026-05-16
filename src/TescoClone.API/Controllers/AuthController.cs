@@ -5,8 +5,12 @@ using TescoClone.Application.Common.Abstractions;
 using TescoClone.Application.Identity.Commands.RefreshToken;
 using TescoClone.Application.Identity.Commands.Register;
 using TescoClone.Application.Identity.Commands.RevokeToken;
+using TescoClone.Application.Identity.Commands.UpdatePassword;
+using TescoClone.Application.Identity.Commands.UpdateProfile;
 using TescoClone.Application.Identity.Queries.GetProfile;
 using TescoClone.Application.Identity.Queries.Login;
+using TescoClone.Application.Identity.Commands.ForgotPassword;
+using TescoClone.Application.Identity.Commands.ResetPassword;
 
 namespace TescoClone.API.Controllers;
 
@@ -77,7 +81,64 @@ public sealed class AuthController : ControllerBase
         var result = await _mediator.Send(new GetProfileQuery(_currentUser.UserId), cancellationToken);
         return Ok(result);
     }
+
+    [HttpPut("profile")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request, CancellationToken cancellationToken)
+    {
+        var command = new UpdateProfileCommand(
+            _currentUser.UserId,
+            request.FirstName,
+            request.LastName,
+            request.Email,
+            request.PhoneNumber);
+        await _mediator.Send(command, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPut("password")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordRequest request, CancellationToken cancellationToken)
+    {
+        var command = new UpdatePasswordCommand(
+            _currentUser.UserId,
+            request.CurrentPassword,
+            request.NewPassword);
+        await _mediator.Send(command, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPost("forgot-password")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request, CancellationToken cancellationToken)
+    {
+        var command = new ForgotPasswordCommand(request.Email);
+        await _mediator.Send(command, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPost("reset-password")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
+    {
+        var command = new ResetPasswordCommand(request.Token, request.NewPassword);
+        await _mediator.Send(command, cancellationToken);
+        return NoContent();
+    }
 }
+
+public sealed record UpdateProfileRequest(string FirstName, string LastName, string Email, string? PhoneNumber);
+public sealed record UpdatePasswordRequest(string CurrentPassword, string NewPassword);
 
 public sealed record RefreshTokenRequest(int UserId, string RefreshToken);
 public sealed record RevokeTokenRequest(string RefreshToken);
+public sealed record ForgotPasswordRequest(string Email);
+public sealed record ResetPasswordRequest(string Token, string NewPassword);

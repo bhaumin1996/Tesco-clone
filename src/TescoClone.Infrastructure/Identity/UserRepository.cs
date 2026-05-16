@@ -123,6 +123,51 @@ public sealed class UserRepository : IUserRepository
         }
     }
 
+    public async Task UpdateProfileAsync(int userId, string firstName, string lastName, string email, string? phoneNumber, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            await SqlHelper.ExecuteNonQueryAsync(
+                connection,
+                "proc_Identity_UpdateProfile",
+                [
+                    SqlHelper.Input("@UserId", userId),
+                    SqlHelper.Input("@FirstName", firstName),
+                    SqlHelper.Input("@LastName", lastName),
+                    SqlHelper.Input("@Email", email),
+                    SqlHelper.Input("@Phone", phoneNumber),
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in UpdateProfileAsync for userId: {UserId}", userId);
+            throw;
+        }
+    }
+
+    public async Task UpdatePasswordAsync(int userId, string passwordHash, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            await SqlHelper.ExecuteNonQueryAsync(
+                connection,
+                "proc_Identity_UpdatePassword",
+                [
+                    SqlHelper.Input("@UserId", userId),
+                    SqlHelper.Input("@PasswordHash", passwordHash),
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in UpdatePasswordAsync for userId: {UserId}", userId);
+            throw;
+        }
+    }
+
     public async Task<IReadOnlyList<string>> GetRolesAsync(int userId, CancellationToken cancellationToken = default)
     {
         try
@@ -207,6 +252,68 @@ public sealed class UserRepository : IUserRepository
         }
     }
 
+    public async Task UpdateStripeCustomerIdAsync(int userId, string stripeCustomerId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            await SqlHelper.ExecuteNonQueryAsync(
+                connection,
+                "spUpdateUserStripeCustomerId",
+                [
+                    SqlHelper.Input("@UserId", userId),
+                    SqlHelper.Input("@StripeCustomerId", stripeCustomerId),
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in UpdateStripeCustomerIdAsync for userId: {UserId}", userId);
+            throw;
+        }
+    }
+
+    public async Task SetPasswordResetTokenAsync(string email, string token, DateTime expiresAt, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            await SqlHelper.ExecuteNonQueryAsync(
+                connection,
+                "proc_Identity_SetPasswordResetToken",
+                [
+                    SqlHelper.Input("@Email", email),
+                    SqlHelper.Input("@Token", token),
+                    SqlHelper.Input("@ExpiresAt", expiresAt),
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in SetPasswordResetTokenAsync for email: {Email}", email);
+            throw;
+        }
+    }
+
+    public async Task<User?> GetByPasswordResetTokenAsync(string token, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            return await SqlHelper.ExecuteReaderSingleAsync(
+                connection,
+                "proc_Identity_GetUserByPasswordResetToken",
+                MapUser,
+                [SqlHelper.Input("@Token", token)],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GetByPasswordResetTokenAsync");
+            throw;
+        }
+    }
+
     private static User MapUser(SqlDataReader reader) =>
         User.Hydrate(
             id: SqlHelper.GetValue<int>(reader, "Id"),
@@ -215,9 +322,12 @@ public sealed class UserRepository : IUserRepository
             email: SqlHelper.GetValue<string>(reader, "Email"),
             passwordHash: SqlHelper.GetValue<string>(reader, "PasswordHash"),
             phoneNumber: SqlHelper.GetNullableString(reader, "PhoneNumber"),
+            stripeCustomerId: SqlHelper.GetNullableString(reader, "StripeCustomerId"),
             status: (UserStatus)SqlHelper.GetValue<byte>(reader, "StatusId"),
             failedLoginAttempts: SqlHelper.GetValue<byte>(reader, "FailedLoginAttempts"),
             lockedUntil: SqlHelper.GetNullableValue<DateTime>(reader, "LockedUntil"),
+            passwordResetToken: SqlHelper.GetNullableString(reader, "PasswordResetToken"),
+            passwordResetTokenExpires: SqlHelper.GetNullableValue<DateTime>(reader, "PasswordResetTokenExpires"),
             recordStatus: (RecordStatus)SqlHelper.GetValue<byte>(reader, "RecordStatusId"),
             createdOn: SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
             modifiedOn: SqlHelper.GetNullableValue<DateTime>(reader, "ModifiedOn"));

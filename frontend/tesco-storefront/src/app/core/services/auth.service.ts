@@ -2,7 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { tap, catchError, throwError } from 'rxjs';
-import { AuthResponse, LoginRequest, RegisterRequest, UserProfile } from '../models/auth.model';
+import { AuthResponse, LoginRequest, RegisterRequest, UserProfile, UpdateProfileRequest, UpdatePasswordRequest, ForgotPasswordRequest, ResetPasswordRequest } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -52,6 +52,31 @@ export class AuthService {
         return throwError(() => err);
       })
     );
+  }
+
+  updateProfile(req: UpdateProfileRequest) {
+    return this._http.put<void>(`${this.baseUrl}/profile`, req).pipe(
+      tap(() => {
+        const u = this._user();
+        if (u) {
+          const updated = { ...u, ...req };
+          this._user.set(updated);
+          localStorage.setItem('user', JSON.stringify(updated));
+        }
+      })
+    );
+  }
+
+  updatePassword(req: UpdatePasswordRequest) {
+    return this._http.put<void>(`${this.baseUrl}/password`, req);
+  }
+
+  forgotPassword(req: ForgotPasswordRequest) {
+    return this._http.post<void>(`${this.baseUrl}/forgot-password`, req);
+  }
+
+  resetPassword(req: ResetPasswordRequest) {
+    return this._http.post<void>(`${this.baseUrl}/reset-password`, req);
   }
 
   getAccessToken(): string | null { return this._accessToken(); }

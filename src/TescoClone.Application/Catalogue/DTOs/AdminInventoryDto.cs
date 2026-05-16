@@ -7,4 +7,7 @@ public sealed record AdminInventoryDto(
     string Sku,
     int StockQuantity,
     int LowStockThreshold,
-    bool IsLowStock);
+    bool IsLowStock,
+    int PlacedAndConfirmedCount,
+    int PendingOrderCount,
+    int RemainingStock);

@@ -113,6 +113,17 @@ public sealed class ContentRepository : IContentRepository
             cancellationToken);
     }
 
+    public async Task<IReadOnlyList<BannerDto>> GetActiveBannersForStorefrontAsync(CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        return await SqlHelper.ExecuteReaderAsync(
+            connection,
+            "proc_Content_GetActiveBanners",
+            MapBanner,
+            [],
+            cancellationToken);
+    }
+
     public async Task<IReadOnlyList<BannerDto>> GetBannersAsync(bool? isActive, CancellationToken cancellationToken = default)
     {
         using var connection = _connectionFactory.CreateConnection();

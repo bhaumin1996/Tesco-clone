@@ -10,5 +10,6 @@ public sealed record PromotionDto(
     DateTime? StartsAt,
     DateTime? EndsAt,
     bool IsActive,
+    bool RequiresClubcard,
     DateTime CreatedOn,
     DateTime? ModifiedOn);

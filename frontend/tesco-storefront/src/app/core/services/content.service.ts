@@ -13,6 +13,17 @@ export interface Page {
   modifiedOn?: string;
 }
 
+export interface Banner {
+  id: number;
+  title: string;
+  subTitle?: string;
+  imageUrl?: string;
+  linkUrl?: string;
+  displayOrder: number;
+  startsAt?: string;
+  endsAt?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,5 +33,9 @@ export class ContentService {
 
   getPageBySlug(slug: string): Observable<Page> {
     return this.http.get<Page>(`${this.apiUrl}/pages/${slug}`);
+  }
+
+  getActiveBanners(): Observable<Banner[]> {
+    return this.http.get<Banner[]>(`${this.apiUrl}/banners`);
   }
 }
