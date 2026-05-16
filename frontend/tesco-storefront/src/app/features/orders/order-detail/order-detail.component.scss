@@ -5,7 +5,7 @@
 .od-page {
   flex: 1;
   background: #f5f7fa;
-  padding: 2rem 1rem 3rem;
+  padding: 0.75rem 1rem 2rem;
   min-height: 100%;
 }
 
@@ -50,8 +50,8 @@
 // ── Grid layout ───────────────────────────────────────────────────────────────
 .od-grid {
   display: grid;
-  gap: 1.25rem;
-  margin-top: 1rem;
+  gap: 1rem;
+  margin-top: 0.75rem;
 
   @include respond-to(lg) {
     grid-template-columns: 1fr 300px;
@@ -62,24 +62,24 @@
 .od-main {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .od-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 // ── Card ──────────────────────────────────────────────────────────────────────
 .od-card {
   background: #ffffff;
   border-radius: 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 6px 24px rgba(0, 93, 170, 0.06);
-  padding: 1.375rem 1.5rem;
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 12px 40px rgba(0, 93, 170, 0.15);
+  padding: 1rem;
 
   &--header {
     border-left: 4px solid #005DAA;
@@ -112,7 +112,7 @@
   &__left { flex: 1; }
 
   &__title {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 800;
     color: #0f172a;
     margin-bottom: 0.2rem;
@@ -135,6 +135,13 @@
     gap: 0.35rem;
 
     svg { color: #005DAA; flex-shrink: 0; }
+  }
+
+  &__right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
   }
 }
 
@@ -168,7 +175,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.875rem 0;
+  padding: 0.625rem 0;
   border-bottom: 1px solid #f1f5f9;
 
   &:last-child { border-bottom: none; padding-bottom: 0; }
@@ -313,6 +320,24 @@
     &:hover:not(:disabled) { background: #b91c1c; transform: translateY(-1px); }
     &:active:not(:disabled) { transform: translateY(0); }
     &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+
+  &--outline {
+    background: transparent;
+    color: #475569;
+    border: 1.5px solid #cbd5e1;
+    
+    &:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      color: #1e293b;
+    }
+  }
+
+  &--sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8125rem;
+    border-radius: 6px;
   }
 
   &__spinner {

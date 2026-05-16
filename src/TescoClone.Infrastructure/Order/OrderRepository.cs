@@ -68,6 +68,7 @@ public sealed class OrderRepository : IOrderRepository
                     ClubcardSavings = SqlHelper.GetValue<decimal>(reader, "DiscountTotal"),
                     Total = SqlHelper.GetValue<decimal>(reader, "Total"),
                     CreatedAt = SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
+                    InvoicePath = SqlHelper.GetValue<string?>(reader, "InvoicePath"),
                     TotalCount = SqlHelper.GetValue<int>(reader, "TotalCount"),
                     CustomerName = SqlHelper.GetValue<string?>(reader, "CustomerName"),
                     Item = new OrderLineDto(
@@ -103,7 +104,8 @@ public sealed class OrderRepository : IOrderRepository
                         null,
                         g.Select(r => r.Item).ToList(),
                         first.CreatedAt,
-                        first.CustomerName);
+                        first.CustomerName,
+                        first.InvoicePath);
                 })
                 .ToList();
 
@@ -162,6 +164,28 @@ public sealed class OrderRepository : IOrderRepository
         }
     }
 
+    public async Task UpdateInvoicePathAsync(int orderId, string path, int modifiedBy, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            await SqlHelper.ExecuteNonQueryAsync(
+                connection,
+                "proc_Order_UpdateInvoicePath",
+                [
+                    SqlHelper.Input("@OrderId", orderId),
+                    SqlHelper.Input("@InvoicePath", path),
+                    SqlHelper.Input("@ModifiedBy", modifiedBy),
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in UpdateInvoicePathAsync for orderId: {OrderId}", orderId);
+            throw;
+        }
+    }
+
     private static async Task<OrderDto?> BuildOrderAsync(SqlConnection connection, string procedure, IEnumerable<SqlParameter> parameters, CancellationToken cancellationToken)
     {
         var rows = await SqlHelper.ExecuteReaderAsync(
@@ -178,6 +202,7 @@ public sealed class OrderRepository : IOrderRepository
                 Total = SqlHelper.GetValue<decimal>(reader, "Total"),
                 DeliveryAddress = SqlHelper.GetValue<string?>(reader, "DeliveryAddress"),
                 CreatedAt = SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
+                InvoicePath = SqlHelper.GetValue<string?>(reader, "InvoicePath"),
                 CustomerName = SqlHelper.GetValue<string?>(reader, "CustomerName"),
                 Item = new OrderLineDto(
                     SqlHelper.GetValue<int>(reader, "OrderLineId"),
@@ -205,6 +230,7 @@ public sealed class OrderRepository : IOrderRepository
             first.DeliveryAddress,
             rows.Select(r => r.Item).ToList(),
             first.CreatedAt,
-            first.CustomerName);
+            first.CustomerName,
+            first.InvoicePath);
     }
 }

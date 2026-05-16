@@ -20,7 +20,8 @@ public sealed class CreateProductCommandHandler : IRequestHandler<CreateProductC
             request.BrandId, null,
             request.Name, request.Slug, request.Description,
             request.BasePrice, request.ClubcardPrice, request.ImageUrl,
-            request.IsAvailable, 0, DateTime.UtcNow, null);
+            request.IsAvailable, 0, DateTime.UtcNow, null,
+            PlacedAndConfirmedCount: 0, PendingOrderCount: 0, RemainingStock: 0);
 
         return _adminCatalogueRepository.CreateProductAsync(dto, request.AdminUserId, cancellationToken);
     }

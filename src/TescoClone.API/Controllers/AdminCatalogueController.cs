@@ -43,7 +43,7 @@ public sealed class AdminCatalogueController : ControllerBase
 
     private static readonly string[] _allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     private static readonly string[] _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
-    private static readonly string[] _allowedFolders = ["categories", "products"];
+    private static readonly string[] _allowedFolders = ["categories", "products", "banners"];
     private const long _maxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
 
     [HttpPost("/api/v1/admin/images/upload")]

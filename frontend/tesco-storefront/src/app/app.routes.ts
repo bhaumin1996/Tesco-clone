@@ -17,6 +17,14 @@ export const routes: Routes = [
         path: 'register',
         loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
       },
+      {
+        path: 'forgot-password',
+        loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () => import('./features/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
+      },
       { path: '', redirectTo: 'login', pathMatch: 'full' }
     ]
   },
@@ -78,13 +86,28 @@ export const routes: Routes = [
       {
         path: 'clubcard',
         loadComponent: () => import('./features/clubcard/clubcard.component').then(m => m.ClubcardComponent)
+      },
+      {
+        path: 'addresses',
+        loadComponent: () => import('./features/account/addresses/addresses.component').then(m => m.AddressesComponent)
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./features/account/profile/profile.component').then(m => m.ProfileComponent)
+      },
+      {
+        path: 'cards',
+        loadComponent: () => import('./features/account/cards/cards.component').then(m => m.CardsComponent)
       }
     ]
   },
   {
     path: 'offers',
-    redirectTo: '/departments',
-    pathMatch: 'full'
+    loadComponent: () => import('./features/offers/offers.component').then(m => m.OffersComponent)
+  },
+  {
+    path: 'banners',
+    loadComponent: () => import('./features/banners/banners.component').then(m => m.BannersComponent)
   },
   {
     path: 'delivery',

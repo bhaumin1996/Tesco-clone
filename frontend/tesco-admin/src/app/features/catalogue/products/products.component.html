@@ -208,9 +208,12 @@
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'basePrice'" (click)="sort('basePrice')">Price <i class="bi sort-icon" [ngClass]="sortIcon('basePrice')"></i></th>
             <th>Clubcard</th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'stockQuantity'" (click)="sort('stockQuantity')">Stock <i class="bi sort-icon" [ngClass]="sortIcon('stockQuantity')"></i></th>
+            <th>Placed &amp; Confirmed</th>
+            <th>Pending</th>
+            <th>Remaining Stock</th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'isAvailable'" (click)="sort('isAvailable')">Status <i class="bi sort-icon" [ngClass]="sortIcon('isAvailable')"></i></th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'createdOn'" (click)="sort('createdOn')">Date Created <i class="bi sort-icon" [ngClass]="sortIcon('createdOn')"></i></th>
-            <th>Actions</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -238,6 +241,13 @@
                 }
               </td>
               <td [class.low-stock]="p.stockQuantity < 10">{{ p.stockQuantity }}</td>
+              <td class="cell--orders">{{ p.placedAndConfirmedCount }}</td>
+              <td class="cell--pending" [class.cell--pending-hi]="p.pendingOrderCount > 0">
+                {{ p.pendingOrderCount }}
+              </td>
+              <td class="cell--remaining" [class.cell--remaining-low]="p.remainingStock < 10" [class.cell--remaining-neg]="p.remainingStock < 0">
+                {{ p.remainingStock }}
+              </td>
               <td>
                 <span class="status-badge"
                       [class.status--active]="p.isAvailable"
@@ -247,22 +257,24 @@
               </td>
               <td class="text-secondary-color" style="font-size:0.8125rem;white-space:nowrap">{{ p.createdOn | date:'dd MMM yyyy' }}</td>
               <td class="actions-cell">
-                @if (deleteConfirmId() === p.id) {
-                  <span class="delete-confirm">Delete?</span>
-                  <button class="table-btn table-btn--danger" (click)="confirmDelete(p.id)">Yes</button>
-                  <button class="table-btn" (click)="cancelDelete()">No</button>
-                } @else {
-                  <button class="table-btn" (click)="openEdit(p)">
-                    <i class="bi bi-pencil me-1"></i>Edit
-                  </button>
-                  <button class="table-btn table-btn--danger" (click)="requestDelete(p.id)">
-                    <i class="bi bi-trash me-1"></i>Delete
-                  </button>
-                }
+                <div class="actions-wrap">
+                  @if (deleteConfirmId() === p.id) {
+                    <span class="delete-confirm">Delete?</span>
+                    <button class="table-btn table-btn--danger" (click)="confirmDelete(p.id)">Yes</button>
+                    <button class="table-btn" (click)="cancelDelete()">No</button>
+                  } @else {
+                    <button class="table-btn" (click)="openEdit(p)">
+                      <i class="bi bi-pencil me-1"></i>Edit
+                    </button>
+                    <button class="table-btn table-btn--danger" (click)="requestDelete(p.id)">
+                      <i class="bi bi-trash me-1"></i>Delete
+                    </button>
+                  }
+                </div>
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="10" class="admin-empty">No products found.</td></tr>
+            <tr><td colspan="13" class="admin-empty">No products found.</td></tr>
           }
         </tbody>
       </table>

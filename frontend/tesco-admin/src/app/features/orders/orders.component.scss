@@ -5,9 +5,18 @@
   padding: 1rem 1.25rem; border-bottom: 1px solid $color-border;
 }
 
+.col-no {
+  width: 48px; text-align: center; font-size: 0.8125rem;
+}
+
 .status-select {
   border: 1px solid $color-border; border-radius: 4px; padding: 0.25rem 0.5rem;
   font-size: 0.8125rem; background: #fff; cursor: pointer;
+
+  &--locked {
+    background: #f3f4f6; color: #6b7280; cursor: not-allowed;
+    border-color: #e5e7eb; opacity: 0.8;
+  }
 }
 
 .order-status {
@@ -21,6 +30,12 @@
   &--delivered  { background: #d1fae5; color: #065f46; }
   &--cancelled  { background: #fee2e2; color: #991b1b; }
   &--refunded   { background: #f3f4f6; color: #374151; }
+}
+
+.page-ellipsis {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 2.25rem; height: 2.25rem;
+  font-size: 0.875rem; color: $color-muted; user-select: none;
 }
 
 .table-btn {

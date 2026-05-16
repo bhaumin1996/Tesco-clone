@@ -329,7 +329,10 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                     Sku: SqlHelper.GetValue<string>(reader, "Sku"),
                     StockQuantity: SqlHelper.GetValue<int>(reader, "StockQuantity"),
                     LowStockThreshold: SqlHelper.GetValue<int>(reader, "LowStockThreshold"),
-                    IsLowStock: SqlHelper.GetValue<bool>(reader, "IsLowStock")),
+                    IsLowStock: SqlHelper.GetValue<bool>(reader, "IsLowStock"),
+                    PlacedAndConfirmedCount: SqlHelper.GetValue<int>(reader, "PlacedAndConfirmedCount"),
+                    PendingOrderCount: SqlHelper.GetValue<int>(reader, "PendingOrderCount"),
+                    RemainingStock: SqlHelper.GetValue<int>(reader, "RemainingStock")),
                 null,
                 cancellationToken);
         }
@@ -404,5 +407,8 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
             IsAvailable: SqlHelper.GetValue<bool>(reader, "IsAvailable"),
             StockQuantity: SqlHelper.GetValue<int>(reader, "StockQuantity"),
             CreatedOn: SqlHelper.GetValue<DateTime>(reader, "CreatedOn"),
-            ModifiedOn: SqlHelper.GetNullableValue<DateTime>(reader, "ModifiedOn"));
+            ModifiedOn: SqlHelper.GetNullableValue<DateTime>(reader, "ModifiedOn"),
+            PlacedAndConfirmedCount: SqlHelper.GetValue<int>(reader, "PlacedAndConfirmedCount"),
+            PendingOrderCount: SqlHelper.GetValue<int>(reader, "PendingOrderCount"),
+            RemainingStock: SqlHelper.GetValue<int>(reader, "RemainingStock"));
 }

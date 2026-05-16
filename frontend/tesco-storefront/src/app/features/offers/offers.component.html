@@ -1,0 +1,209 @@
+<div class="offers-page" id="main-content">
+  <div class="page-container">
+    <app-breadcrumb [items]="breadcrumbs" />
+  </div>
+
+  <!-- ── Hero ──────────────────────────────────────────────────────────── -->
+  <section class="offers-hero" aria-label="Offers and Deals">
+    <div class="page-container offers-hero__inner">
+      <div class="offers-hero__text">
+        <span class="offers-hero__eyebrow">
+          <i class="bi bi-tag-fill"></i>
+          Updated weekly
+        </span>
+        <h1 class="offers-hero__title">This Week's Best Offers</h1>
+        <p class="offers-hero__sub">
+          Save on thousands of products — from everyday essentials to special treats.
+        </p>
+      </div>
+
+      @if (!loading() && result()) {
+        <div class="offers-hero__stats" aria-label="Offer counts by type">
+          <div class="offers-hero__stat">
+            <span class="offers-hero__stat-num">{{ result()!.totalCount }}</span>
+            <span class="offers-hero__stat-lbl">Total offers</span>
+          </div>
+          @for (tab of filterTabs.slice(1); track tab.id) {
+            @if (typeCounts()[tab.id] > 0) {
+              <div class="offers-hero__stat offers-hero__stat--{{ typeKey(tab.id) }}">
+                <span class="offers-hero__stat-num">{{ typeCounts()[tab.id] }}</span>
+                <span class="offers-hero__stat-lbl">{{ tab.short }}</span>
+              </div>
+            }
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ── Filter + Sort bar ─────────────────────────────────────────────── -->
+  <div class="offers-controls" role="navigation" aria-label="Filter and sort offers">
+    <div class="page-container offers-controls__inner">
+      <div class="offers-filters" role="tablist" aria-label="Filter by offer type">
+        @for (tab of filterTabs; track tab.id) {
+          <button
+            class="filter-pill"
+            [class.filter-pill--active]="activeFilter() === tab.id"
+            (click)="setFilter(tab.id)"
+            role="tab"
+            [attr.aria-selected]="activeFilter() === tab.id"
+            [attr.aria-label]="tab.short + ' — ' + (typeCounts()[tab.id] ?? 0) + ' offers'">
+            <i class="bi {{ tab.icon }}"></i>
+            <span class="filter-pill__label">{{ tab.short }}</span>
+            <span class="filter-pill__count">
+              {{ typeCounts()[tab.id] ?? (activeFilter() === tab.id ? displayItems().length : 0) }}
+            </span>
+          </button>
+        }
+      </div>
+
+      <div class="offers-sort">
+        <label for="sort-select" class="offers-sort__label">
+          <i class="bi bi-sort-down-alt"></i>
+          Sort:
+        </label>
+        <select
+          id="sort-select"
+          class="offers-sort__select"
+          [value]="sortBy()"
+          (change)="setSortBy($any($event.target).value)">
+          @for (opt of sortOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Content ───────────────────────────────────────────────────────── -->
+  <div class="page-container offers-body">
+
+    @if (loading()) {
+      <div class="offers-loading" role="status" aria-live="polite">
+        <app-spinner size="lg" />
+        <p>Loading offers…</p>
+      </div>
+
+    } @else if (displayItems().length === 0) {
+      <div class="offers-empty" role="alert">
+        <div class="offers-empty__icon" aria-hidden="true">
+          <i class="bi bi-tag"></i>
+        </div>
+        <h2 class="offers-empty__title">No offers found</h2>
+        <p class="offers-empty__msg">
+          Try a different filter, or check back soon for new deals.
+        </p>
+        <button class="btn btn--outline" (click)="setFilter('All')">
+          Show all offers
+        </button>
+      </div>
+
+    } @else {
+      <!-- Result bar -->
+      <div class="offers-result-bar">
+        <span class="offers-result-bar__count">
+          <strong>{{ displayItems().length }}</strong>
+          offer{{ displayItems().length === 1 ? '' : 's' }} found
+        </span>
+        @if (activeFilter() !== 'All') {
+          <button class="offers-result-bar__clear" (click)="setFilter('All')" aria-label="Clear filter">
+            <i class="bi bi-x-circle"></i> Clear filter
+          </button>
+        }
+      </div>
+
+      <!-- Grid -->
+      <div class="offers-grid" aria-label="Offers">
+        @for (p of displayItems(); track p.id) {
+          <article
+            class="offer-card offer-card--{{ typeKey(p.typeName) }}"
+            [attr.aria-label]="p.name">
+
+            <!-- Visual area with big discount callout -->
+            <div class="offer-card__visual" aria-hidden="true">
+              <div class="offer-card__circles">
+                <span class="offer-card__circle offer-card__circle--1"></span>
+                <span class="offer-card__circle offer-card__circle--2"></span>
+                <span class="offer-card__circle offer-card__circle--3"></span>
+              </div>
+
+              <div class="offer-card__discount">
+                <span class="offer-card__discount-main">{{ discountMain(p) }}</span>
+                <span class="offer-card__discount-sub">{{ discountSub(p) }}</span>
+              </div>
+
+              @if (urgencyLabel(p); as urgency) {
+                <div class="offer-card__urgency-badge" [attr.aria-label]="urgency">
+                  <i class="bi bi-fire"></i>
+                  {{ urgency }}
+                </div>
+              }
+
+              @if (!urgencyLabel(p) && isNew(p)) {
+                <div class="offer-card__new-badge">New</div>
+              }
+            </div>
+
+            <!-- Card body -->
+            <div class="offer-card__body">
+              <div class="offer-card__chips">
+                <span class="offer-card__type-chip">{{ p.typeName }}</span>
+                @if (p.requiresClubcard) {
+                  <span class="offer-card__clubcard-chip">
+                    <span class="clubcard-dot" aria-hidden="true"></span>
+                    Clubcard
+                  </span>
+                }
+              </div>
+
+              <h2 class="offer-card__name">{{ p.name }}</h2>
+
+              @if (p.minQuantity && p.minQuantity > 1) {
+                <p class="offer-card__detail">
+                  <i class="bi bi-info-circle" aria-hidden="true"></i>
+                  Min. {{ p.minQuantity }} items
+                </p>
+              }
+            </div>
+
+            <!-- Card footer -->
+            <div class="offer-card__footer">
+              @if (p.startsAt || p.endsAt) {
+                <div class="offer-card__dates">
+                  @if (p.startsAt) {
+                    <span>
+                      <i class="bi bi-calendar-event" aria-hidden="true"></i>
+                      From {{ p.startsAt | date:'d MMM' }}
+                    </span>
+                  }
+                  @if (p.endsAt) {
+                    <span>
+                      <i class="bi bi-calendar-x" aria-hidden="true"></i>
+                      Until {{ p.endsAt | date:'d MMM yyyy' }}
+                    </span>
+                  }
+                </div>
+              }
+
+              <a
+                routerLink="/search"
+                [queryParams]="{ promotionId: p.id }"
+                class="offer-card__cta"
+                [attr.aria-label]="'Shop ' + p.name">
+                Shop this offer
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+
+      @if (totalPages() > 1) {
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          (pageChange)="onPageChange($event)" />
+      }
+    }
+  </div>
+</div>

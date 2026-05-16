@@ -8,6 +8,7 @@ import { PaginationComponent } from '../../../shared/components/pagination/pagin
 import { Order, OrderStatus } from '../../../core/models/order.model';
 import { PagedResult } from '../../../core/models/catalogue.model';
 import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-order-list',
@@ -28,7 +29,7 @@ export class OrderListComponent implements OnInit {
 
   private _load(): void {
     this.loading.set(true);
-    this._orders.getMyOrders(this.currentPage()).subscribe({
+    this._orders.getMyOrders(this.currentPage(), 5).subscribe({
       next: r => { this.result.set(r); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
@@ -47,5 +48,15 @@ export class OrderListComponent implements OnInit {
       Cancelled: 'cancelled'
     };
     return map[status] ?? 'pending';
+  }
+
+  protected downloadInvoice(event: Event, order: Order): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (order.invoiceUrl) {
+      const url = `${environment.apiBaseUrl}/assets/invoices/${order.invoiceUrl}`;
+      window.open(url, '_blank');
+    }
   }
 }

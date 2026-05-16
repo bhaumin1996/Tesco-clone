@@ -50,34 +50,32 @@
       <div class="header__actions">
 
         <!-- Account -->
-        <div class="header__account" (click)="toggleAccountMenu($event)" (keydown.enter)="toggleAccountMenu($any($event))" tabindex="0" role="button" [attr.aria-expanded]="accountMenuOpen()">
-          <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
-          <span class="header__action-label">
-            @if (auth.isAuthenticated()) {
-              {{ auth.user()?.firstName }}
-            } @else {
-              Sign In
-            }
-          </span>
+        @if (auth.isAuthenticated()) {
+          <div class="header__account" (click)="toggleAccountMenu($event)" (keydown.enter)="toggleAccountMenu($any($event))" tabindex="0" role="button" [attr.aria-expanded]="accountMenuOpen()">
+            <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span class="header__action-label">{{ auth.user()?.firstName }}</span>
 
-          @if (accountMenuOpen()) {
-            <div class="header__dropdown" role="menu">
-              @if (auth.isAuthenticated()) {
+            @if (accountMenuOpen()) {
+              <div class="header__dropdown" role="menu">
                 <a routerLink="/account" class="header__dropdown-item" role="menuitem">My Account</a>
                 <a routerLink="/account/orders" class="header__dropdown-item" role="menuitem">My Orders</a>
                 <a routerLink="/account/clubcard" class="header__dropdown-item" role="menuitem">Clubcard</a>
                 <a routerLink="/account/favourites" class="header__dropdown-item" role="menuitem">Favourites</a>
                 <hr class="header__dropdown-divider" />
                 <button class="header__dropdown-item" role="menuitem" (click)="logout()">Sign Out</button>
-              } @else {
-                <a routerLink="/auth/login" class="header__dropdown-item" role="menuitem">Sign In</a>
-                <a routerLink="/auth/register" class="header__dropdown-item header__dropdown-item--register" role="menuitem">Register</a>
-              }
-            </div>
-          }
-        </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <a routerLink="/auth/login" class="header__account" aria-label="Sign In">
+            <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span class="header__action-label">Sign In</span>
+          </a>
+        }
 
         <!-- Clubcard -->
         <a routerLink="/account/clubcard" class="header__clubcard" aria-label="Tesco Clubcard">

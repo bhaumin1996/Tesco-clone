@@ -17,11 +17,18 @@ public sealed class Order : Entity
     public int? DeliverySlotId { get; private set; }
     public string? DeliveryAddress { get; private set; }
     public IReadOnlyList<OrderLine> Lines => _lines.AsReadOnly();
+    public string? InvoicePath { get; private set; }
     public RecordStatus RecordStatus { get; private set; }
     public DateTime CreatedOn { get; private set; }
     public DateTime? ModifiedOn { get; private set; }
 
     private Order() { }
+
+    public void UpdateInvoicePath(string path)
+    {
+        InvoicePath = path;
+        ModifiedOn = DateTime.UtcNow;
+    }
 
     public void Cancel()
     {

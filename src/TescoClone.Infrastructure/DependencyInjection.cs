@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using TescoClone.Application.Addresses.Interfaces;
 using TescoClone.Application.Analytics.Interfaces;
 using TescoClone.Application.Catalogue.Interfaces;
 using TescoClone.Application.Common.Abstractions;
@@ -9,6 +10,7 @@ using TescoClone.Application.Loyalty.Interfaces;
 using TescoClone.Application.Marketplace.Interfaces;
 using TescoClone.Application.Order.Interfaces;
 using TescoClone.Application.Promotions.Interfaces;
+using TescoClone.Infrastructure.Addresses;
 using TescoClone.Infrastructure.Analytics;
 using TescoClone.Infrastructure.Catalogue;
 using TescoClone.Infrastructure.Common;
@@ -37,6 +39,8 @@ public static class DependencyInjection
         // Identity
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IAdminUserRepository, AdminUserRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IPaymentRepository, PaymentRepository>();
 
         // Catalogue
         services.AddScoped<IProductRepository, ProductRepository>();
@@ -72,6 +76,11 @@ public static class DependencyInjection
         // Audit and application log repositories
         services.AddScoped<IAuditLogRepository, AuditLogRepository>();
         services.AddScoped<IApplicationLogRepository, ApplicationLogRepository>();
+        
+        // Payment and Invoice
+        services.AddScoped<IPaymentService, StripePaymentService>();
+        services.AddScoped<IInvoiceService, QuestPdfInvoiceService>();
+        services.AddScoped<IEmailService, EmailService>();
 
         return services;
     }

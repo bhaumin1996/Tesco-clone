@@ -14,7 +14,11 @@ export class NotificationService {
   readonly notifications = this._notifications.asReadonly();
 
   show(message: string, type: NotificationType = 'info', durationMs = 4000): void {
-    const id = crypto.randomUUID();
+    // Fallback for non-secure contexts where crypto.randomUUID might be undefined
+    const id = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+      ? crypto.randomUUID() 
+      : Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+
     this._notifications.update(n => [...n, { id, type, message }]);
     setTimeout(() => this.dismiss(id), durationMs);
   }

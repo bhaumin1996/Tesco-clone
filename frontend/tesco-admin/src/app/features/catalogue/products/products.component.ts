@@ -25,6 +25,9 @@ interface ProductRow {
   stockQuantity: number;
   createdOn: string;
   modifiedOn: string | null;
+  placedAndConfirmedCount: number;
+  pendingOrderCount: number;
+  remainingStock: number;
 }
 
 interface PagedResult<T> {

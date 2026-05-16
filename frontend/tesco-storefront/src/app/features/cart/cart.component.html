@@ -34,7 +34,7 @@
               }
             </a>
             <div class="cart-item__info">
-              <a [routerLink]="['/products', item.productId]" class="cart-item__name">{{ item.productName }}</a>
+              <p class="cart-item__name">{{ item.productName }}</p>
               @if (item.promotionLabel) { <span class="badge badge--red cart-item__promo">{{ item.promotionLabel }}</span> }
               <p class="cart-item__unit">{{ item.unitPrice }}</p>
               <div class="cart-item__actions">

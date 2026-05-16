@@ -15,7 +15,7 @@ interface OrderRow {
   createdAt: string;
 }
 
-interface PagedResult<T> { items: T[]; totalPages: number; pageNumber: number; }
+interface PagedResult<T> { items: T[]; totalPages: number; pageNumber: number; totalCount: number; }
 
 @Component({
   selector: 'app-admin-orders',
@@ -31,10 +31,13 @@ export class AdminOrdersComponent implements OnInit {
 
   protected orders = signal<OrderRow[]>([]);
   protected totalPages = signal(1);
+  protected totalCount = signal(0);
   protected currentPage = signal(1);
   protected loading = signal(true);
   protected selectedOrder = signal<OrderRow | null>(null);
   protected message = signal('');
+
+  protected readonly pageSize = 10;
 
   protected filterForm = this._fb.group({ search: [''] });
 
@@ -80,13 +83,13 @@ export class AdminOrdersComponent implements OnInit {
     const { search } = this.filterForm.getRawValue();
     const params: Record<string, string> = {
       pageNumber: String(this.currentPage()),
-      pageSize: '20',
+      pageSize: '10',
       sortBy: this.sortBy(),
       sortDirection: this.sortDirection()
     };
     if (search) params['search'] = search;
     this._http.get<PagedResult<OrderRow>>(this._base, { params }).subscribe({
-      next: r => { this.orders.set(r.items); this.totalPages.set(r.totalPages); this.loading.set(false); },
+      next: r => { this.orders.set(r.items); this.totalPages.set(r.totalPages); this.totalCount.set(r.totalCount ?? 0); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
   }
@@ -109,7 +112,11 @@ export class AdminOrdersComponent implements OnInit {
 
   protected goTo(page: number): void { this.currentPage.set(page); this._load(); }
 
+  protected readonly terminalStatuses = new Set(['Cancelled', 'Refunded']);
+
   protected updateStatus(orderId: number, status: string): void {
+    const current = this.orders().find(o => o.id === orderId)?.status ?? '';
+    if (this.terminalStatuses.has(current)) return;
     this._http.put(`${this._base}/${orderId}/status`, { newStatus: status }).subscribe({
       next: () => {
         this.orders.update(list => list.map(o => o.id === orderId ? { ...o, status } : o));
@@ -128,5 +135,18 @@ export class AdminOrdersComponent implements OnInit {
     });
   }
 
-  protected pages(): number[] { return Array.from({ length: this.totalPages() }, (_, i) => i + 1); }
+  protected startItem(): number { return Math.min((this.currentPage() - 1) * this.pageSize + 1, this.totalCount()); }
+  protected endItem(): number   { return Math.min(this.currentPage() * this.pageSize, this.totalCount()); }
+
+  protected visiblePages(): (number | null)[] {
+    const total = this.totalPages();
+    const cur   = this.currentPage();
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: (number | null)[] = [1];
+    if (cur > 3) pages.push(null);
+    for (let p = Math.max(2, cur - 1); p <= Math.min(total - 1, cur + 1); p++) pages.push(p);
+    if (cur < total - 2) pages.push(null);
+    pages.push(total);
+    return pages;
+  }
 }

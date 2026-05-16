@@ -17,6 +17,9 @@ interface InventoryItem {
   stockQuantity: number;
   lowStockThreshold: number;
   isLowStock: boolean;
+  placedAndConfirmedCount: number;
+  pendingOrderCount: number;
+  remainingStock: number;
 }
 
 interface ProductSearchResult {

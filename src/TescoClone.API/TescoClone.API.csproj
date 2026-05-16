@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\assets\images\departments\" />
+    <Folder Include="wwwroot\assets\invoices\" />
   </ItemGroup>
 
   <PropertyGroup>

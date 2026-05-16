@@ -15,4 +15,7 @@ public sealed record AdminProductDto(
     bool IsAvailable,
     int StockQuantity,
     DateTime CreatedOn,
-    DateTime? ModifiedOn);
+    DateTime? ModifiedOn,
+    int PlacedAndConfirmedCount,
+    int PendingOrderCount,
+    int RemainingStock);

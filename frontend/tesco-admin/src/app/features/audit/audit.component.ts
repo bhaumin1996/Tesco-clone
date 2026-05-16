@@ -24,7 +24,7 @@ interface LogEntry {
   createdOn: string;
 }
 
-interface PagedResult<T> { items: T[]; totalPages: number; }
+interface PagedResult<T> { items: T[]; totalPages: number; totalCount: number; }
 
 @Component({
   selector: 'app-admin-audit',
@@ -38,10 +38,14 @@ export class AdminAuditComponent implements OnInit {
   private readonly _http = inject(HttpClient);
   private readonly _fb = inject(FormBuilder);
 
+  protected readonly pageSize = 20;
+
   protected auditEntries = signal<AuditEntry[]>([]);
   protected logEntries = signal<LogEntry[]>([]);
   protected totalAuditPages = signal(1);
   protected totalLogPages = signal(1);
+  protected totalAuditCount = signal(0);
+  protected totalLogCount = signal(0);
   protected auditPage = signal(1);
   protected logPage = signal(1);
   protected loading = signal(true);
@@ -71,7 +75,7 @@ export class AdminAuditComponent implements OnInit {
     if (table) params['table'] = table;
     if (action) params['action'] = action;
     this._http.get<PagedResult<AuditEntry>>(`${this._base}/audit`, { params }).subscribe({
-      next: r => { this.auditEntries.set(r.items); this.totalAuditPages.set(r.totalPages); this.loading.set(false); },
+      next: r => { this.auditEntries.set(r.items); this.totalAuditPages.set(r.totalPages); this.totalAuditCount.set(r.totalCount); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
   }
@@ -82,7 +86,7 @@ export class AdminAuditComponent implements OnInit {
     if (level) params['level'] = level;
     if (source) params['source'] = source;
     this._http.get<PagedResult<LogEntry>>(`${this._base}/logs`, { params }).subscribe({
-      next: r => { this.logEntries.set(r.items); this.totalLogPages.set(r.totalPages); },
+      next: r => { this.logEntries.set(r.items); this.totalLogPages.set(r.totalPages); this.totalLogCount.set(r.totalCount); },
       error: () => {}
     });
   }

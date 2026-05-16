@@ -1,0 +1,655 @@
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as *;
+
+// ── Hero ─────────────────────────────────────────────────────────────────────
+.offers-hero {
+  background: linear-gradient(135deg, $color-tesco-blue 0%, $color-tesco-blue-dark 100%);
+  padding: $space-7 0;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 8% 60%, rgba(255, 255, 255, 0.07) 0%, transparent 50%),
+      radial-gradient(circle at 92% 15%, rgba($color-clubcard-yellow, 0.12) 0%, transparent 45%);
+    pointer-events: none;
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $space-6;
+
+    @include respond-to(lg) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    font-size: $font-size-xs;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.15);
+    padding: 5px 14px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: $space-3;
+
+    i { font-size: 0.9em; }
+  }
+
+  &__title {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 800;
+    color: $color-surface;
+    line-height: 1.15;
+    margin: 0 0 $space-3;
+  }
+
+  &__sub {
+    font-size: $font-size-md;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 52ch;
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  &__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+    flex-shrink: 0;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 76px;
+    padding: $space-3 $space-4;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: $radius-md;
+    transition: background 0.2s;
+    cursor: default;
+
+    &:hover { background: rgba(255, 255, 255, 0.2); }
+
+    &--clubcard {
+      border-color: rgba($color-clubcard-yellow, 0.45);
+      background: rgba($color-clubcard-yellow, 0.12);
+    }
+  }
+
+  &__stat-num {
+    font-size: $font-size-xl;
+    font-weight: 800;
+    color: $color-surface;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  &__stat-lbl {
+    font-size: $font-size-xs;
+    color: rgba(255, 255, 255, 0.72);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+// ── Controls bar ─────────────────────────────────────────────────────────────
+.offers-controls {
+  background: $color-surface;
+  border-bottom: 1px solid $color-border;
+  position: sticky;
+  top: $header-height;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding-block: $space-3;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+}
+
+.offers-filters {
+  display: flex;
+  gap: $space-2;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: 8px 14px;
+  border: 1.5px solid $color-border;
+  border-radius: 99px;
+  background: $color-surface;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-muted;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s;
+  user-select: none;
+  flex-shrink: 0;
+
+  i { font-size: 0.9em; }
+
+  &__label {
+    @include respond-to(md) { display: inline; }
+  }
+
+  &__count {
+    font-size: $font-size-xs;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 99px;
+    background: $color-surface-alt;
+    color: $color-muted;
+    transition: background 0.15s, color 0.15s;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  &:hover {
+    border-color: $color-tesco-blue;
+    color: $color-tesco-blue;
+
+    .filter-pill__count {
+      background: $color-tesco-blue-light;
+      color: $color-tesco-blue;
+    }
+  }
+
+  &:active { transform: scale(0.97); }
+
+  &--active {
+    background: $color-tesco-blue;
+    border-color: $color-tesco-blue;
+    color: $color-surface;
+    box-shadow: 0 2px 10px rgba($color-tesco-blue, 0.35);
+
+    .filter-pill__count {
+      background: rgba(255, 255, 255, 0.25);
+      color: $color-surface;
+    }
+
+    &:hover {
+      color: $color-surface;
+      background: $color-tesco-blue-dark;
+      border-color: $color-tesco-blue-dark;
+    }
+  }
+}
+
+.offers-sort {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  flex-shrink: 0;
+
+  &__label {
+    display: none;
+    align-items: center;
+    gap: $space-1;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-muted;
+    white-space: nowrap;
+    cursor: default;
+    user-select: none;
+
+    @include respond-to(md) { display: flex; }
+  }
+
+  &__select {
+    appearance: none;
+    padding: 8px 32px 8px 12px;
+    border: 1.5px solid $color-border;
+    border-radius: $radius-sm;
+    background:
+      $color-surface
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")
+      no-repeat right 10px center;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-ink;
+    cursor: pointer;
+    min-width: 148px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus {
+      outline: none;
+      border-color: $color-tesco-blue;
+      box-shadow: 0 0 0 3px rgba($color-tesco-blue, 0.15);
+    }
+  }
+}
+
+// ── Body ─────────────────────────────────────────────────────────────────────
+.offers-body {
+  padding-block: $space-6;
+}
+
+.offers-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-9 0;
+  color: $color-muted;
+  font-size: $font-size-sm;
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.offers-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $space-9 $space-4;
+  gap: $space-3;
+
+  &__icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: $color-surface-alt;
+    @include flex-center;
+    font-size: 2.25rem;
+    color: $color-muted;
+    margin-bottom: $space-1;
+  }
+
+  &__title {
+    font-size: $font-size-xl;
+    font-weight: 700;
+    color: $color-ink;
+    margin: 0;
+  }
+
+  &__msg {
+    font-size: $font-size-sm;
+    color: $color-muted;
+    max-width: 40ch;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+// ── Result bar ────────────────────────────────────────────────────────────────
+.offers-result-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-5;
+  padding-bottom: $space-4;
+  border-bottom: 1px solid $color-border;
+
+  &__count {
+    font-size: $font-size-sm;
+    color: $color-muted;
+
+    strong { color: $color-ink; font-weight: 700; }
+  }
+
+  &__clear {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-tesco-blue;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: $radius-sm;
+    transition: background 0.15s;
+
+    i { font-size: 1em; }
+
+    &:hover { background: $color-tesco-blue-light; }
+  }
+}
+
+// ── Grid ─────────────────────────────────────────────────────────────────────
+.offers-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $space-4;
+  margin-bottom: $space-7;
+
+  @include respond-to(sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to(md) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to(lg) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// ── Card ─────────────────────────────────────────────────────────────────────
+.offer-card {
+  display: flex;
+  flex-direction: column;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    box-shadow: $shadow-hover;
+    transform: translateY(-3px);
+  }
+
+  // ── Visual area color themes ────────────────────────────────────────────
+  &--percent  .offer-card__visual { background: linear-gradient(135deg, $color-tesco-red 0%, $color-tesco-red-dark 100%); }
+  &--fixed    .offer-card__visual { background: linear-gradient(135deg, $color-tesco-blue 0%, $color-tesco-blue-dark 100%); }
+  &--bxgy     .offer-card__visual { background: linear-gradient(135deg, #007A33 0%, #005a25 100%); }
+  &--multibuy .offer-card__visual { background: linear-gradient(135deg, #c07800 0%, #7f4c00 100%); }
+  &--clubcard .offer-card__visual { background: linear-gradient(135deg, $color-clubcard-blue 0%, $color-tesco-blue-dark 100%); }
+  &--default  .offer-card__visual { background: linear-gradient(135deg, #444 0%, #222 100%); }
+
+  // Clubcard variant: golden discount text
+  &--clubcard .offer-card__discount { color: $color-clubcard-yellow; }
+
+  // All other variants: white discount text
+  &--percent .offer-card__discount,
+  &--fixed   .offer-card__discount,
+  &--bxgy    .offer-card__discount,
+  &--multibuy .offer-card__discount,
+  &--default .offer-card__discount { color: #fff; }
+
+  // ── Visual ──────────────────────────────────────────────────────────────
+  &__visual {
+    position: relative;
+    height: 148px;
+    @include flex-center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  &__circles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  &__circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+
+    &--1 {
+      width: 110px;
+      height: 110px;
+      top: -30px;
+      right: -25px;
+    }
+
+    &--2 {
+      width: 70px;
+      height: 70px;
+      bottom: -15px;
+      left: 8px;
+    }
+
+    &--3 {
+      width: 44px;
+      height: 44px;
+      top: 18px;
+      left: 38%;
+    }
+  }
+
+  &__discount {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1px;
+  }
+
+  &__discount-main {
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  }
+
+  &__discount-sub {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.9;
+  }
+
+  &__urgency-badge {
+    position: absolute;
+    bottom: $space-2;
+    left: $space-2;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 4px 9px;
+    border-radius: 99px;
+    background: rgba(0, 0, 0, 0.38);
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(4px);
+
+    i { font-size: 0.8em; color: #ff9c41; }
+  }
+
+  &__new-badge {
+    position: absolute;
+    top: $space-2;
+    right: $space-2;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 99px;
+    background: $color-clubcard-yellow;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  // ── Body ────────────────────────────────────────────────────────────────
+  &__body {
+    flex: 1;
+    padding: $space-3 $space-4;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-1;
+    align-items: center;
+  }
+
+  &__type-chip {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 99px;
+    background: $color-surface-alt;
+    color: $color-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  &__clubcard-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 9px;
+    border-radius: 99px;
+    background: $color-clubcard-yellow-soft;
+    color: $color-clubcard-blue;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  &__name {
+    font-size: $font-size-md;
+    font-weight: 700;
+    color: $color-ink;
+    line-height: 1.35;
+    @include line-clamp(2);
+    margin: 0;
+  }
+
+  &__detail {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    font-size: $font-size-xs;
+    color: $color-muted;
+    margin: 0;
+
+    i { font-size: 0.85em; }
+  }
+
+  // ── Footer ──────────────────────────────────────────────────────────────
+  &__footer {
+    padding: $space-3 $space-4;
+    border-top: 1px solid $color-border;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      color: $color-muted;
+      font-weight: 500;
+
+      i { font-size: 0.9em; }
+    }
+  }
+
+  &__cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2;
+    padding: 10px $space-4;
+    border-radius: $radius-sm;
+    background: $color-tesco-blue;
+    color: $color-surface;
+    font-size: $font-size-sm;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s, transform 0.1s;
+
+    i {
+      font-size: 0.85em;
+      transition: transform 0.15s;
+    }
+
+    &:hover {
+      background: $color-tesco-blue-dark;
+
+      i { transform: translateX(4px); }
+    }
+
+    &:active { transform: scale(0.98); }
+    &:focus-visible { @include focus-ring; }
+  }
+}
+
+// ── Clubcard dot ──────────────────────────────────────────────────────────────
+.clubcard-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: $color-clubcard-yellow;
+  flex-shrink: 0;
+}
+
+// ── Button (empty state) ──────────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-2 $space-6;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid transparent;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &--outline {
+    background: transparent;
+    border-color: $color-tesco-blue;
+    color: $color-tesco-blue;
+
+    &:hover { background: $color-tesco-blue-light; }
+    &:focus-visible { @include focus-ring; }
+  }
+}

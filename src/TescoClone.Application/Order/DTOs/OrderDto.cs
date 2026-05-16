@@ -13,4 +13,5 @@ public sealed record OrderDto(
     string? DeliveryAddress,
     IReadOnlyList<OrderLineDto> Items,
     DateTime CreatedAt,
-    string? CustomerName = null);
+    string? CustomerName = null,
+    string? InvoiceUrl = null);

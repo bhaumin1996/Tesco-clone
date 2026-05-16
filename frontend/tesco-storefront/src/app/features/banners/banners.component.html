@@ -1,0 +1,66 @@
+<div class="page-container banners-page">
+  <app-breadcrumb [items]="breadcrumbs" />
+
+  <div class="banners-page__hero">
+    <h1 class="banners-page__title">Latest Promotions</h1>
+    <p class="banners-page__subtitle">Discover our latest deals, events and seasonal campaigns</p>
+  </div>
+
+  @if (loading()) {
+    <div class="banners-page__loading">
+      <app-spinner size="lg" />
+    </div>
+  } @else {
+    @if (banners().length === 0) {
+      <div class="banners-page__empty">
+        <p>No active promotions right now. Check back soon!</p>
+        <a routerLink="/" class="btn btn--primary">Back to home</a>
+      </div>
+    } @else {
+      <div class="banners-grid">
+        @for (b of banners(); track b.id) {
+          <article class="banner-card">
+            @if (b.imageUrl) {
+              <div class="banner-card__image-wrap">
+                <img
+                  [src]="b.imageUrl"
+                  [alt]="b.title"
+                  class="banner-card__image"
+                  loading="lazy" />
+                @if (isExpiringSoon(b.endsAt)) {
+                  <span class="banner-card__expiry-badge">Ending soon</span>
+                }
+              </div>
+            } @else {
+              <div class="banner-card__placeholder">
+                <span class="banner-card__placeholder-icon" aria-hidden="true">🏷️</span>
+              </div>
+            }
+
+            <div class="banner-card__body">
+              <h2 class="banner-card__title">{{ b.title }}</h2>
+              @if (b.subTitle) {
+                <p class="banner-card__subtitle">{{ b.subTitle }}</p>
+              }
+              @if (b.endsAt) {
+                <p class="banner-card__dates">Valid until {{ b.endsAt | date:'d MMMM yyyy' }}</p>
+              }
+            </div>
+
+            <div class="banner-card__footer">
+              @if (b.linkUrl) {
+                <a [href]="b.linkUrl" class="btn btn--primary btn--full" rel="noopener">
+                  Shop now
+                </a>
+              } @else {
+                <a routerLink="/offers" class="btn btn--outline btn--full">
+                  View offers
+                </a>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    }
+  }
+</div>

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Department, Category, Brand, ProductDetail, ProductVariant, PagedResult, ProductSummary, SearchRequest } from '../models/catalogue.model';
+import { Department, Category, Brand, ProductDetail, ProductVariant, PagedResult, ProductSummary, SearchRequest, Banner } from '../models/catalogue.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -21,6 +21,10 @@ export class CatalogueService {
 
   getBrands() {
     return this._http.get<Brand[]>(`${this.baseUrl}/catalogue/brands`);
+  }
+
+  getBanners() {
+    return this._http.get<Banner[]>(`${this.baseUrl}/content/banners`);
   }
 
   getProducts(categoryId: number, pageNumber = 1, pageSize = 24, filters: any = {}) {

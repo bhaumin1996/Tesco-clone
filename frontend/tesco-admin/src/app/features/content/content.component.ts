@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { ImageUrlPipe } from '../../shared/pipes/image-url.pipe';
 
 interface CmsPage {
   id: number;
@@ -23,12 +24,14 @@ interface Banner {
   linkUrl: string | null;
   isActive: boolean;
   displayOrder: number;
+  startsAt: string | null;
+  endsAt: string | null;
 }
 
 @Component({
   selector: 'app-admin-content',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ImageUrlPipe],
   templateUrl: './content.component.html',
   styleUrl: './content.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -50,6 +53,13 @@ export class AdminContentComponent implements OnInit {
 
   protected cmsSearch = signal('');
   protected bannerSearch = signal('');
+
+  // ── Image Upload State ────────────────────────────────────────────────────
+  protected selectedFile = signal<File | null>(null);
+  protected previewUrl = signal<string | null>(null);
+  protected existingImageUrl = signal<string | null>(null);
+  protected uploading = signal(false);
+  protected saving = signal(false);
 
   protected readonly pageSize = 10;
   protected cmsPage = signal(1);
@@ -84,7 +94,9 @@ export class AdminContentComponent implements OnInit {
     title: ['', Validators.required],
     imageUrl: [''],
     linkUrl: [''],
-    displayOrder: [1, Validators.required]
+    displayOrder: [1, Validators.required],
+    startsAt: [null as string | null],
+    endsAt: [null as string | null]
   });
 
   private get _base() { return `${environment.apiUrl}/admin/content`; }
@@ -145,12 +157,59 @@ export class AdminContentComponent implements OnInit {
     this.showForm.set(true);
   }
 
+  protected onFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    const prev = this.previewUrl();
+    if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+    if (file) {
+      this.selectedFile.set(file);
+      this.previewUrl.set(URL.createObjectURL(file));
+    } else {
+      this.selectedFile.set(null);
+      this.previewUrl.set(null);
+    }
+  }
+
+  protected removeImage(): void {
+    const prev = this.previewUrl();
+    if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
+    this.existingImageUrl.set(null);
+    this.bannerForm.get('imageUrl')?.setValue('');
+  }
+
+  private _resetFileState(): void {
+    const prev = this.previewUrl();
+    if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
+    this.existingImageUrl.set(null);
+  }
+
+  protected cancelForm(): void {
+    this._resetFileState();
+    this.showForm.set(false);
+    this.editId.set(null);
+  }
+
   protected openBannerForm(banner?: Banner): void {
     this.formType.set('banner');
     this.editId.set(banner?.id ?? null);
+    this.existingImageUrl.set(banner?.imageUrl ?? null);
+    this._resetFileState();
+    
     this.bannerForm.reset(banner
-      ? { title: banner.title, imageUrl: banner.imageUrl ?? '', linkUrl: banner.linkUrl ?? '', displayOrder: banner.displayOrder }
-      : { displayOrder: 1 });
+      ? { 
+          title: banner.title, 
+          imageUrl: banner.imageUrl ?? '', 
+          linkUrl: banner.linkUrl ?? '', 
+          displayOrder: banner.displayOrder,
+          startsAt: banner.startsAt ? banner.startsAt.substring(0, 10) : null,
+          endsAt: banner.endsAt ? banner.endsAt.substring(0, 10) : null
+        }
+      : { displayOrder: 1, imageUrl: '', startsAt: null, endsAt: null });
     this.showForm.set(true);
   }
 
@@ -163,9 +222,50 @@ export class AdminContentComponent implements OnInit {
 
   protected saveBanner(): void {
     if (this.bannerForm.invalid) { this.bannerForm.markAllAsTouched(); return; }
-    const body = this.bannerForm.getRawValue();
+    
+    const file = this.selectedFile();
+    if (file) {
+      this._uploadThenSaveBanner(file);
+    } else {
+      this._doSaveBanner(this.existingImageUrl());
+    }
+  }
+
+  private _uploadThenSaveBanner(file: File): void {
+    this.uploading.set(true);
+    this.saving.set(true);
+    const fd = new FormData();
+    fd.append('file', file);
+    this._http.post<{ path: string }>(`${environment.apiUrl}/admin/images/upload?folder=banners`, fd).subscribe({
+      next: res => { this.uploading.set(false); this._doSaveBanner(res.path); },
+      error: () => {
+        this.uploading.set(false);
+        this.saving.set(false);
+        this.message.set('Image upload failed.');
+        setTimeout(() => this.message.set(''), 3000);
+      }
+    });
+  }
+
+  private _doSaveBanner(imageUrl: string | null): void {
+    this.saving.set(true);
+    const body = { ...this.bannerForm.getRawValue(), imageUrl };
     const req = this.editId() ? this._http.put(`${this._base}/banners/${this.editId()}`, body) : this._http.post(`${this._base}/banners`, body);
-    req.subscribe({ next: () => { this.showForm.set(false); this._load(); this.message.set('Banner saved.'); setTimeout(() => this.message.set(''), 3000); }, error: () => this.message.set('Save failed.') });
+    req.subscribe({
+      next: () => {
+        this._resetFileState();
+        this.showForm.set(false);
+        this._load();
+        this.message.set('Banner saved.');
+        setTimeout(() => this.message.set(''), 3000);
+        this.saving.set(false);
+      },
+      error: () => {
+        this.message.set('Save failed.');
+        setTimeout(() => this.message.set(''), 3000);
+        this.saving.set(false);
+      }
+    });
   }
 
   protected publishPage(id: number): void {

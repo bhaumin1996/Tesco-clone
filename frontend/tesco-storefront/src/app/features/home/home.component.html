@@ -45,6 +45,46 @@
     </div>
   </section>
 
+  <!-- ── Banners ───────────────────────────────────────────────────────────── -->
+  @if (banners().length > 0) {
+    <section class="home__banners" aria-label="Promotions">
+      <div class="page-container">
+        <div class="banner-wrapper">
+          @if (banners().length > 1) {
+            <button class="banner-nav banner-nav--left" (click)="scrollBanners(-1)" aria-label="Previous banner">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+          }
+
+          <div class="banner-grid" #bannerContainer [class.banner-grid--single]="banners().length === 1">
+            @for (banner of banners(); track banner.id) {
+              <a [href]="banner.linkUrl || 'javascript:void(0)'" class="home-banner" [target]="banner.linkUrl?.startsWith('http') ? '_blank' : '_self'">
+                @if (banner.imageUrl) {
+                  <div class="home-banner__img-wrap">
+                    <img [src]="banner.imageUrl | imageUrl" [alt]="banner.title" class="home-banner__img" loading="lazy" />
+                  </div>
+                }
+                <div class="home-banner__content">
+                  <h2 class="home-banner__title">{{ banner.title }}</h2>
+                  @if (banner.subTitle) {
+                    <p class="home-banner__text">{{ banner.subTitle }}</p>
+                  }
+                  <span class="home-banner__cta">Shop now <span aria-hidden="true">→</span></span>
+                </div>
+              </a>
+            }
+          </div>
+
+          @if (banners().length > 1) {
+            <button class="banner-nav banner-nav--right" (click)="scrollBanners(1)" aria-label="Next banner">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
   <!-- ── Department Roundels ────────────────────────────────────────────────── -->
   <section class="home__roundels" aria-label="Shop by department">
     <div class="page-container">

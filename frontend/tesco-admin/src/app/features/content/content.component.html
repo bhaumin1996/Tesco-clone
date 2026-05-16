@@ -44,7 +44,7 @@
         </div>
         <div class="content-form-card__actions">
           <button type="submit" class="button button--primary">Save</button>
-          <button type="button" class="button button--secondary" (click)="showForm.set(false)">Cancel</button>
+          <button type="button" class="button button--secondary" (click)="cancelForm()">Cancel</button>
         </div>
       </form>
     } @else {
@@ -55,22 +55,57 @@
             <label class="form-label">Title</label>
             <input class="form-control" formControlName="title" />
           </div>
-          <div class="form-group">
-            <label class="form-label">Image URL</label>
-            <input class="form-control" formControlName="imageUrl" />
+          <div class="form-group banner-image-group">
+            <label class="form-label">Image <span class="text-muted fw-normal">(optional · JPEG, PNG, WebP, GIF · max 5 MB)</span></label>
+            
+            @if (previewUrl() || existingImageUrl()) {
+              <div class="img-upload-preview">
+                <img [src]="previewUrl() ?? (existingImageUrl() | imageUrl)" alt="Preview" class="img-upload-preview__img" />
+                <button type="button" class="img-upload-preview__remove" (click)="removeImage()" title="Remove image">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+              <label class="img-upload-replace" for="bannerImage">
+                <i class="bi bi-arrow-repeat me-1"></i>Replace image
+              </label>
+            } @else {
+              <label class="img-upload-zone" for="bannerImage">
+                <i class="bi bi-cloud-upload img-upload-zone__icon"></i>
+                <span class="img-upload-zone__text">Click to upload an image</span>
+                <span class="img-upload-zone__hint">JPEG · PNG · WebP · GIF &nbsp;|&nbsp; max 5 MB</span>
+              </label>
+            }
+            <input id="bannerImage" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="visually-hidden" (change)="onFileSelect($event)" />
           </div>
-          <div class="form-group">
-            <label class="form-label">Link URL</label>
-            <input class="form-control" formControlName="linkUrl" />
+          <div class="content-form-grid">
+            <div class="form-group">
+              <label class="form-label">Link URL <span class="form-label--optional">(Optional)</span></label>
+              <input class="form-control" formControlName="linkUrl" placeholder="e.g. /category/bakery or https://..." />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Display Order</label>
+              <input type="number" class="form-control" formControlName="displayOrder" />
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Display Order</label>
-            <input type="number" class="form-control" formControlName="displayOrder" />
+
+          <div class="content-form-grid mt-4">
+            <div class="form-group">
+              <label class="form-label">Valid From <span class="form-label--optional">(Optional)</span></label>
+              <input type="date" class="form-control" formControlName="startsAt" />
+              <span class="form-hint">Banner will only show after this date.</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">To Date <span class="form-label--optional">(Optional)</span></label>
+              <input type="date" class="form-control" formControlName="endsAt" />
+              <span class="form-hint">Banner will disappear after this date.</span>
+            </div>
           </div>
         </div>
         <div class="content-form-card__actions">
-          <button type="submit" class="button button--primary">Save</button>
-          <button type="button" class="button button--secondary" (click)="showForm.set(false)">Cancel</button>
+          <button type="submit" class="button button--primary" [disabled]="saving()">
+            {{ uploading() ? 'Uploading…' : saving() ? 'Saving…' : (editId() ? 'Update Banner' : 'Create Banner') }}
+          </button>
+          <button type="button" class="button button--secondary" (click)="cancelForm()">Cancel</button>
         </div>
       </form>
     }
@@ -134,12 +169,26 @@
         <input class="admin-search-bar__input" type="search" placeholder="Search by banner title…" [value]="bannerSearch()" (input)="onBannerSearch($any($event.target).value)" />
       </div>
       <table class="admin-table">
-        <thead><tr><th>Order</th><th>Title</th><th>Link</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Order</th><th>Image</th><th>Title</th><th>Schedule</th><th>Link</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>
           @for (b of pagedBanners(); track b.id) {
             <tr>
               <td>{{ b.displayOrder }}</td>
+              <td class="prod-thumb-cell">
+                @if (b.imageUrl) {
+                  <img [src]="b.imageUrl | imageUrl" [alt]="b.title" class="prod-thumb" />
+                } @else {
+                  <span class="prod-thumb prod-thumb--empty">No img</span>
+                }
+              </td>
               <td>{{ b.title }}</td>
+              <td>
+                <div class="schedule-cell">
+                  <div class="schedule-date" *ngIf="b.startsAt">From: {{ b.startsAt | date:'dd MMM yyyy' }}</div>
+                  <div class="schedule-date" *ngIf="b.endsAt">To: {{ b.endsAt | date:'dd MMM yyyy' }}</div>
+                  <div class="schedule-empty" *ngIf="!b.startsAt && !b.endsAt">Indefinite</div>
+                </div>
+              </td>
               <td><a [href]="b.linkUrl" target="_blank" class="dash-link">{{ b.linkUrl || '—' }}</a></td>
               <td><span class="status-badge" [class.status--active]="b.isActive" [class.status--inactive]="!b.isActive">{{ b.isActive ? 'Active' : 'Inactive' }}</span></td>
               <td>
@@ -150,7 +199,7 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="5" class="admin-empty">No banners found.</td></tr>
+            <tr><td colspan="7" class="admin-empty">No banners found.</td></tr>
           }
         </tbody>
       </table>

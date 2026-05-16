@@ -1,408 +1,376 @@
 @use '../../../../styles/tokens' as *;
-@use '../../../../styles/mixins' as *;
 
-// ── Page shell ────────────────────────────────────────────────────────────────
 .ol-page {
-  flex: 1;
-  background: #f0f4f8;
-  padding: 1.75rem 1rem 3.5rem;
-  min-height: 100%;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding-bottom: 4rem;
 }
 
 .ol-wrap {
-  max-width: 700px;
+  max-width: 900px;
   margin: 0 auto;
+  padding: 0.5rem 1rem 1.5rem;
 }
 
-// ── Hero header ───────────────────────────────────────────────────────────────
+// --- Hero Section ---
 .ol-hero {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  margin: 1rem 0 1.75rem;
+  gap: 1.25rem;
+  padding: 1rem 1.25rem;
+  margin: 0.75rem 0 1.25rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.15), 0 4px 8px -2px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 
-  &__icon {
-    flex-shrink: 0;
-    width: 46px;
-    height: 46px;
-    background: #005DAA;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(0, 93, 170, 0.3);
-  }
-
-  &__text { flex: 1; }
-
-  &__title {
-    font-size: 1.375rem;
-    font-weight: 900;
-    color: #0f172a;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-  }
-
-  &__sub {
-    font-size: 0.8125rem;
-    color: #64748b;
-    margin-top: 0.1rem;
-    font-weight: 500;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+    background: $color-tesco-blue;
   }
 }
 
-// ── CTA button ────────────────────────────────────────────────────────────────
+.ol-hero__icon {
+  width: 48px;
+  height: 48px;
+  background: #eff6ff;
+  color: $color-tesco-blue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+}
+
+.ol-hero__text {
+  flex: 1;
+}
+
+.ol-hero__title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.ol-hero__sub {
+  font-size: 0.9375rem;
+  color: #64748b;
+  margin: 0.25rem 0 0;
+  font-weight: 500;
+}
+
 .ol-cta-btn {
-  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.6rem 1.125rem;
-  background: #005DAA;
-  color: #fff;
+  gap: 0.5rem;
+  background: $color-tesco-blue;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
   font-size: 0.875rem;
-  font-weight: 700;
-  border-radius: 9px;
   text-decoration: none;
-  letter-spacing: 0.01em;
-  box-shadow: 0 3px 10px rgba(0, 93, 170, 0.25);
-  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
-  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 15px -3px rgba(0, 83, 159, 0.2);
 
   &:hover {
-    background: #003f7d;
+    background: $color-tesco-blue-dark;
     transform: translateY(-1px);
-    box-shadow: 0 5px 16px rgba(0, 93, 170, 0.32);
-  }
-
-  &:active { transform: translateY(0); }
-}
-
-// ── Loading ───────────────────────────────────────────────────────────────────
-.ol-loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 4rem 0;
-
-  &__text {
-    font-size: 0.875rem;
-    color: #94a3b8;
-    font-weight: 500;
+    box-shadow: 0 20px 25px -5px rgba(0, 83, 159, 0.2);
   }
 }
 
-// ── Empty state ───────────────────────────────────────────────────────────────
-.ol-empty {
-  background: #fff;
-  border-radius: 18px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 8px 28px rgba(0,93,170,0.06);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.625rem;
-  padding: 3.5rem 2rem;
+// --- Loading & Empty ---
+.ol-loading, .ol-empty {
   text-align: center;
-
-  &__ring {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: #f1f5f9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.5rem;
-  }
-
-  &__title {
-    font-size: 1.1875rem;
-    font-weight: 800;
-    color: #0f172a;
-  }
-
-  &__sub {
-    font-size: 0.875rem;
-    color: #64748b;
-    margin-bottom: 0.5rem;
-  }
+  padding: 6rem 2rem;
+  background: white;
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-// ── Orders list ───────────────────────────────────────────────────────────────
-.ol-list {
+.ol-loading__text {
+  margin-top: 1.5rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.ol-empty__ring {
+  width: 80px;
+  height: 80px;
+  background: #f1f5f9;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.ol-empty__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem;
+}
+
+.ol-empty__sub {
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+// --- Orders List ---
+.ol-list {
+  display: grid;
   gap: 1rem;
 }
 
-// ── Order card ────────────────────────────────────────────────────────────────
 .ol-card {
-  display: flex;
+  display: block;
+  background: white;
+  border-radius: 1rem;
   text-decoration: none;
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05), 0 6px 20px rgba(0,93,170,0.06);
+  color: inherit;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 8px 12px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.08);
+  position: relative;
   overflow: hidden;
-  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
 
   &:hover {
-    border-color: #93c5fd;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08), 0 14px 36px rgba(0,93,170,0.13);
     transform: translateY(-3px);
+    border-color: #e2e8f0;
+    box-shadow: 0 25px 30px -5px rgba(0, 0, 0, 0.18), 0 15px 15px -5px rgba(0, 0, 0, 0.08);
 
     .ol-card__view-btn {
-      background: #003f7d;
-      svg { transform: translateX(2px); }
+      background: #f1f5f9;
+      color: $color-tesco-blue;
     }
-
-    .ol-card__stripe { width: 6px; }
-  }
-
-  // ── Left colour stripe ────────────────────────────────────────────────────
-  &__stripe {
-    flex-shrink: 0;
-    width: 5px;
-    transition: width 0.2s;
-
-    &--pending     { background: #f59e0b; }
-    &--confirmed   { background: #3b82f6; }
-    &--picking     { background: #8b5cf6; }
-    &--packed      { background: #06b6d4; }
-    &--delivery    { background: #f97316; }
-    &--delivered   { background: #16a34a; }
-    &--cancelled   { background: #ef4444; }
-  }
-
-  &__inner {
-    flex: 1;
-    padding: 1.25rem 1.375rem;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  // ── Top row ───────────────────────────────────────────────────────────────
-  &__top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin-bottom: 0.35rem;
-  }
-
-  &__id-group {
-    display: flex;
-    align-items: baseline;
-    gap: 0.35rem;
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  &__label {
-    font-size: 0.6875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #94a3b8;
-    flex-shrink: 0;
-  }
-
-  &__number {
-    font-size: 0.9375rem;
-    font-weight: 800;
-    color: #005DAA;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  // ── Date ─────────────────────────────────────────────────────────────────
-  &__date {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.78125rem;
-    color: #94a3b8;
-    font-weight: 500;
-    margin-bottom: 1rem;
-
-    svg { flex-shrink: 0; }
-  }
-
-  // ── Items preview ─────────────────────────────────────────────────────────
-  &__items-preview {
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-    margin-bottom: 0.75rem;
-  }
-
-  &__more {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    font-weight: 600;
-    padding-left: calc(36px + 0.625rem);
-  }
-
-  // ── Divider ───────────────────────────────────────────────────────────────
-  &__divider {
-    height: 1px;
-    background: #f1f5f9;
-    margin-bottom: 0.875rem;
-  }
-
-  // ── Footer ────────────────────────────────────────────────────────────────
-  &__foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  &__foot-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  &__foot-right {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
-    flex-shrink: 0;
-  }
-
-  &__chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #64748b;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 0.2rem 0.55rem;
-    border-radius: 99px;
-
-    svg { color: #94a3b8; }
-  }
-
-  &__total {
-    font-size: 1.0625rem;
-    font-weight: 900;
-    color: #0f172a;
-    letter-spacing: -0.01em;
-  }
-
-  &__view-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    color: #fff;
-    background: #005DAA;
-    padding: 0.4rem 0.875rem;
-    border-radius: 7px;
-    white-space: nowrap;
-    transition: background 0.15s;
-
-    svg { transition: transform 0.15s; }
   }
 }
 
-// ── Item preview row ──────────────────────────────────────────────────────────
+.ol-card__stripe {
+  position: absolute;
+  top: 0; left: 0; bottom: 0; width: 4px;
+  
+  &--pending { background: #eab308; }
+  &--confirmed { background: #3b82f6; }
+  &--delivered { background: #22c55e; }
+  &--cancelled { background: #ef4444; }
+  &--picking, &--packed, &--delivery { background: #8b5cf6; }
+}
+
+.ol-card__inner {
+  padding: 1rem;
+}
+
+.ol-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.ol-card__id-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.ol-card__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.ol-card__number {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-top: 0.125rem;
+}
+
+.ol-card__date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+// --- Status Badges ---
+.ol-status {
+  padding: 0.375rem 0.75rem;
+  border-radius: 2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+
+  &--pending { background: #fef9c3; color: #854d0e; }
+  &--confirmed { background: #dbeafe; color: #1e40af; }
+  &--delivered { background: #dcfce7; color: #166534; }
+  &--cancelled { background: #fee2e2; color: #991b1b; }
+  &--picking, &--packed, &--delivery { background: #f3e8ff; color: #6b21a8; }
+}
+
+// --- Items Preview ---
+.ol-card__items-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+}
+
 .ol-preview-item {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
+  gap: 0.875rem;
+}
 
-  &__img {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    border-radius: 7px;
-    border: 1px solid #e2e8f0;
-    background: #f8fafc;
-    object-fit: contain;
+.ol-preview-item__img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  padding: 2px;
 
-    &--placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-
-  &__name {
-    flex: 1;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: #374151;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &__qty {
-    flex-shrink: 0;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #94a3b8;
+  &--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
-// ── Status badge ──────────────────────────────────────────────────────────────
-.ol-status {
-  flex-shrink: 0;
-  font-size: 0.6875rem;
+.ol-preview-item__name {
+  flex: 1;
+  font-size: 0.875rem;
   font-weight: 700;
-  padding: 0.25rem 0.625rem;
-  border-radius: 99px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  color: #0f172a;
   white-space: nowrap;
-
-  &--pending     { background: #fef3c7; color: #92400e; }
-  &--confirmed   { background: #dbeafe; color: #1e40af; }
-  &--picking     { background: #ede9fe; color: #5b21b6; }
-  &--packed      { background: #cffafe; color: #164e63; }
-  &--delivery    { background: #ffedd5; color: #9a3412; }
-  &--delivered   { background: #dcfce7; color: #14532d; }
-  &--cancelled   { background: #fee2e2; color: #991b1b; }
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-// ── Pagination ────────────────────────────────────────────────────────────────
+.ol-preview-item__qty {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #e2e8f0;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.ol-card__more {
+  font-size: 0.8125rem;
+  color: #64748b;
+  font-weight: 600;
+  margin: 0.25rem 0 0 3.5rem;
+}
+
+.ol-card__divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 0 -1rem 1rem;
+}
+
+.ol-card__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ol-card__foot-meta {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.ol-card__chip {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.5rem;
+}
+
+.ol-card__foot-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.ol-card__total {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.ol-card__view-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #94a3b8;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.625rem;
+  transition: all 0.2s;
+}
+
+.ol-card__invoice-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  svg {
+    opacity: 0.7;
+    transition: transform 0.2s;
+  }
+
+  &:hover svg {
+    opacity: 1;
+    transform: translateY(1px);
+  }
+}
+
 .ol-pagination {
+  margin-top: 2rem;
   display: flex;
   justify-content: center;
-  margin-top: 2.25rem;
-}
-
-// ── Responsive ────────────────────────────────────────────────────────────────
-@media (max-width: 540px) {
-  .ol-page { padding: 1rem 0.75rem 2.5rem; }
-
-  .ol-hero {
-    flex-wrap: wrap;
-    gap: 0.75rem;
-
-    &__icon { width: 40px; height: 40px; border-radius: 10px; }
-    &__title { font-size: 1.1875rem; }
-  }
-
-  .ol-cta-btn { width: 100%; justify-content: center; }
-
-  .ol-card__inner { padding: 1rem 1.125rem; }
-
-  .ol-card__foot { flex-direction: column; align-items: flex-start; }
-
-  .ol-card__foot-right { width: 100%; justify-content: space-between; }
 }

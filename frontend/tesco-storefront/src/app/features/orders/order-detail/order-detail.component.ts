@@ -70,4 +70,12 @@ export class OrderDetailComponent implements OnInit {
   protected addressLines(address: string): string[] {
     return address.split(', ').filter(l => l.trim().length > 0);
   }
+
+  protected downloadInvoice(): void {
+    const o = this.order();
+    if (o?.invoiceUrl) {
+      const url = this._orders.getInvoiceUrl(o.invoiceUrl);
+      window.open(url, '_blank');
+    }
+  }
 }

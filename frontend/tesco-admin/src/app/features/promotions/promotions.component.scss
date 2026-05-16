@@ -8,11 +8,11 @@
 
 .promo-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
 
-.actions-cell { display: flex; gap: 0.5rem; white-space: nowrap; }
+.promo-form-active { align-self: end; }
 
-.table-btn {
-  background: none; border: 1px solid $color-border; border-radius: 4px; cursor: pointer;
-  font-size: 0.8125rem; padding: 0.25rem 0.625rem;
-  &:hover { border-color: $color-tesco-blue; color: $color-tesco-blue; }
-  &--danger:hover { border-color: #c0392b; color: #c0392b; }
+.promo-toggle {
+  display: flex; align-items: center; gap: 0.5rem;
+  cursor: pointer; font-size: $font-size-sm; font-weight: 500;
+
+  input[type='checkbox'] { width: 1rem; height: 1rem; cursor: pointer; accent-color: $color-accent; }
 }

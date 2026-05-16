@@ -987,3 +987,209 @@
   margin: 0;
   line-height: 1.4;
 }
+// ── Dynamic Banners ──────────────────────────────────────────────────────────
+.home__banners {
+  padding: $space-8 0;
+  background: linear-gradient(to bottom, #fff, #f8f9fa);
+}
+
+.banner-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.banner-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  color: $color-tesco-blue;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  &:hover {
+    background: white;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  &--left { left: -$space-4; }
+  &--right { right: -$space-4; }
+  
+  @include respond-to(md) {
+    &--left { left: -$space-6; }
+    &--right { right: -$space-6; }
+  }
+
+  i { display: flex; stroke-width: 2; }
+}
+
+.banner-grid {
+  display: flex;
+  gap: $space-6;
+  padding: $space-2 0 $space-9;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+
+  &--single {
+    display: block;
+    padding: $space-2 0 $space-8;
+    
+    .home-banner {
+      flex-direction: row;
+      max-width: 100%;
+      margin: 0;
+      scroll-snap-align: none;
+      min-height: 480px;
+
+      .home-banner__img-wrap {
+        flex: 1.2;
+        height: auto;
+        min-height: 480px;
+      }
+      .home-banner__content {
+        flex: 1;
+        justify-content: center;
+        padding: $space-9;
+      }
+      .home-banner__title {
+        font-size: 3.5rem;
+      }
+    }
+  }
+}
+
+.home-banner {
+  flex: 0 0 88%;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  background: $color-surface;
+  border-radius: 32px;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.04);
+  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.03);
+
+  @include respond-to(md) {
+    flex: 0 0 calc(50% - 1rem);
+    scroll-snap-align: start;
+  }
+
+  @include respond-to(lg) {
+    flex: 0 0 720px;
+  }
+
+  &:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+
+    .home-banner__img {
+      transform: scale(1.08);
+    }
+    .home-banner__cta {
+      background: $color-tesco-blue;
+      color: white;
+      padding-right: 3rem;
+      i { transform: translateX(8px); }
+    }
+  }
+}
+
+.home-banner__img-wrap {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  background: #f8f9fa;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.05), transparent);
+    pointer-events: none;
+  }
+
+  @include respond-to(md) {
+    height: 380px;
+  }
+}
+
+.home-banner__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.home-banner__content {
+  padding: $space-8;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  z-index: 1;
+  flex: 1;
+  position: relative;
+}
+
+.home-banner__title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: $color-ink;
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  
+  @include respond-to(md) {
+    font-size: 2.5rem;
+  }
+}
+
+.home-banner__text {
+  font-size: 1.125rem;
+  color: #444;
+  margin: $space-4 0 0;
+  line-height: 1.5;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.home-banner__cta {
+  align-self: flex-start;
+  margin-top: $space-7;
+  padding: 1rem 2rem;
+  background: #f1f5f9;
+  color: $color-tesco-blue;
+  font-weight: 800;
+  border-radius: 100px;
+  font-size: 0.9375rem;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+
+  span {
+    transition: transform 0.3s ease;
+  }
+
+  .home-banner:hover & span {
+    transform: translateX(4px);
+  }
+}
