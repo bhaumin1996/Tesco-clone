@@ -18,12 +18,17 @@ import { Address } from '../../../core/models/address.model';
           <div class="addr-container">
             <app-breadcrumb [items]="[{ label: 'My Account', url: '/account' }, { label: 'Addresses' }]"></app-breadcrumb>
 
-            <div class="addr-header">
-              <div>
-                <h1 class="addr-title">Addresses</h1>
-                <p class="addr-sub">Manage your delivery and billing addresses</p>
+            <div class="addr-header-card">
+              <div class="addr-header-content">
+                <div class="addr-header-text">
+                  <h1 class="addr-title">Delivery Addresses</h1>
+                  <p class="addr-sub">Manage where you want your groceries delivered.</p>
+                </div>
+                <button *ngIf="!showForm()" (click)="openAddForm()" class="btn-add-main">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Add New Address
+                </button>
               </div>
-              <button *ngIf="!showForm()" (click)="openAddForm()" class="btn-primary">Add Address</button>
             </div>
 
             <!-- Address List -->
@@ -32,78 +37,102 @@ import { Address } from '../../../core/models/address.model';
                 <app-spinner></app-spinner>
               </div>
 
-              <div *ngIf="!loading() && addresses().length === 0" class="empty-state">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                  <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                <p>You haven't added any addresses yet.</p>
-                <div class="empty-actions">
-                  <button (click)="openAddForm()" class="btn-primary">Add your first address</button>
-                  <button (click)="importFromOrders()" class="btn-ghost">Import from recent orders</button>
+              <div *ngIf="!loading() && addresses().length === 0" class="premium-empty-state">
+                <div class="empty-glow"></div>
+                <div class="empty-icon-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                </div>
+                <h3 class="empty-title">No addresses found</h3>
+                <p class="empty-text">Your delivery addresses will appear here once added. You can also import them from your order history.</p>
+                <div class="empty-actions-grid">
+                  <button (click)="openAddForm()" class="btn-premium">Add First Address</button>
+                  <button (click)="importFromOrders()" class="btn-outline-premium">Import from Orders</button>
                 </div>
               </div>
 
-              <div *ngFor="let addr of addresses()" class="addr-card" [class.default]="addr.isDefault">
-                <div class="addr-card__content">
-                  <div class="addr-card__header">
-                    <span *ngIf="addr.isDefault" class="badge">Default</span>
-                    <span class="addr-card__id">#{{ addr.id }}</span>
+              <div class="addr-grid">
+                <div *ngFor="let addr of addresses()" class="premium-addr-card" [class.is-default]="addr.isDefault">
+                  <div class="card-glass"></div>
+                  <div class="addr-card-body">
+                    <div class="addr-card-top">
+                      <span *ngIf="addr.isDefault" class="default-pill">Default</span>
+                      <span class="addr-id-tag">ADDR-{{ addr.id }}</span>
+                    </div>
+                    <div class="addr-details">
+                      <p class="addr-main-line">{{ addr.addressLine1 }}</p>
+                      <p *ngIf="addr.addressLine2" class="addr-second-line">{{ addr.addressLine2 }}</p>
+                      <div class="addr-city-post">
+                        <span class="city-text">{{ addr.townCity }}</span>
+                        <span class="postcode-tag">{{ addr.postcode }}</span>
+                      </div>
+                    </div>
                   </div>
-                  <p class="addr-line">{{ addr.addressLine1 }}</p>
-                  <p *ngIf="addr.addressLine2" class="addr-line">{{ addr.addressLine2 }}</p>
-                  <p class="addr-line">{{ addr.townCity }}</p>
-                  <p class="addr-postcode">{{ addr.postcode }}</p>
-                </div>
-                <div class="addr-card__actions">
-                  <button (click)="editAddress(addr)" class="btn-icon" title="Edit">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  </button>
-                  <button (click)="deleteAddress(addr.id)" class="btn-icon btn-icon--danger" title="Delete">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                  </button>
+                  <div class="addr-card-footer">
+                    <button (click)="editAddress(addr)" class="action-btn" title="Edit">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      Edit
+                    </button>
+                    <div class="footer-divider"></div>
+                    <button (click)="deleteAddress(addr.id)" class="action-btn delete" title="Delete">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- Add/Edit Form -->
-            <div *ngIf="showForm()" class="addr-form-wrap">
-              <h2 class="form-title">{{ editingId() ? 'Edit Address' : 'New Address' }}</h2>
-              <form [formGroup]="addrForm" (ngSubmit)="submit()" class="addr-form">
-                <div class="form-group">
-                  <label for="addressLine1">Address Line 1</label>
-                  <input type="text" id="addressLine1" formControlName="addressLine1" class="form-input" [class.error]="fieldError('addressLine1')">
-                  <span class="error-msg" *ngIf="fieldError('addressLine1')">{{ fieldError('addressLine1') }}</span>
-                </div>
-
-                <div class="form-group">
-                  <label for="addressLine2">Address Line 2 (Optional)</label>
-                  <input type="text" id="addressLine2" formControlName="addressLine2" class="form-input">
-                </div>
-
-                <div class="form-grid">
-                  <div class="form-group">
-                    <label for="townCity">Town / City</label>
-                    <input type="text" id="townCity" formControlName="townCity" class="form-input" [class.error]="fieldError('townCity')">
-                    <span class="error-msg" *ngIf="fieldError('townCity')">{{ fieldError('townCity') }}</span>
+            <div *ngIf="showForm()" class="premium-form-card">
+              <div class="form-header">
+                <h2 class="form-title-text">{{ editingId() ? 'Update Address' : 'New Address' }}</h2>
+                <button (click)="cancel()" class="btn-close-form" aria-label="Close form">✕</button>
+              </div>
+              
+              <form [formGroup]="addrForm" (ngSubmit)="submit()" class="premium-form">
+                <div class="premium-form-group">
+                  <label class="premium-label" for="addressLine1">Address Line 1</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="addressLine1" formControlName="addressLine1" placeholder="e.g. 123 High Street" class="premium-input" [class.has-error]="fieldError('addressLine1')">
+                    <span class="error-indicator" *ngIf="fieldError('addressLine1')">!</span>
                   </div>
-                  <div class="form-group">
-                    <label for="postcode">Postcode</label>
-                    <input type="text" id="postcode" formControlName="postcode" class="form-input" [class.error]="fieldError('postcode')">
-                    <span class="error-msg" *ngIf="fieldError('postcode')">{{ fieldError('postcode') }}</span>
+                  <span class="premium-error" *ngIf="fieldError('addressLine1')">{{ fieldError('addressLine1') }} is required</span>
+                </div>
+
+                <div class="premium-form-group">
+                  <label class="premium-label" for="addressLine2">Address Line 2 (Optional)</label>
+                  <input type="text" id="addressLine2" formControlName="addressLine2" placeholder="e.g. Flat 4b" class="premium-input">
+                </div>
+
+                <div class="premium-form-row">
+                  <div class="premium-form-group">
+                    <label class="premium-label" for="townCity">Town / City</label>
+                    <input type="text" id="townCity" formControlName="townCity" placeholder="City" class="premium-input" [class.has-error]="fieldError('townCity')">
+                  </div>
+                  <div class="premium-form-group">
+                    <label class="premium-label" for="postcode">Postcode</label>
+                    <input type="text" id="postcode" formControlName="postcode" placeholder="E1 6AN" class="premium-input" [class.has-error]="fieldError('postcode')">
                   </div>
                 </div>
 
-                <div class="form-checkbox">
-                  <input type="checkbox" id="isDefault" formControlName="isDefault">
-                  <label for="isDefault">Set as default address</label>
+                <div class="premium-checkbox-card" (click)="addrForm.get('isDefault')?.setValue(!addrForm.get('isDefault')?.value)">
+                  <div class="checkbox-ui" [class.checked]="addrForm.get('isDefault')?.value">
+                    <svg *ngIf="addrForm.get('isDefault')?.value" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                  <div class="checkbox-text">
+                    <strong>Set as default</strong>
+                    <span>Use this address for all future orders by default.</span>
+                  </div>
                 </div>
 
-                <div class="form-actions">
-                  <button type="button" (click)="cancel()" class="btn-ghost">Cancel</button>
-                  <button type="submit" class="btn-primary" [disabled]="loading() || addrForm.invalid">
-                    <app-spinner *ngIf="loading()"></app-spinner>
-                    <span *ngIf="!loading()">{{ editingId() ? 'Update' : 'Add' }} Address</span>
+                <div class="premium-form-actions">
+                  <button type="button" (click)="cancel()" class="btn-cancel-premium">Cancel</button>
+                  <button type="submit" class="btn-save-premium" [disabled]="loading() || addrForm.invalid">
+                    <app-spinner *ngIf="loading()" size="sm"></app-spinner>
+                    <span>{{ editingId() ? 'Save Changes' : 'Add Address' }}</span>
                   </button>
                 </div>
               </form>
@@ -114,93 +143,166 @@ import { Address } from '../../../core/models/address.model';
     </div>
   `,
   styles: [`
-    .addr-page { background: #f5f7fa; min-height: calc(100vh - 80px); display: flex; flex-direction: column; }
-    .page-container { flex: 1; display: flex; flex-direction: column; }
-    .page-content { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
-    .addr-container { width: 100%; max-width: 600px; }
-    app-breadcrumb { display: block; margin-bottom: 1.25rem; }
+    .addr-page { background: #f8fafc; min-height: calc(100vh - 80px); padding-bottom: 4rem; }
+    .page-content { display: flex; justify-content: center; padding: 2rem 1rem; }
+    .addr-container { width: 100%; max-width: 720px; }
+    app-breadcrumb { margin-bottom: 2rem; opacity: 0.8; transition: opacity 0.3s; &:hover { opacity: 1; } }
+
+    /* --- Header Card --- */
+    .addr-header-card {
+      background: #ffffff; border-radius: 24px; padding: 2rem 2.5rem;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.03);
+      margin-bottom: 2.5rem; position: relative; overflow: hidden;
+      &::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: #005DAA;
+      }
+    }
+    .addr-header-content { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; }
+    .addr-title { font-size: 1.75rem; color: #0f172a; font-weight: 850; letter-spacing: -0.03em; margin: 0 0 0.5rem; }
+    .addr-sub { color: #64748b; margin: 0; font-size: 0.9375rem; font-weight: 500; }
     
-    .addr-header { 
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; 
-      background: #fff; padding: 1.5rem 2rem; border-radius: 16px; 
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 32px rgba(0,93,170,0.08); 
-      border: 1px solid #e2e8f0;
+    .btn-add-main {
+      background: #005DAA; color: #fff; border: none; padding: 0.875rem 1.5rem; border-radius: 14px;
+      font-weight: 700; font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem;
+      box-shadow: 0 10px 20px -5px rgba(0, 93, 170, 0.3); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      &:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px -8px rgba(0, 93, 170, 0.4); background: #004d8c; }
+      &:active { transform: translateY(-1px) scale(0.98); }
     }
-    .addr-title { font-size: 1.5rem; color: #0f172a; margin: 0 0 0.25rem; font-weight: 800; letter-spacing: -0.01em; }
-    .addr-sub { color: #64748b; margin: 0; font-size: 0.8125rem; }
 
-    .addr-list { display: flex; flex-direction: column; gap: 1rem; }
-
-    .addr-card { 
-      background: #fff; border-radius: 16px; padding: 1.25rem 1.75rem; 
-      display: flex; justify-content: space-between; align-items: center;
-      border: 1.5px solid #e2e8f0; transition: all 0.25s; 
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05); 
+    /* --- Empty State --- */
+    .premium-empty-state {
+      background: #fff; border-radius: 30px; padding: 5rem 3rem; text-align: center;
+      border: 2px dashed #e2e8f0; position: relative; overflow: hidden;
     }
-    .addr-card.default { border-color: #005DAA; background: #f0f7ff; }
-    .addr-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,93,170,0.12); border-color: #005DAA; }
-
-    .addr-card__header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
-    .badge { background: #005DAA; color: #fff; font-size: 0.625rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .addr-card__id { font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+    .empty-glow {
+      position: absolute; top: 50%; left: 50%; width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(0, 93, 170, 0.05) 0%, transparent 70%);
+      transform: translate(-50%, -50%); pointer-events: none;
+    }
+    .empty-icon-box {
+      width: 80px; height: 80px; background: #f1f5f9; border-radius: 24px;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;
+      color: #94a3b8; transition: all 0.5s ease;
+      svg { width: 40px; height: 40px; }
+      .premium-empty-state:hover & { transform: scale(1.1) rotate(5deg); background: #e0f2fe; color: #005DAA; }
+    }
+    .empty-title { font-size: 1.5rem; color: #1e293b; font-weight: 800; margin-bottom: 1rem; }
+    .empty-text { color: #64748b; font-size: 1rem; max-width: 400px; margin: 0 auto 2.5rem; line-height: 1.6; }
+    .empty-actions-grid { display: flex; gap: 1rem; justify-content: center; }
     
-    .addr-line { margin: 0 0 0.15rem; color: #1e293b; font-weight: 500; font-size: 0.9375rem; }
-    .addr-postcode { margin: 0.375rem 0 0; color: #64748b; font-weight: 700; font-size: 0.875rem; }
-
-    .addr-card__actions { display: flex; gap: 0.5rem; }
-    .btn-icon { 
-      background: #f8fafc; border: 1.5px solid #e2e8f0; width: 36px; height: 36px; border-radius: 10px; 
-      display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b; transition: all 0.2s; 
+    .btn-premium {
+      background: #005DAA; color: #fff; border: none; padding: 1rem 2rem; border-radius: 16px;
+      font-weight: 700; cursor: pointer; transition: all 0.3s;
+      &:hover { background: #004d8c; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 93, 170, 0.25); }
     }
-    .btn-icon:hover { background: #fff; border-color: #005DAA; color: #005DAA; transform: scale(1.05); }
-    .btn-icon--danger:hover { background: #fff5f5; border-color: #fca5a5; color: #dc2626; }
-    .btn-icon svg { width: 18px; height: 18px; }
-
-    .empty-state { background: #fff; padding: 3rem 2rem; border-radius: 16px; text-align: center; border: 1.5px dashed #e2e8f0; }
-    .empty-state svg { width: 48px; height: 48px; margin-bottom: 1rem; color: #cbd5e1; }
-    .empty-state p { color: #64748b; font-size: 0.875rem; margin-bottom: 1.5rem; }
-    .empty-actions { display: flex; flex-direction: column; gap: 0.75rem; align-items: center; }
-
-    .addr-form-wrap { 
-      background: #fff; padding: 2rem 2.5rem; border-radius: 16px; 
-      box-shadow: 0 8px 32px rgba(0,93,170,0.12); border: 1px solid #e2e8f0;
-      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+    .btn-outline-premium {
+      background: transparent; color: #005DAA; border: 2px solid #005DAA; padding: 1rem 2rem; border-radius: 16px;
+      font-weight: 700; cursor: pointer; transition: all 0.3s;
+      &:hover { background: rgba(0, 93, 170, 0.05); transform: translateY(-2px); }
     }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .form-title { font-size: 1.375rem; color: #0f172a; margin-bottom: 1.5rem; font-weight: 800; letter-spacing: -0.01em; }
 
-    .addr-form { display: flex; flex-direction: column; gap: 1rem; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.375rem; }
-    .form-group label { font-size: 0.8125rem; font-weight: 600; color: #374151; }
-    .form-input { 
-      padding: 0.65rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.9375rem; 
-      background: #f8fafc; transition: all 0.2s; outline: none; box-sizing: border-box; width: 100%;
+    /* --- Address Grid & Cards --- */
+    .addr-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    .premium-addr-card {
+      background: #fff; border-radius: 24px; border: 1px solid #e2e8f0;
+      overflow: hidden; position: relative; transition: all 0.3s ease;
+      display: flex; flex-direction: column;
+      &:hover {
+        transform: translateY(-5px); border-color: #005DAA;
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.08);
+      }
+      &.is-default {
+        border-color: #005DAA; background: linear-gradient(to bottom right, #fff, #f8fbff);
+        box-shadow: 0 10px 30px -5px rgba(0, 93, 170, 0.1);
+      }
     }
-    .form-input:focus { border-color: #005DAA; background: #fff; box-shadow: 0 0 0 3px rgba(0,93,170,0.1); }
-    .form-input.error { border-color: #fca5a5; background: #fff5f5; }
-    .error-msg { color: #dc2626; font-size: 0.75rem; font-weight: 500; margin-top: 0.125rem; }
-
-    .form-checkbox { display: flex; align-items: center; gap: 0.75rem; margin: 0.25rem 0; cursor: pointer; }
-    .form-checkbox input { width: 18px; height: 18px; cursor: pointer; accent-color: #005DAA; }
-    .form-checkbox label { font-size: 0.875rem; cursor: pointer; color: #475569; font-weight: 500; }
-
-    .form-actions { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 0.5rem; }
-    .btn-primary { 
-      background: #005DAA; color: #fff; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; 
-      font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
-      box-shadow: 0 4px 12px rgba(0,93,170,0.25); transition: all 0.2s;
+    .card-glass { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%); pointer-events: none; }
+    .addr-card-body { padding: 2rem 2.25rem; flex: 1; }
+    .addr-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .default-pill {
+      background: #005DAA; color: #fff; font-size: 0.6875rem; font-weight: 800; padding: 0.35rem 0.875rem;
+      border-radius: 30px; text-transform: uppercase; letter-spacing: 0.06em;
     }
-    .btn-primary:hover:not(:disabled) { background: #003f7d; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,93,170,0.3); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .addr-id-tag { font-size: 0.75rem; color: #94a3b8; font-weight: 700; font-family: monospace; }
+    .addr-main-line { font-size: 1.125rem; font-weight: 700; color: #0f172a; margin: 0 0 0.5rem; }
+    .addr-second-line { font-size: 1rem; font-weight: 500; color: #64748b; margin: 0 0 1rem; }
+    .addr-city-post { display: flex; align-items: center; gap: 1rem; }
+    .city-text { font-size: 1rem; font-weight: 600; color: #475569; }
+    .postcode-tag { background: #f1f5f9; color: #475569; font-size: 0.8125rem; font-weight: 800; padding: 0.25rem 0.75rem; border-radius: 8px; }
 
-    .btn-ghost { 
-      background: #f1f5f9; color: #64748b; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; 
-      font-weight: 700; cursor: pointer; transition: all 0.2s;
+    .addr-card-footer {
+      padding: 1.25rem 2.25rem; background: #fafafa; border-top: 1px solid #f1f5f9;
+      display: flex; align-items: center; gap: 1.5rem;
     }
-    .btn-ghost:hover { background: #e2e8f0; color: #1e293b; }
+    .action-btn {
+      background: none; border: none; color: #64748b; font-size: 0.875rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s;
+      svg { width: 18px; height: 18px; }
+      &:hover { color: #005DAA; }
+      &.delete:hover { color: #dc2626; }
+    }
+    .footer-divider { width: 1px; height: 16px; background: #e2e8f0; }
 
-    .loading-wrap { grid-column: 1 / -1; display: flex; justify-content: center; padding: 2rem; }
+    /* --- Form Styling --- */
+    .premium-form-card {
+      background: #fff; border-radius: 30px; padding: 3rem; border: 1px solid #e2e8f0;
+      box-shadow: 0 25px 60px -15px rgba(0, 93, 170, 0.15);
+      animation: formIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes formIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .form-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem; }
+    .form-title-text { font-size: 1.75rem; font-weight: 850; color: #0f172a; margin: 0; letter-spacing: -0.02em; }
+    .btn-close-form {
+      background: #f1f5f9; border: none; width: 36px; height: 36px; border-radius: 50%;
+      cursor: pointer; font-size: 1.25rem; color: #94a3b8; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; &:hover { background: #e2e8f0; color: #475569; transform: rotate(90deg); }
+    }
+
+    .premium-form { display: flex; flex-direction: column; gap: 1.5rem; }
+    .premium-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .premium-form-group { display: flex; flex-direction: column; gap: 0.625rem; }
+    .premium-label { font-size: 0.8125rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; }
+    .input-wrapper { position: relative; display: flex; align-items: center; }
+    .premium-input {
+      width: 100%; padding: 0.875rem 1.25rem; background: #f8fafc; border: 2px solid #e2e8f0;
+      border-radius: 14px; font-size: 1rem; color: #1e293b; font-weight: 500; transition: all 0.3s;
+      &:focus { background: #fff; border-color: #005DAA; box-shadow: 0 0 0 4px rgba(0, 93, 170, 0.08); outline: none; }
+      &.has-error { border-color: #fda4af; background: #fff1f2; }
+    }
+    .error-indicator { position: absolute; right: 1rem; width: 20px; height: 20px; background: #ef4444; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.75rem; }
+    .premium-error { font-size: 0.75rem; color: #ef4444; font-weight: 600; margin-top: 0.25rem; }
+
+    .premium-checkbox-card {
+      background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 20px; padding: 1.25rem;
+      display: flex; gap: 1.25rem; align-items: center; cursor: pointer; transition: all 0.2s;
+      &:hover { border-color: #005DAA; background: #fff; }
+    }
+    .checkbox-ui {
+      width: 24px; height: 24px; border: 2px solid #cbd5e1; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+      &.checked { background: #005DAA; border-color: #005DAA; color: #fff; }
+    }
+    .checkbox-text {
+      display: flex; flex-direction: column;
+      strong { font-size: 0.9375rem; color: #1e293b; }
+      span { font-size: 0.8125rem; color: #64748b; }
+    }
+
+    .premium-form-actions { display: flex; justify-content: flex-end; gap: 1.25rem; margin-top: 1rem; }
+    .btn-cancel-premium {
+      background: none; border: none; padding: 1rem 2rem; color: #64748b; font-weight: 700; cursor: pointer; transition: color 0.2s;
+      &:hover { color: #1e293b; }
+    }
+    .btn-save-premium {
+      background: #005DAA; color: #fff; border: none; padding: 1rem 2.5rem; border-radius: 16px;
+      font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.75rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 93, 170, 0.3); transition: all 0.3s;
+      &:hover:not(:disabled) { background: #004d8c; transform: translateY(-2px); box-shadow: 0 15px 30px -8px rgba(0, 93, 170, 0.4); }
+      &:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    }
+
+    .loading-wrap { display: flex; justify-content: center; padding: 4rem; }
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
