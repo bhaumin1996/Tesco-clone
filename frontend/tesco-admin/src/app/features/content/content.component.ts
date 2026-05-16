@@ -1,24 +1,28 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 
 interface CmsPage {
-  pageId: number;
+  id: number;
   title: string;
   slug: string;
+  content: string | null;
   isPublished: boolean;
-  updatedOn: string;
+  createdOn: string;
+  modifiedOn: string | null;
 }
 
 interface Banner {
-  bannerId: number;
+  id: number;
   title: string;
-  imageUrl: string;
-  linkUrl: string;
+  subTitle: string | null;
+  imageUrl: string | null;
+  linkUrl: string | null;
   isActive: boolean;
-  position: number;
+  displayOrder: number;
 }
 
 @Component({
@@ -32,6 +36,8 @@ interface Banner {
 export class AdminContentComponent implements OnInit {
   private readonly _http = inject(HttpClient);
   private readonly _fb = inject(FormBuilder);
+  private readonly _destroyRef = inject(DestroyRef);
+  private _slugAutoSync = false;
 
   protected pages = signal<CmsPage[]>([]);
   protected banners = signal<Banner[]>([]);
@@ -70,19 +76,46 @@ export class AdminContentComponent implements OnInit {
   protected pageForm = this._fb.group({
     title: ['', Validators.required],
     slug: ['', Validators.required],
-    body: ['', Validators.required]
+    content: ['', Validators.required],
+    isPublished: [false]
   });
 
   protected bannerForm = this._fb.group({
     title: ['', Validators.required],
-    imageUrl: ['', Validators.required],
+    imageUrl: [''],
     linkUrl: [''],
-    position: [1, Validators.required]
+    displayOrder: [1, Validators.required]
   });
 
   private get _base() { return `${environment.apiUrl}/admin/content`; }
 
-  ngOnInit(): void { this._load(); }
+  ngOnInit(): void {
+    this._load();
+    this._setupSlugSync();
+  }
+
+  private _setupSlugSync(): void {
+    this.pageForm.get('title')!.valueChanges
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(title => {
+        if (this._slugAutoSync && title !== null) {
+          this.pageForm.get('slug')!.setValue(this._toSlug(title), { emitEvent: false });
+        }
+      });
+
+    this.pageForm.get('slug')!.valueChanges
+      .pipe(takeUntilDestroyed(this._destroyRef))
+      .subscribe(() => { this._slugAutoSync = false; });
+  }
+
+  private _toSlug(value: string): string {
+    return value
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
 
   private _load(): void {
     this.loading.set(true);
@@ -104,15 +137,20 @@ export class AdminContentComponent implements OnInit {
 
   protected openPageForm(page?: CmsPage): void {
     this.formType.set('page');
-    this.editId.set(page?.pageId ?? null);
-    this.pageForm.reset(page ? { title: page.title, slug: page.slug, body: '' } : {});
+    this.editId.set(page?.id ?? null);
+    this._slugAutoSync = !page;
+    this.pageForm.reset(page
+      ? { title: page.title, slug: page.slug, content: page.content ?? '', isPublished: page.isPublished }
+      : { isPublished: false });
     this.showForm.set(true);
   }
 
   protected openBannerForm(banner?: Banner): void {
     this.formType.set('banner');
-    this.editId.set(banner?.bannerId ?? null);
-    this.bannerForm.reset(banner ? { title: banner.title, imageUrl: banner.imageUrl, linkUrl: banner.linkUrl, position: banner.position } : { position: 1 });
+    this.editId.set(banner?.id ?? null);
+    this.bannerForm.reset(banner
+      ? { title: banner.title, imageUrl: banner.imageUrl ?? '', linkUrl: banner.linkUrl ?? '', displayOrder: banner.displayOrder }
+      : { displayOrder: 1 });
     this.showForm.set(true);
   }
 

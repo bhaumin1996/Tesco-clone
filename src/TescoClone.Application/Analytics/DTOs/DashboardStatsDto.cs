@@ -6,4 +6,6 @@ public sealed record DashboardStatsDto(
     int NewCustomersToday,
     int PendingOrders,
     int LowStockProducts,
-    int OpenDisputes);
+    int OpenDisputes,
+    decimal TotalRevenue,
+    int TotalOrderedCustomers);

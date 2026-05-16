@@ -30,11 +30,11 @@
       <table class="admin-table table table-hover align-middle mb-0">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'firstName'" (click)="sort('firstName')">Name <i class="bi sort-icon" [ngClass]="sortIcon('firstName')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'email'" (click)="sort('email')">Email <i class="bi sort-icon" [ngClass]="sortIcon('email')"></i></th>
             <th>Role</th>
             <th>Status</th>
-            <th>Joined</th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'createdOn'" (click)="sort('createdOn')">Joined <i class="bi sort-icon" [ngClass]="sortIcon('createdOn')"></i></th>
             <th>Actions</th>
           </tr>
         </thead>

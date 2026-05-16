@@ -10,6 +10,8 @@
 
 .form-group--check { display: flex; flex-direction: column; }
 
+.form-hint { display: block; margin-top: 0.25rem; font-size: 0.8125rem; color: $color-muted; }
+
 .check-toggle {
   display: flex;
   align-items: center;
@@ -23,14 +25,74 @@
 .form-label--required { color: $color-error; font-size: 0.75rem; font-weight: 600; }
 .form-label--optional  { color: $color-muted; font-size: 0.75rem; font-weight: 400; }
 
-.img-preview {
+.img-upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 28px 16px;
+  border: 2px dashed $color-border;
+  border-radius: 10px;
+  background: $color-surface-alt;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+
+  &:hover {
+    border-color: $color-accent;
+    background: rgba($color-accent, 0.04);
+  }
+
+  &__icon { font-size: 2rem; color: $color-muted; }
+  &__text  { font-size: 0.9375rem; font-weight: 500; color: $color-text-primary; }
+  &__hint  { font-size: 0.8125rem; color: $color-muted; }
+}
+
+.img-upload-preview {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 8px;
+
   &__img {
-    width: 100px;
-    height: 100px;
+    display: block;
+    width: 120px;
+    height: 120px;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1.5px solid $color-border;
   }
+
+  &__remove {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: #dc3545;
+    color: #fff;
+    font-size: 0.625rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+
+    &:hover { background: darken(#dc3545, 8%); }
+  }
+}
+
+.img-upload-replace {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  color: $color-accent;
+  cursor: pointer;
+  font-weight: 500;
+
+  &:hover { text-decoration: underline; }
 }
 
 // ── Table thumbnails ───────────────────────────────────────────────────────

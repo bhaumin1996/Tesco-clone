@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { CatalogueService } from '../../core/services/catalogue.service';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 import { Department, Brand } from '../../core/models/catalogue.model';
+import { ImageUrlPipe } from '../../shared/pipes/image-url.pipe';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ImageUrlPipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

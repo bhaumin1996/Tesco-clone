@@ -28,12 +28,19 @@
           <input class="form-control" formControlName="title" />
         </div>
         <div class="form-group">
-          <label class="form-label">Slug</label>
-          <input class="form-control" formControlName="slug" />
+          <label class="form-label">URL</label>
+          <input class="form-control" formControlName="slug" placeholder="auto-generated from title" />
+          @if (pageForm.get('slug')?.value) {
+            <small class="form-hint">/{{ pageForm.get('slug')?.value }}</small>
+          }
         </div>
         <div class="form-group">
           <label class="form-label">Body (HTML)</label>
-          <textarea class="form-control" formControlName="body" rows="8"></textarea>
+          <textarea class="form-control" formControlName="content" rows="8"></textarea>
+        </div>
+        <div class="form-group form-group--inline">
+          <input type="checkbox" id="isPublished" formControlName="isPublished" />
+          <label class="form-label form-label--inline" for="isPublished">Published</label>
         </div>
         <div class="content-form-card__actions">
           <button type="submit" class="button button--primary">Save</button>
@@ -57,8 +64,8 @@
             <input class="form-control" formControlName="linkUrl" />
           </div>
           <div class="form-group">
-            <label class="form-label">Position</label>
-            <input type="number" class="form-control" formControlName="position" />
+            <label class="form-label">Display Order</label>
+            <input type="number" class="form-control" formControlName="displayOrder" />
           </div>
         </div>
         <div class="content-form-card__actions">
@@ -80,19 +87,19 @@
         <input class="admin-search-bar__input" type="search" placeholder="Search by title or slug…" [value]="cmsSearch()" (input)="onCmsSearch($any($event.target).value)" />
       </div>
       <table class="admin-table">
-        <thead><tr><th>Title</th><th>Slug</th><th>Status</th><th>Last Updated</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Title</th><th>URL</th><th>Status</th><th>Last Updated</th><th>Actions</th></tr></thead>
         <tbody>
-          @for (p of pagedCmsPages(); track p.pageId) {
+          @for (p of pagedCmsPages(); track p.id) {
             <tr>
               <td>{{ p.title }}</td>
               <td>/{{ p.slug }}</td>
               <td><span class="status-badge" [class.status--active]="p.isPublished" [class.status--pending]="!p.isPublished">{{ p.isPublished ? 'Published' : 'Draft' }}</span></td>
-              <td>{{ p.updatedOn | date:'dd MMM yyyy HH:mm' }}</td>
+              <td>{{ (p.modifiedOn || p.createdOn) | date:'dd MMM yyyy HH:mm' }}</td>
               <td>
                 <div class="actions-cell">
                   <button class="table-btn" (click)="openPageForm(p)">Edit</button>
                   @if (!p.isPublished) {
-                    <button class="table-btn table-btn--success" (click)="publishPage(p.pageId)">Publish</button>
+                    <button class="table-btn table-btn--success" (click)="publishPage(p.id)">Publish</button>
                   }
                 </div>
               </td>
@@ -127,18 +134,18 @@
         <input class="admin-search-bar__input" type="search" placeholder="Search by banner title…" [value]="bannerSearch()" (input)="onBannerSearch($any($event.target).value)" />
       </div>
       <table class="admin-table">
-        <thead><tr><th>Position</th><th>Title</th><th>Link</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Order</th><th>Title</th><th>Link</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>
-          @for (b of pagedBanners(); track b.bannerId) {
+          @for (b of pagedBanners(); track b.id) {
             <tr>
-              <td>{{ b.position }}</td>
+              <td>{{ b.displayOrder }}</td>
               <td>{{ b.title }}</td>
               <td><a [href]="b.linkUrl" target="_blank" class="dash-link">{{ b.linkUrl || '—' }}</a></td>
               <td><span class="status-badge" [class.status--active]="b.isActive" [class.status--inactive]="!b.isActive">{{ b.isActive ? 'Active' : 'Inactive' }}</span></td>
               <td>
                 <div class="actions-cell">
                   <button class="table-btn" (click)="openBannerForm(b)">Edit</button>
-                  <button class="table-btn" (click)="toggleBanner(b.bannerId)">{{ b.isActive ? 'Deactivate' : 'Activate' }}</button>
+                  <button class="table-btn" (click)="toggleBanner(b.id)">{{ b.isActive ? 'Deactivate' : 'Activate' }}</button>
                 </div>
               </td>
             </tr>

@@ -8,11 +8,12 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
 import { BreadcrumbComponent } from '../../../shared/components/breadcrumb/breadcrumb.component';
 import { QuantityStepperComponent } from '../../../shared/components/quantity-stepper/quantity-stepper.component';
 import { ProductDetail } from '../../../core/models/catalogue.model';
+import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, SpinnerComponent, BreadcrumbComponent, QuantityStepperComponent],
+  imports: [CommonModule, RouterLink, SpinnerComponent, BreadcrumbComponent, QuantityStepperComponent, ImageUrlPipe],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

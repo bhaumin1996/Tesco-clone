@@ -21,5 +21,7 @@ public sealed class GetAdminProductsQueryHandler : IRequestHandler<GetAdminProdu
             request.DepartmentId,
             request.PageNumber,
             request.PageSize,
+            request.SortBy,
+            request.SortDirection,
             cancellationToken);
 }

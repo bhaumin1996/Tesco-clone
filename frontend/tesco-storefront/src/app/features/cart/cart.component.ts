@@ -7,11 +7,12 @@ import { SpinnerComponent } from '../../shared/components/spinner/spinner.compon
 import { QuantityStepperComponent } from '../../shared/components/quantity-stepper/quantity-stepper.component';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { CartItem } from '../../core/models/cart.model';
+import { ImageUrlPipe } from '../../shared/pipes/image-url.pipe';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterLink, SpinnerComponent, QuantityStepperComponent, BreadcrumbComponent],
+  imports: [CommonModule, RouterLink, SpinnerComponent, QuantityStepperComponent, BreadcrumbComponent, ImageUrlPipe],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -75,7 +75,8 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                     DepartmentName: SqlHelper.GetValue<string>(reader, "DepartmentName"),
                     ProductCount: SqlHelper.GetValue<int>(reader, "ProductCount"),
                     IsActive: SqlHelper.GetValue<bool>(reader, "IsActive"),
-                    ImageUrl: SqlHelper.GetNullableString(reader, "ImageUrl")),
+                    ImageUrl: SqlHelper.GetNullableString(reader, "ImageUrl"),
+                    CreatedOn: SqlHelper.GetValue<DateTime>(reader, "CreatedOn")),
                 null,
                 cancellationToken);
         }
@@ -87,7 +88,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
     }
 
     public async Task<PaginatedResult<AdminProductDto>> GetProductsAsync(
-        string? search, int? categoryId, int? departmentId, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+        string? search, int? categoryId, int? departmentId, int pageNumber, int pageSize, string sortBy, string sortDirection, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -105,7 +106,9 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                     SqlHelper.InputNullable("@CategoryId", categoryId),
                     SqlHelper.InputNullable("@DepartmentId", departmentId),
                     SqlHelper.Input("@PageNumber", pageNumber),
-                    SqlHelper.Input("@PageSize", pageSize)
+                    SqlHelper.Input("@PageSize", pageSize),
+                    SqlHelper.Input("@SortBy", sortBy),
+                    SqlHelper.Input("@SortDirection", sortDirection)
                 ],
                 cancellationToken);
 
@@ -198,7 +201,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         }
     }
 
-    public async Task<int> CreateCategoryAsync(string name, int departmentId, string? imageUrl, int adminId, CancellationToken cancellationToken = default)
+    public async Task<int> CreateCategoryAsync(string name, string slug, int departmentId, string? imageUrl, int adminId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -208,6 +211,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                 "proc_Admin_CreateCategory",
                 [
                     SqlHelper.Input("@Name", name),
+                    SqlHelper.Input("@Slug", slug),
                     SqlHelper.Input("@DepartmentId", departmentId),
                     SqlHelper.Input("@ImageUrl", (object?)imageUrl ?? DBNull.Value),
                     SqlHelper.Input("@AdminId", adminId)
@@ -221,7 +225,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         }
     }
 
-    public async Task UpdateCategoryAsync(int categoryId, string name, int departmentId, string? imageUrl, int adminId, CancellationToken cancellationToken = default)
+    public async Task UpdateCategoryAsync(int categoryId, string name, string slug, int departmentId, string? imageUrl, int adminId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -232,6 +236,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                 [
                     SqlHelper.Input("@CategoryId", categoryId),
                     SqlHelper.Input("@Name", name),
+                    SqlHelper.Input("@Slug", slug),
                     SqlHelper.Input("@DepartmentId", departmentId),
                     SqlHelper.Input("@ImageUrl", (object?)imageUrl ?? DBNull.Value),
                     SqlHelper.Input("@AdminId", adminId)

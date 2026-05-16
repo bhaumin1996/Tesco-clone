@@ -28,7 +28,7 @@
           <div class="cart-item">
             <a [routerLink]="['/products', item.productId]" class="cart-item__img-link">
               @if (item.imageUrl) {
-                <img [src]="item.imageUrl" [alt]="item.productName" class="cart-item__img" />
+                <img [src]="item.imageUrl | imageUrl" [alt]="item.productName" class="cart-item__img" />
               } @else {
                 <div class="cart-item__img-placeholder">🛒</div>
               }

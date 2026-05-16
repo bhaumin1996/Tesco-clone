@@ -19,6 +19,8 @@
 
 .content-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
 
+.form-hint { display: block; margin-top: 0.25rem; font-size: 0.8125rem; color: $color-muted; }
+
 .actions-cell { display: flex; gap: 0.5rem; }
 
 .dash-link { color: $color-tesco-blue; font-size: 0.875rem; text-decoration: none; &:hover { text-decoration: underline; } }

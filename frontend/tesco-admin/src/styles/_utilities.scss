@@ -232,3 +232,24 @@
   border-radius: $radius-md $radius-md 0 0;
   align-items: center;
 }
+
+// ── Sortable table headers ─────────────────────────────────────────────────
+.th-sort {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+
+  &:hover { color: $color-accent; }
+
+  .sort-icon {
+    margin-left: 0.3rem;
+    font-size: 0.6875rem;
+    opacity: 0.35;
+    vertical-align: middle;
+    transition: opacity 0.15s;
+  }
+
+  &.th-sort--active .sort-icon { opacity: 1; color: $color-accent; }
+  &:hover .sort-icon { opacity: 0.7; }
+}

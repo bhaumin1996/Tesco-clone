@@ -7,6 +7,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 
 interface ProductRow {
   id: number;
@@ -41,7 +42,7 @@ interface BrandOption { brandId: number; name: string; }
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ImageUrlPipe],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -67,11 +68,21 @@ export class AdminProductsComponent implements OnInit {
   protected showForm = signal(false);
   protected editId = signal<number | null>(null);
   protected saving = signal(false);
+  protected uploading = signal(false);
   protected message = signal('');
   protected messageType = signal<'success' | 'error'>('success');
 
+  // ── image upload state ────────────────────────────────────────────────────
+  protected selectedFile = signal<File | null>(null);
+  protected previewUrl = signal<string | null>(null);
+  protected existingImageUrl = signal<string | null>(null);
+
   // ── delete confirm state ──────────────────────────────────────────────────
   protected deleteConfirmId = signal<number | null>(null);
+
+  // ── sort state ────────────────────────────────────────────────────────────
+  protected sortBy = signal('createdOn');
+  protected sortDirection = signal<'asc' | 'desc'>('desc');
 
   // ── filter form ────────────────────────────────────────────────────────────
   protected filterForm = this._fb.group({
@@ -90,7 +101,6 @@ export class AdminProductsComponent implements OnInit {
     description: [''],
     basePrice: [null as number | null, [Validators.required, Validators.min(0.01)]],
     clubcardPrice: [null as number | null],
-    imageUrl: [''],
     isAvailable: [true]
   });
 
@@ -144,7 +154,9 @@ export class AdminProductsComponent implements OnInit {
     const { search, departmentId, categoryId } = this.filterForm.getRawValue();
     const params: Record<string, string> = {
       pageNumber: String(this.currentPage()),
-      pageSize: '20'
+      pageSize: '20',
+      sortBy: this.sortBy(),
+      sortDirection: this.sortDirection()
     };
     if (search) params['search'] = search;
     if (departmentId) params['departmentId'] = departmentId;
@@ -167,7 +179,9 @@ export class AdminProductsComponent implements OnInit {
   protected openCreate(): void {
     this.editId.set(null);
     this.formDeptId.set(0);
-    this.form.reset({ formDeptId: 0, categoryId: 0, brandId: null, name: '', slug: '', description: '', basePrice: null, clubcardPrice: null, imageUrl: '', isAvailable: true });
+    this.form.reset({ formDeptId: 0, categoryId: 0, brandId: null, name: '', slug: '', description: '', basePrice: null, clubcardPrice: null, isAvailable: true });
+    this._resetFileState();
+    this.existingImageUrl.set(null);
     this.showForm.set(true);
   }
 
@@ -184,22 +198,70 @@ export class AdminProductsComponent implements OnInit {
       description: product.description ?? '',
       basePrice: product.basePrice,
       clubcardPrice: product.clubcardPrice,
-      imageUrl: product.imageUrl ?? '',
       isAvailable: product.isAvailable
     });
+    this.existingImageUrl.set(product.imageUrl ?? null);
+    this._resetFileState();
     this.showForm.set(true);
   }
 
   protected cancelForm(): void {
+    this._resetFileState();
     this.showForm.set(false);
     this.editId.set(null);
   }
 
+  protected onFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    const prev = this.previewUrl();
+    if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+    if (file) {
+      this.selectedFile.set(file);
+      this.previewUrl.set(URL.createObjectURL(file));
+    } else {
+      this.selectedFile.set(null);
+      this.previewUrl.set(null);
+    }
+  }
+
+  protected removeImage(): void {
+    const prev = this.previewUrl();
+    if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
+    this.existingImageUrl.set(null);
+  }
+
   protected save(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    this.saving.set(true);
+    const file = this.selectedFile();
+    if (file) {
+      this._uploadThenSave(file);
+    } else {
+      this._doSave(this.existingImageUrl());
+    }
+  }
 
+  private _uploadThenSave(file: File): void {
+    this.uploading.set(true);
+    this.saving.set(true);
+    const fd = new FormData();
+    fd.append('file', file);
+    this._http.post<{ path: string }>(`${environment.apiUrl}/admin/images/upload?folder=products`, fd).subscribe({
+      next: res => { this.uploading.set(false); this._doSave(res.path); },
+      error: () => {
+        this.uploading.set(false);
+        this.saving.set(false);
+        this._showMessage('Image upload failed.', 'error');
+      }
+    });
+  }
+
+  private _doSave(imageUrl: string | null): void {
+    this.saving.set(true);
     const v = this.form.getRawValue();
+    const id = this.editId();
     const body = {
       categoryId: Number(v.categoryId),
       brandId: v.brandId ? Number(v.brandId) : null,
@@ -208,17 +270,17 @@ export class AdminProductsComponent implements OnInit {
       description: v.description || null,
       basePrice: Number(v.basePrice),
       clubcardPrice: v.clubcardPrice ? Number(v.clubcardPrice) : null,
-      imageUrl: v.imageUrl || null,
+      imageUrl: imageUrl || null,
       isAvailable: v.isAvailable
     };
 
-    const id = this.editId();
     const req = id
       ? this._http.put(`${this._base}/products/${id}`, body)
       : this._http.post(`${this._base}/products`, body);
 
     req.subscribe({
       next: () => {
+        this._resetFileState();
         this.showForm.set(false);
         this.editId.set(null);
         this._load();
@@ -227,6 +289,13 @@ export class AdminProductsComponent implements OnInit {
       },
       error: () => { this._showMessage('Save failed. Please check the fields and try again.', 'error'); this.saving.set(false); }
     });
+  }
+
+  private _resetFileState(): void {
+    const prev = this.previewUrl();
+    if (prev?.startsWith('blob:')) URL.revokeObjectURL(prev);
+    this.selectedFile.set(null);
+    this.previewUrl.set(null);
   }
 
   protected requestDelete(id: number): void {
@@ -246,6 +315,22 @@ export class AdminProductsComponent implements OnInit {
       },
       error: () => this._showMessage('Delete failed.', 'error')
     });
+  }
+
+  protected sort(col: string): void {
+    if (this.sortBy() === col) {
+      this.sortDirection.update(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortBy.set(col);
+      this.sortDirection.set('asc');
+    }
+    this.currentPage.set(1);
+    this._load();
+  }
+
+  protected sortIcon(col: string): string {
+    if (this.sortBy() !== col) return 'bi-arrow-down-up';
+    return this.sortDirection() === 'asc' ? 'bi-sort-up' : 'bi-sort-down';
   }
 
   protected goTo(page: number): void { this.currentPage.set(page); this._load(); }

@@ -8,6 +8,7 @@ import { SpinnerComponent } from '../../../shared/components/spinner/spinner.com
 import { BreadcrumbComponent } from '../../../shared/components/breadcrumb/breadcrumb.component';
 import { BasketSidebarComponent } from '../../../shared/components/basket-sidebar/basket-sidebar.component';
 import { ProductSummary, PagedResult, Category } from '../../../core/models/catalogue.model';
+import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 
 interface FilterSection {
   title: string;
@@ -26,7 +27,8 @@ interface FilterSection {
     PaginationComponent,
     SpinnerComponent,
     BreadcrumbComponent,
-    BasketSidebarComponent
+    BasketSidebarComponent,
+    ImageUrlPipe
   ],
   templateUrl: './category.component.html',
   styleUrl: './category.component.scss',

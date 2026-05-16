@@ -87,7 +87,7 @@
 
   <!-- Secondary KPI row -->
   <div class="row g-4 mb-4">
-    <div class="col-12 col-sm-6">
+    <div class="col-12 col-sm-6 col-xl-3">
       <div class="kpi-card kpi-card--sm admin-card p-3 d-flex align-items-center gap-3">
         <div class="kpi-card__icon kpi-card__icon--red">
           <i class="bi bi-exclamation-triangle"></i>
@@ -101,7 +101,7 @@
         </a>
       </div>
     </div>
-    <div class="col-12 col-sm-6">
+    <div class="col-12 col-sm-6 col-xl-3">
       <div class="kpi-card kpi-card--sm admin-card p-3 d-flex align-items-center gap-3">
         <div class="kpi-card__icon kpi-card__icon--red">
           <i class="bi bi-flag"></i>
@@ -112,6 +112,34 @@
         </div>
         <a routerLink="/marketplace" class="ms-auto kpi-card__link">
           View disputes <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card kpi-card--sm admin-card p-3 d-flex align-items-center gap-3">
+        <div class="kpi-card__icon kpi-card__icon--orange">
+          <i class="bi bi-currency-pound"></i>
+        </div>
+        <div>
+          <p class="kpi-card__label mb-0">Total revenue</p>
+          <p class="kpi-card__value mb-0" style="font-size:1.5rem">£{{ (stats()?.totalRevenue ?? 0) | number:'1.2-2' }}</p>
+        </div>
+        <a routerLink="/analytics" class="ms-auto kpi-card__link">
+          View analytics <i class="bi bi-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="kpi-card kpi-card--sm admin-card p-3 d-flex align-items-center gap-3">
+        <div class="kpi-card__icon kpi-card__icon--teal">
+          <i class="bi bi-person-check"></i>
+        </div>
+        <div>
+          <p class="kpi-card__label mb-0">Customers ordered</p>
+          <p class="kpi-card__value mb-0" style="font-size:1.5rem">{{ stats()?.totalOrderedCustomers ?? 0 }}</p>
+        </div>
+        <a routerLink="/users" class="ms-auto kpi-card__link">
+          View users <i class="bi bi-arrow-right"></i>
         </a>
       </div>
     </div>

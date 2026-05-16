@@ -12,6 +12,7 @@ public interface IContentRepository
     Task UpdatePageAsync(PageDto page, int adminId, CancellationToken cancellationToken = default);
     Task SoftDeletePageAsync(int id, int adminId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<BannerDto>> GetBannersAsync(bool? isActive, CancellationToken cancellationToken = default);
+    Task<BannerDto?> GetBannerByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<int> CreateBannerAsync(BannerDto banner, int adminId, CancellationToken cancellationToken = default);
     Task UpdateBannerAsync(BannerDto banner, int adminId, CancellationToken cancellationToken = default);
     Task SoftDeleteBannerAsync(int id, int adminId, CancellationToken cancellationToken = default);

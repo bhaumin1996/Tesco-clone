@@ -36,10 +36,12 @@ public sealed class AnalyticsRepository : IAnalyticsRepository
                 NewCustomersToday: SqlHelper.GetValue<int>(reader, "NewCustomersToday"),
                 PendingOrders: SqlHelper.GetValue<int>(reader, "PendingOrders"),
                 LowStockProducts: SqlHelper.GetValue<int>(reader, "LowStockProducts"),
-                OpenDisputes: SqlHelper.GetValue<int>(reader, "OpenDisputes"));
+                OpenDisputes: SqlHelper.GetValue<int>(reader, "OpenDisputes"),
+                TotalRevenue: SqlHelper.GetValue<decimal>(reader, "TotalRevenue"),
+                TotalOrderedCustomers: SqlHelper.GetValue<int>(reader, "TotalOrderedCustomers"));
         }
 
-        return new DashboardStatsDto(0, 0m, 0, 0, 0, 0);
+        return new DashboardStatsDto(0, 0m, 0, 0, 0, 0, 0m, 0);
     }
 
     public async Task<SalesAnalyticsDto> GetSalesAnalyticsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)

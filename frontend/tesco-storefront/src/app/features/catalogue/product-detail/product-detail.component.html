@@ -16,9 +16,9 @@
     <div class="pdp-gallery">
       <div class="pdp-gallery__main">
         @if (p.images && p.images.length > 0) {
-        <img [src]="p.images[selectedImage()]" [alt]="p.name" class="pdp-gallery__img" />
+        <img [src]="p.images[selectedImage()] | imageUrl" [alt]="p.name" class="pdp-gallery__img" />
         } @else if (p.imageUrl) {
-        <img [src]="p.imageUrl" [alt]="p.name" class="pdp-gallery__img" />
+        <img [src]="p.imageUrl | imageUrl" [alt]="p.name" class="pdp-gallery__img" />
         } @else {
         <div class="pdp-gallery__placeholder">
           <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#d8dde6" stroke-width="1">
@@ -33,7 +33,7 @@
       <div class="pdp-gallery__thumbs">
         @for (img of p.images; track img; let i = $index) {
         <button class="pdp-gallery__thumb" [class.active]="i === selectedImage()" (click)="selectedImage.set(i)">
-          <img [src]="img" [alt]="p.name + ' ' + (i + 1)" loading="lazy" />
+          <img [src]="img | imageUrl" [alt]="p.name + ' ' + (i + 1)" loading="lazy" />
         </button>
         }
       </div>

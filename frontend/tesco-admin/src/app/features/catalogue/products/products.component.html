@@ -66,10 +66,13 @@
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              <label class="form-label">Slug <span class="text-danger">*</span></label>
-              <input class="form-control" formControlName="slug" placeholder="organic-whole-milk-2l" />
+              <label class="form-label">URL <span class="text-danger">*</span></label>
+              <input class="form-control" formControlName="slug" placeholder="auto-generated from name" />
+              @if (form.get('slug')?.value) {
+                <small class="form-hint">/{{ form.get('slug')?.value }}</small>
+              }
               @if (form.get('slug')!.invalid && form.get('slug')!.touched) {
-                <span class="form-error">Slug is required — lowercase, digits and hyphens only.</span>
+                <span class="form-error">URL is required — lowercase, digits and hyphens only.</span>
               }
             </div>
           </div>
@@ -112,13 +115,37 @@
         <div class="row g-3">
           <div class="col-md-8">
             <div class="form-group">
-              <label class="form-label">Image URL <span class="text-muted fw-normal">(optional)</span></label>
-              <input class="form-control" formControlName="imageUrl" placeholder="https://example.com/product.jpg" />
-              @if (form.get('imageUrl')!.value) {
-                <div class="img-preview mt-2">
-                  <img [src]="form.get('imageUrl')!.value!" alt="Preview" class="img-preview__img" />
+              <label class="form-label">Image <span class="text-muted fw-normal">(optional · JPEG, PNG, WebP, GIF · max 5 MB)</span></label>
+
+              @if (previewUrl() || existingImageUrl()) {
+                <div class="img-upload-preview">
+                  <img
+                    [src]="previewUrl() ?? (existingImageUrl() | imageUrl)"
+                    alt="Preview"
+                    class="img-upload-preview__img"
+                  />
+                  <button type="button" class="img-upload-preview__remove" (click)="removeImage()" title="Remove image">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
                 </div>
+                <label class="img-upload-replace" for="productImage">
+                  <i class="bi bi-arrow-repeat me-1"></i>Replace image
+                </label>
+              } @else {
+                <label class="img-upload-zone" for="productImage">
+                  <i class="bi bi-cloud-upload img-upload-zone__icon"></i>
+                  <span class="img-upload-zone__text">Click to upload an image</span>
+                  <span class="img-upload-zone__hint">JPEG · PNG · WebP · GIF &nbsp;|&nbsp; max 5 MB</span>
+                </label>
               }
+
+              <input
+                id="productImage"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                class="visually-hidden"
+                (change)="onFileSelect($event)"
+              />
             </div>
           </div>
           <div class="col-md-4">
@@ -134,8 +161,8 @@
 
         <div class="d-flex gap-2 pt-2">
           <button type="submit" class="button button--primary" [disabled]="saving()">
-            <i class="bi" [class.bi-floppy]="!saving()" [class.bi-arrow-clockwise]="saving()"></i>
-            {{ saving() ? 'Saving…' : (editId() ? 'Update Product' : 'Create Product') }}
+            <i class="bi" [class.bi-floppy]="!saving()" [class.bi-hourglass-split]="saving()"></i>
+            {{ uploading() ? 'Uploading…' : saving() ? 'Saving…' : (editId() ? 'Update Product' : 'Create Product') }}
           </button>
           <button type="button" class="button button--secondary" (click)="cancelForm()" [disabled]="saving()">Cancel</button>
         </div>
@@ -175,13 +202,14 @@
         <thead>
           <tr>
             <th>Image</th>
-            <th>Name</th>
-            <th>Category</th>
-            <th>Brand</th>
-            <th>Price</th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'name'" (click)="sort('name')">Name <i class="bi sort-icon" [ngClass]="sortIcon('name')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'categoryName'" (click)="sort('categoryName')">Category <i class="bi sort-icon" [ngClass]="sortIcon('categoryName')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'brandName'" (click)="sort('brandName')">Brand <i class="bi sort-icon" [ngClass]="sortIcon('brandName')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'basePrice'" (click)="sort('basePrice')">Price <i class="bi sort-icon" [ngClass]="sortIcon('basePrice')"></i></th>
             <th>Clubcard</th>
-            <th>Stock</th>
-            <th>Status</th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'stockQuantity'" (click)="sort('stockQuantity')">Stock <i class="bi sort-icon" [ngClass]="sortIcon('stockQuantity')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'isAvailable'" (click)="sort('isAvailable')">Status <i class="bi sort-icon" [ngClass]="sortIcon('isAvailable')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'createdOn'" (click)="sort('createdOn')">Date Created <i class="bi sort-icon" [ngClass]="sortIcon('createdOn')"></i></th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -190,14 +218,14 @@
             <tr>
               <td class="prod-thumb-cell">
                 @if (p.imageUrl) {
-                  <img [src]="p.imageUrl" [alt]="p.name" class="prod-thumb" />
+                  <img [src]="p.imageUrl | imageUrl" [alt]="p.name" class="prod-thumb" />
                 } @else {
                   <span class="prod-thumb prod-thumb--empty">No img</span>
                 }
               </td>
               <td>
                 <span class="prod-name">{{ p.name }}</span>
-                <span class="prod-slug">{{ p.slug }}</span>
+                <span class="prod-slug">/{{ p.slug }}</span>
               </td>
               <td>{{ p.categoryName }}</td>
               <td>{{ p.brandName ?? '—' }}</td>
@@ -217,6 +245,7 @@
                   {{ p.isAvailable ? 'Active' : 'Inactive' }}
                 </span>
               </td>
+              <td class="text-secondary-color" style="font-size:0.8125rem;white-space:nowrap">{{ p.createdOn | date:'dd MMM yyyy' }}</td>
               <td class="actions-cell">
                 @if (deleteConfirmId() === p.id) {
                   <span class="delete-confirm">Delete?</span>
@@ -233,7 +262,7 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="9" class="admin-empty">No products found.</td></tr>
+            <tr><td colspan="10" class="admin-empty">No products found.</td></tr>
           }
         </tbody>
       </table>

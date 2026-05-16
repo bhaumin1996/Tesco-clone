@@ -49,6 +49,9 @@ export class AdminUsersComponent implements OnInit {
   protected readonly roles = ['Customer', 'Admin', 'SuperAdmin'];
   private readonly _roleIds: Record<string, number> = { 'Admin': 1, 'Customer': 2, 'SuperAdmin': 4 };
 
+  protected sortBy = signal('createdOn');
+  protected sortDirection = signal<'asc' | 'desc'>('desc');
+
   private get _base() { return `${environment.apiUrl}/admin/users`; }
 
   ngOnInit(): void {
@@ -61,7 +64,12 @@ export class AdminUsersComponent implements OnInit {
   private _load(): void {
     this.loading.set(true);
     const { search, role } = this.filterForm.getRawValue();
-    const params: Record<string, string> = { pageNumber: String(this.currentPage()), pageSize: '20' };
+    const params: Record<string, string> = {
+      pageNumber: String(this.currentPage()),
+      pageSize: '20',
+      sortBy: this.sortBy(),
+      sortDirection: this.sortDirection()
+    };
     if (search) params['search'] = search;
     if (role) params['role'] = role;
 
@@ -82,6 +90,22 @@ export class AdminUsersComponent implements OnInit {
       },
       error: () => this.loading.set(false)
     });
+  }
+
+  protected sort(col: string): void {
+    if (this.sortBy() === col) {
+      this.sortDirection.update(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortBy.set(col);
+      this.sortDirection.set('asc');
+    }
+    this.currentPage.set(1);
+    this._load();
+  }
+
+  protected sortIcon(col: string): string {
+    if (this.sortBy() !== col) return 'bi-arrow-down-up';
+    return this.sortDirection() === 'asc' ? 'bi-sort-up' : 'bi-sort-down';
   }
 
   protected goTo(page: number): void { this.currentPage.set(page); this._load(); }

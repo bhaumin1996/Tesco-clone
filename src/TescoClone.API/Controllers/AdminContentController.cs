@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TescoClone.API.Authorization;
 using TescoClone.Application.Common.Abstractions;
 using TescoClone.Application.Content.Commands.CreatePage;
+using TescoClone.Application.Content.DTOs;
 using TescoClone.Application.Content.Interfaces;
 using TescoClone.Application.Content.Queries.GetPages;
 
@@ -51,6 +52,34 @@ public sealed class AdminContentController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, new { id });
     }
 
+    [HttpPut("pages/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> UpdatePage(int id, [FromBody] UpdatePageRequest request, CancellationToken cancellationToken)
+    {
+        var page = await _contentRepository.GetPageByIdAsync(id, cancellationToken);
+        if (page is null) return NotFound();
+        var updated = page with { Title = request.Title, Slug = request.Slug, Content = request.Content, IsPublished = request.IsPublished };
+        await _contentRepository.UpdatePageAsync(updated, _currentUser.UserId, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPatch("pages/{id:int}/publish")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> PublishPage(int id, CancellationToken cancellationToken)
+    {
+        var page = await _contentRepository.GetPageByIdAsync(id, cancellationToken);
+        if (page is null) return NotFound();
+        var published = page with { IsPublished = true };
+        await _contentRepository.UpdatePageAsync(published, _currentUser.UserId, cancellationToken);
+        return NoContent();
+    }
+
     [HttpGet("banners")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -62,6 +91,48 @@ public sealed class AdminContentController : ControllerBase
         var result = await _contentRepository.GetBannersAsync(isActive, cancellationToken);
         return Ok(result);
     }
+
+    [HttpPost("banners")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> CreateBanner([FromBody] CreateBannerRequest request, CancellationToken cancellationToken)
+    {
+        var banner = new BannerDto(0, request.Title, null, request.ImageUrl, request.LinkUrl, request.DisplayOrder, true, null, null, DateTime.UtcNow, null);
+        var id = await _contentRepository.CreateBannerAsync(banner, _currentUser.UserId, cancellationToken);
+        return StatusCode(StatusCodes.Status201Created, new { id });
+    }
+
+    [HttpPut("banners/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> UpdateBanner(int id, [FromBody] UpdateBannerRequest request, CancellationToken cancellationToken)
+    {
+        var banner = await _contentRepository.GetBannerByIdAsync(id, cancellationToken);
+        if (banner is null) return NotFound();
+        var updated = banner with { Title = request.Title, ImageUrl = request.ImageUrl, LinkUrl = request.LinkUrl, DisplayOrder = request.DisplayOrder };
+        await _contentRepository.UpdateBannerAsync(updated, _currentUser.UserId, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPatch("banners/{id:int}/toggle")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> ToggleBanner(int id, CancellationToken cancellationToken)
+    {
+        var banner = await _contentRepository.GetBannerByIdAsync(id, cancellationToken);
+        if (banner is null) return NotFound();
+        var toggled = banner with { IsActive = !banner.IsActive };
+        await _contentRepository.UpdateBannerAsync(toggled, _currentUser.UserId, cancellationToken);
+        return NoContent();
+    }
 }
 
 public sealed record CreatePageRequest(string Title, string Slug, string? Content, bool IsPublished);
+public sealed record UpdatePageRequest(string Title, string Slug, string? Content, bool IsPublished);
+public sealed record CreateBannerRequest(string Title, string? ImageUrl, string? LinkUrl, int DisplayOrder);
+public sealed record UpdateBannerRequest(string Title, string? ImageUrl, string? LinkUrl, int DisplayOrder);

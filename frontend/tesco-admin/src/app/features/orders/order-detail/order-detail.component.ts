@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 
 interface OrderLine {
   id: number;
@@ -30,7 +31,7 @@ interface OrderDetail {
 @Component({
   selector: 'app-admin-order-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ImageUrlPipe],
   templateUrl: './order-detail.component.html',
   styleUrl: './order-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -21,7 +21,7 @@
                 [attr.aria-label]="cat.name"
               >
                 @if (cat.imageUrl) {
-                  <img [src]="cat.imageUrl" [alt]="" class="cat-chip__img" aria-hidden="true" loading="lazy" />
+                  <img [src]="cat.imageUrl | imageUrl" [alt]="" class="cat-chip__img" aria-hidden="true" loading="lazy" />
                 } @else {
                   <div class="cat-chip__img-placeholder" aria-hidden="true"></div>
                 }

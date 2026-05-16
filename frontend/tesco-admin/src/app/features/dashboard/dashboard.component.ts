@@ -11,6 +11,8 @@ interface DashboardStats {
   pendingOrders: number;
   lowStockProducts: number;
   openDisputes: number;
+  totalRevenue: number;
+  totalOrderedCustomers: number;
 }
 
 interface RecentOrder {
@@ -41,7 +43,7 @@ export class DashboardComponent implements OnInit {
     this._http.get<DashboardStats>(`${environment.apiUrl}/admin/dashboard/stats`).subscribe({
       next: s => { this.stats.set(s); this.loading.set(false); },
       error: () => {
-        this.stats.set({ totalOrdersToday: 0, totalRevenueToday: 0, newCustomersToday: 0, pendingOrders: 0, lowStockProducts: 0, openDisputes: 0 });
+        this.stats.set({ totalOrdersToday: 0, totalRevenueToday: 0, newCustomersToday: 0, pendingOrders: 0, lowStockProducts: 0, openDisputes: 0, totalRevenue: 0, totalOrderedCustomers: 0 });
         this.loading.set(false);
       }
     });

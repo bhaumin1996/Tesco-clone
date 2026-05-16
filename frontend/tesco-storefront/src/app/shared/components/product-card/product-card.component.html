@@ -4,7 +4,7 @@
     <!-- Image -->
     <div class="product-card__image-wrap">
       @if (product.imageUrl) {
-      <img [src]="product.imageUrl" [alt]="product.name" class="product-card__image" loading="lazy" />
+      <img [src]="product.imageUrl | imageUrl" [alt]="product.name" class="product-card__image" loading="lazy" />
       } @else {
       <div class="product-card__image-placeholder">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d8dde6" stroke-width="1.5">

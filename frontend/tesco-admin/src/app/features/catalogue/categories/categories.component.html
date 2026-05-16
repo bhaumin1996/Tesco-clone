@@ -50,19 +50,43 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Image URL <span class="text-muted fw-normal">(optional)</span></label>
-          <input class="form-control" formControlName="imageUrl" placeholder="https://example.com/image.jpg" />
-          @if (form.get('imageUrl')!.value) {
-            <div class="img-preview mt-2">
-              <img [src]="form.get('imageUrl')!.value!" alt="Preview" class="img-preview__img" />
+          <label class="form-label">Image <span class="text-muted fw-normal">(optional · JPEG, PNG, WebP, GIF · max 5 MB)</span></label>
+
+          @if (previewUrl() || existingImageUrl()) {
+            <div class="img-upload-preview">
+              <img
+                [src]="previewUrl() ?? (existingImageUrl() | imageUrl)"
+                alt="Preview"
+                class="img-upload-preview__img"
+              />
+              <button type="button" class="img-upload-preview__remove" (click)="removeImage()" title="Remove image">
+                <i class="bi bi-x-lg"></i>
+              </button>
             </div>
+            <label class="img-upload-replace" for="categoryImage">
+              <i class="bi bi-arrow-repeat me-1"></i>Replace image
+            </label>
+          } @else {
+            <label class="img-upload-zone" for="categoryImage">
+              <i class="bi bi-cloud-upload img-upload-zone__icon"></i>
+              <span class="img-upload-zone__text">Click to upload an image</span>
+              <span class="img-upload-zone__hint">JPEG · PNG · WebP · GIF &nbsp;|&nbsp; max 5 MB</span>
+            </label>
           }
+
+          <input
+            id="categoryImage"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            class="visually-hidden"
+            (change)="onFileSelect($event)"
+          />
         </div>
 
         <div class="d-flex gap-2">
           <button type="submit" class="button button--primary" [disabled]="saving()">
-            <i class="bi bi-floppy"></i>
-            {{ saving() ? 'Saving…' : 'Save Category' }}
+            <i class="bi" [class.bi-floppy]="!saving()" [class.bi-hourglass-split]="saving()"></i>
+            {{ uploading() ? 'Uploading…' : saving() ? 'Saving…' : 'Save Category' }}
           </button>
           <button type="button" class="button button--secondary" (click)="showForm.set(false)" [disabled]="saving()">Cancel</button>
         </div>
@@ -87,11 +111,12 @@
           <tr>
             <th class="col-seq">#</th>
             <th>Image</th>
-            <th>Name</th>
-            <th>Slug</th>
-            <th>Department</th>
-            <th>Products</th>
-            <th>Status</th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'name'" (click)="sort('name')">Name <i class="bi sort-icon" [ngClass]="sortIcon('name')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'slug'" (click)="sort('slug')">URL <i class="bi sort-icon" [ngClass]="sortIcon('slug')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'departmentName'" (click)="sort('departmentName')">Department <i class="bi sort-icon" [ngClass]="sortIcon('departmentName')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'productCount'" (click)="sort('productCount')">Products <i class="bi sort-icon" [ngClass]="sortIcon('productCount')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'isActive'" (click)="sort('isActive')">Status <i class="bi sort-icon" [ngClass]="sortIcon('isActive')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'createdOn'" (click)="sort('createdOn')">Date Created <i class="bi sort-icon" [ngClass]="sortIcon('createdOn')"></i></th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -101,13 +126,13 @@
               <td class="col-seq text-muted">{{ rowIndex(i) }}</td>
               <td class="cat-thumb-cell">
                 @if (cat.imageUrl) {
-                  <img [src]="cat.imageUrl" [alt]="cat.name" class="cat-thumb" />
+                  <img [src]="cat.imageUrl | imageUrl" [alt]="cat.name" class="cat-thumb" />
                 } @else {
                   <span class="cat-thumb cat-thumb--empty">No image</span>
                 }
               </td>
               <td><span class="fw-semibold">{{ cat.name }}</span></td>
-              <td><code class="text-muted" style="font-size:0.8125rem">{{ cat.slug }}</code></td>
+              <td><code class="text-muted" style="font-size:0.8125rem">/{{ cat.slug }}</code></td>
               <td>{{ cat.departmentName }}</td>
               <td>
                 <span class="badge rounded-pill bg-light text-secondary border">{{ cat.productCount }}</span>
@@ -117,6 +142,7 @@
                   {{ cat.isActive ? 'Active' : 'Inactive' }}
                 </span>
               </td>
+              <td class="text-secondary-color" style="font-size:0.8125rem;white-space:nowrap">{{ cat.createdOn ? (cat.createdOn | date:'dd MMM yyyy') : '—' }}</td>
               <td>
                 <div class="actions-cell">
                   <button class="table-btn" (click)="openEdit(cat)">
@@ -131,7 +157,7 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="8" class="admin-empty">No categories found.</td></tr>
+            <tr><td colspan="9" class="admin-empty">No categories found.</td></tr>
           }
         </tbody>
       </table>

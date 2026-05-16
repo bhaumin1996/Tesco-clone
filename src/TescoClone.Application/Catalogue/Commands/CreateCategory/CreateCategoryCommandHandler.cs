@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using MediatR;
 using TescoClone.Application.Catalogue.Interfaces;
 
@@ -12,6 +13,16 @@ public sealed class CreateCategoryCommandHandler : IRequestHandler<CreateCategor
         _adminCatalogueRepository = adminCatalogueRepository;
     }
 
-    public Task<int> Handle(CreateCategoryCommand request, CancellationToken cancellationToken) =>
-        _adminCatalogueRepository.CreateCategoryAsync(request.Name, request.DepartmentId, request.ImageUrl, request.AdminUserId, cancellationToken);
+    public Task<int> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    {
+        var slug = GenerateSlug(request.Name);
+        return _adminCatalogueRepository.CreateCategoryAsync(request.Name, slug, request.DepartmentId, request.ImageUrl, request.AdminUserId, cancellationToken);
+    }
+
+    private static string GenerateSlug(string name)
+    {
+        var lower = name.ToLowerInvariant();
+        var slug = Regex.Replace(lower, @"[^a-z0-9]+", "-");
+        return slug.Trim('-');
+    }
 }

@@ -69,7 +69,7 @@
               <a [routerLink]="['/departments', dept.slug]" class="roundel">
                 <div class="roundel__circle">
                   @if (dept.imageUrl) {
-                    <img [src]="dept.imageUrl" [alt]="dept.name" loading="lazy" />
+                    <img [src]="dept.imageUrl | imageUrl" [alt]="dept.name" loading="lazy" />
                   } @else {
                     <div class="roundel__placeholder">
                       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#005DAA" stroke-width="1.5" aria-hidden="true">
@@ -294,7 +294,7 @@
             <a [routerLink]="['/search']" [queryParams]="{ brand: brand.name }" class="roundel">
               <div class="roundel__circle roundel__circle--brand">
                 @if (brand.logoUrl && !brandImgErrors().has(brand.slug)) {
-                  <img [src]="brand.logoUrl" [alt]="brand.name" loading="lazy" class="roundel__brand-logo" (error)="onBrandImgError(brand.slug)" />
+                  <img [src]="brand.logoUrl | imageUrl" [alt]="brand.name" loading="lazy" class="roundel__brand-logo" (error)="onBrandImgError(brand.slug)" />
                 } @else {
                   <span class="roundel__brand-initial">{{ brand.name[0] }}</span>
                 }

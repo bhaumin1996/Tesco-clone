@@ -8,4 +8,5 @@ public sealed record AdminCategoryDto(
     string DepartmentName,
     int ProductCount,
     bool IsActive,
-    string? ImageUrl);
+    string? ImageUrl,
+    DateTime CreatedOn);

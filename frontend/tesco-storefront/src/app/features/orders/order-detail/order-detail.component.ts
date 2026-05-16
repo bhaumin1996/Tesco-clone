@@ -6,11 +6,12 @@ import { NotificationService } from '../../../core/services/notification.service
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import { BreadcrumbComponent } from '../../../shared/components/breadcrumb/breadcrumb.component';
 import { Order, OrderStatus } from '../../../core/models/order.model';
+import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, SpinnerComponent, BreadcrumbComponent],
+  imports: [CommonModule, RouterLink, SpinnerComponent, BreadcrumbComponent, ImageUrlPipe],
   templateUrl: './order-detail.component.html',
   styleUrl: './order-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

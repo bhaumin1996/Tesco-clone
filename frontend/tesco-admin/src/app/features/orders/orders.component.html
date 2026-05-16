@@ -26,11 +26,11 @@
       <table class="admin-table table table-hover align-middle mb-0">
         <thead>
           <tr>
-            <th>Order #</th>
-            <th>Customer</th>
-            <th>Total</th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'orderNumber'" (click)="sort('orderNumber')">Order # <i class="bi sort-icon" [ngClass]="sortIcon('orderNumber')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'customerName'" (click)="sort('customerName')">Customer <i class="bi sort-icon" [ngClass]="sortIcon('customerName')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'total'" (click)="sort('total')">Total <i class="bi sort-icon" [ngClass]="sortIcon('total')"></i></th>
             <th>Status</th>
-            <th>Date</th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'createdAt'" (click)="sort('createdAt')">Date <i class="bi sort-icon" [ngClass]="sortIcon('createdAt')"></i></th>
             <th>Actions</th>
           </tr>
         </thead>

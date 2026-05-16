@@ -30,11 +30,55 @@ public sealed class AdminCatalogueController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly ICurrentUser _currentUser;
+    private readonly IWebHostEnvironment _env;
 
-    public AdminCatalogueController(IMediator mediator, ICurrentUser currentUser)
+    public AdminCatalogueController(IMediator mediator, ICurrentUser currentUser, IWebHostEnvironment env)
     {
         _mediator = mediator;
         _currentUser = currentUser;
+        _env = env;
+    }
+
+    // ── Image Upload ─────────────────────────────────────────────────────────
+
+    private static readonly string[] _allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+    private static readonly string[] _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+    private static readonly string[] _allowedFolders = ["categories", "products"];
+    private const long _maxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
+
+    [HttpPost("/api/v1/admin/images/upload")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> UploadImage(IFormFile file, [FromQuery] string folder = "categories", CancellationToken cancellationToken = default)
+    {
+        if (!_allowedFolders.Contains(folder))
+            return BadRequest(new { error = "folder must be 'categories' or 'products'." });
+
+        if (file is null || file.Length == 0)
+            return BadRequest(new { error = "No file provided." });
+
+        if (file.Length > _maxFileSizeBytes)
+            return BadRequest(new { error = "File exceeds the 5 MB size limit." });
+
+        if (!_allowedMimeTypes.Contains(file.ContentType.ToLowerInvariant()))
+            return BadRequest(new { error = "Only JPEG, PNG, WebP, and GIF images are allowed." });
+
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!_allowedExtensions.Contains(ext))
+            return BadRequest(new { error = "Invalid file extension." });
+
+        var uploadDir = Path.Combine(_env.WebRootPath, "assets", "images", folder);
+        Directory.CreateDirectory(uploadDir);
+
+        var uniqueName = $"{Guid.NewGuid():N}{ext}";
+        var filePath = Path.Combine(uploadDir, uniqueName);
+
+        await using var stream = System.IO.File.Create(filePath);
+        await file.CopyToAsync(stream, cancellationToken);
+
+        return Ok(new { path = $"/assets/images/{folder}/{uniqueName}" });
     }
 
     // ── Departments ──────────────────────────────────────────────────────────
@@ -141,9 +185,11 @@ public sealed class AdminCatalogueController : ControllerBase
         [FromQuery] int? departmentId,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 20,
+        [FromQuery] string sortBy = "createdOn",
+        [FromQuery] string sortDirection = "desc",
         CancellationToken cancellationToken = default)
     {
-        var result = await _mediator.Send(new GetAdminProductsQuery(search, categoryId, departmentId, pageNumber, pageSize), cancellationToken);
+        var result = await _mediator.Send(new GetAdminProductsQuery(search, categoryId, departmentId, pageNumber, pageSize, sortBy, sortDirection), cancellationToken);
         return Ok(result);
     }
 

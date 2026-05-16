@@ -124,6 +124,17 @@ public sealed class ContentRepository : IContentRepository
             cancellationToken);
     }
 
+    public async Task<BannerDto?> GetBannerByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        return await SqlHelper.ExecuteReaderSingleAsync(
+            connection,
+            "proc_Admin_GetBannerById",
+            MapBanner,
+            [SqlHelper.Input("@BannerId", id)],
+            cancellationToken);
+    }
+
     public async Task<int> CreateBannerAsync(BannerDto banner, int adminId, CancellationToken cancellationToken = default)
     {
         using var connection = _connectionFactory.CreateConnection();

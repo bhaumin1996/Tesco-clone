@@ -40,6 +40,9 @@ export class AdminOrdersComponent implements OnInit {
 
   protected readonly statuses = ['Placed', 'Confirmed', 'PickingInProgress', 'OutForDelivery', 'Delivered', 'Cancelled', 'Refunded'];
 
+  protected sortBy = signal('createdAt');
+  protected sortDirection = signal<'asc' | 'desc'>('desc');
+
   protected readonly statusLabels: Record<string, string> = {
     Placed: 'Placed',
     Confirmed: 'Confirmed',
@@ -75,12 +78,33 @@ export class AdminOrdersComponent implements OnInit {
   private _load(): void {
     this.loading.set(true);
     const { search } = this.filterForm.getRawValue();
-    const params: Record<string, string> = { pageNumber: String(this.currentPage()), pageSize: '20' };
+    const params: Record<string, string> = {
+      pageNumber: String(this.currentPage()),
+      pageSize: '20',
+      sortBy: this.sortBy(),
+      sortDirection: this.sortDirection()
+    };
     if (search) params['search'] = search;
     this._http.get<PagedResult<OrderRow>>(this._base, { params }).subscribe({
       next: r => { this.orders.set(r.items); this.totalPages.set(r.totalPages); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
+  }
+
+  protected sort(col: string): void {
+    if (this.sortBy() === col) {
+      this.sortDirection.update(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortBy.set(col);
+      this.sortDirection.set('asc');
+    }
+    this.currentPage.set(1);
+    this._load();
+  }
+
+  protected sortIcon(col: string): string {
+    if (this.sortBy() !== col) return 'bi-arrow-down-up';
+    return this.sortDirection() === 'asc' ? 'bi-sort-up' : 'bi-sort-down';
   }
 
   protected goTo(page: number): void { this.currentPage.set(page); this._load(); }

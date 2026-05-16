@@ -5,11 +5,12 @@ import { CatalogueService } from '../../../core/services/catalogue.service';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import { BreadcrumbComponent } from '../../../shared/components/breadcrumb/breadcrumb.component';
 import { Department } from '../../../core/models/catalogue.model';
+import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 
 @Component({
   selector: 'app-departments',
   standalone: true,
-  imports: [CommonModule, RouterLink, SpinnerComponent, BreadcrumbComponent],
+  imports: [CommonModule, RouterLink, SpinnerComponent, BreadcrumbComponent, ImageUrlPipe],
   template: `
     <div class="page-container page-content">
       <app-breadcrumb [items]="[{ label: 'Home', url: '/' }, { label: 'All Departments' }]" />
@@ -23,7 +24,7 @@ import { Department } from '../../../core/models/catalogue.model';
             <a [routerLink]="['/departments', dept.slug]" class="dept-card card card--hover">
               <div class="dept-card__img">
                 @if (dept.imageUrl) {
-                  <img [src]="dept.imageUrl" [alt]="dept.name" loading="lazy" />
+                  <img [src]="dept.imageUrl | imageUrl" [alt]="dept.name" loading="lazy" />
                 } @else {
                   <span class="dept-card__icon">🛒</span>
                 }

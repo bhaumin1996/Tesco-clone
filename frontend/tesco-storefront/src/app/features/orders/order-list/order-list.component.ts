@@ -7,11 +7,12 @@ import { BreadcrumbComponent } from '../../../shared/components/breadcrumb/bread
 import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { Order, OrderStatus } from '../../../core/models/order.model';
 import { PagedResult } from '../../../core/models/catalogue.model';
+import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, SpinnerComponent, BreadcrumbComponent, PaginationComponent],
+  imports: [CommonModule, RouterLink, SpinnerComponent, BreadcrumbComponent, PaginationComponent, ImageUrlPipe],
   templateUrl: './order-list.component.html',
   styleUrl: './order-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -9,4 +9,6 @@ public sealed record GetAdminProductsQuery(
     int? CategoryId,
     int? DepartmentId,
     int PageNumber = 1,
-    int PageSize = 10) : IRequest<PaginatedResult<AdminProductDto>>;
+    int PageSize = 10,
+    string SortBy = "createdOn",
+    string SortDirection = "desc") : IRequest<PaginatedResult<AdminProductDto>>;

@@ -60,7 +60,7 @@
               <td>
                 <div class="d-flex align-items-center gap-2">
                   @if (item.imageUrl) {
-                    <img [src]="item.imageUrl" [alt]="item.productName" class="order-item-img" />
+                    <img [src]="item.imageUrl | imageUrl" [alt]="item.productName" class="order-item-img" />
                   }
                   <span>{{ item.productName }}</span>
                 </div>
