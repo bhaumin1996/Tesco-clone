@@ -163,6 +163,7 @@
   cursor: pointer;
   padding: $space-1;
   border-radius: $radius-sm;
+  text-decoration: none;
 
   &:hover .header__icon { color: $color-tesco-blue; }
   &:hover .header__action-label { color: $color-tesco-blue; }
