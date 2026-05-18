@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
 
 interface Promotion {
   id: number;
@@ -24,7 +25,7 @@ interface PagedResponse<T> {
 @Component({
   selector: 'app-admin-promotions',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AdminPaginationComponent],
   templateUrl: './promotions.component.html',
   styleUrl: './promotions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

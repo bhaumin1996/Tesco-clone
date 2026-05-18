@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 import { PermissionsService } from '../../../core/services/permissions.service';
+import { AdminPaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 interface ProductRow {
   id: number;
@@ -46,7 +47,7 @@ interface BrandOption { brandId: number; name: string; }
 @Component({
   selector: 'app-admin-products',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ImageUrlPipe],
+  imports: [CommonModule, ReactiveFormsModule, ImageUrlPipe, AdminPaginationComponent],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

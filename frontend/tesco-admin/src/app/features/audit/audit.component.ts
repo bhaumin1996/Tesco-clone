@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
 
 interface AuditEntry {
   auditId: number;
@@ -29,7 +30,7 @@ interface PagedResult<T> { items: T[]; totalPages: number; totalCount: number; }
 @Component({
   selector: 'app-admin-audit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AdminPaginationComponent],
   templateUrl: './audit.component.html',
   styleUrl: './audit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -6,6 +6,7 @@ import { environment } from '../../../environments/environment';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AdminAuthService } from '../../core/services/admin-auth.service';
 import { PermissionsService, AdminPermission } from '../../core/services/permissions.service';
+import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
 
 interface UserRow {
   userId: number;
@@ -33,7 +34,7 @@ interface PagedResult<T> { items: T[]; totalPages: number; }
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AdminPaginationComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

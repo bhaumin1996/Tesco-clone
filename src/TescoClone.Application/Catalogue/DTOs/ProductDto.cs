@@ -17,4 +17,5 @@ public sealed record ProductDto(
     decimal AverageRating = 0,
     int ReviewCount = 0,
     int? DefaultVariantId = null,
-    string? UnitPrice = null);
+    string? UnitPrice = null,
+    string? PromotionLabel = null);

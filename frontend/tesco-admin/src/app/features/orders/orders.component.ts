@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
 
 interface OrderRow {
   id: number;
@@ -20,7 +21,7 @@ interface PagedResult<T> { items: T[]; totalPages: number; pageNumber: number; t
 @Component({
   selector: 'app-admin-orders',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AdminPaginationComponent],
   templateUrl: './orders.component.html',
   styleUrl: './orders.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

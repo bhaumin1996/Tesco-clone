@@ -71,27 +71,10 @@
       </table>
     </div>
 
-    <div class="admin-pagination">
-      <span class="admin-pagination__info">
-        @if (totalCount() > 0) {
-          Showing {{ startItem() }}–{{ endItem() }} of {{ totalCount() }} orders
-        }
-      </span>
-      <div class="admin-pagination__controls">
-        <button class="page-btn" [disabled]="currentPage() === 1" (click)="goTo(currentPage() - 1)" title="Previous">
-          <i class="bi bi-chevron-left"></i>
-        </button>
-        @for (page of visiblePages(); track $index) {
-          @if (page === null) {
-            <span class="page-ellipsis">…</span>
-          } @else {
-            <button class="page-btn" [class.active]="page === currentPage()" (click)="goTo(page)">{{ page }}</button>
-          }
-        }
-        <button class="page-btn" [disabled]="currentPage() === totalPages()" (click)="goTo(currentPage() + 1)" title="Next">
-          <i class="bi bi-chevron-right"></i>
-        </button>
-      </div>
-    </div>
+    <app-admin-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      (pageChange)="goTo($event)">
+    </app-admin-pagination>
   }
 </div>

@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ImageUrlPipe } from '../../shared/pipes/image-url.pipe';
+import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
 
 interface CmsPage {
   id: number;
@@ -31,7 +32,7 @@ interface Banner {
 @Component({
   selector: 'app-admin-content',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ImageUrlPipe],
+  imports: [CommonModule, ReactiveFormsModule, ImageUrlPipe, AdminPaginationComponent],
   templateUrl: './content.component.html',
   styleUrl: './content.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

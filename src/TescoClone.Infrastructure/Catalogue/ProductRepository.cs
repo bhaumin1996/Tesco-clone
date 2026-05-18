@@ -141,5 +141,6 @@ public sealed class ProductRepository : IProductRepository
             SqlHelper.GetValue<decimal>(reader, "AverageRating"),
             SqlHelper.GetValue<int>(reader, "ReviewCount"),
             SqlHelper.GetNullableValue<int>(reader, "DefaultVariantId"),
-            SqlHelper.GetNullableString(reader, "UnitPrice"));
+            SqlHelper.GetNullableString(reader, "UnitPrice"),
+            SqlHelper.GetNullableString(reader, "PromotionLabel"));
 }

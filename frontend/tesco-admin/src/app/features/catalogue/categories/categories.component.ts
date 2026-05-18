@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 import { PermissionsService } from '../../../core/services/permissions.service';
+import { AdminPaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 interface Category {
   categoryId: number;
@@ -23,7 +24,7 @@ interface Department { departmentId: number; name: string; }
 @Component({
   selector: 'app-admin-categories',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ImageUrlPipe],
+  imports: [CommonModule, ReactiveFormsModule, ImageUrlPipe, AdminPaginationComponent],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

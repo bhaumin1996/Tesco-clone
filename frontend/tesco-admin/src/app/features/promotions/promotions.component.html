@@ -126,19 +126,10 @@
       </tbody>
     </table>
 
-    @if (totalPages() > 1) {
-      <div class="admin-pagination">
-        <span class="admin-pagination__info">
-          Showing {{ (currentPage() - 1) * pageSize + 1 }}–{{ currentPage() * pageSize < filteredPromotions().length ? currentPage() * pageSize : filteredPromotions().length }} of {{ filteredPromotions().length }}
-        </span>
-        <div class="admin-pagination__controls">
-          <button class="pagination-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)"><i class="bi bi-chevron-left"></i></button>
-          @for (n of pageNumbers(); track n) {
-            <button class="pagination-btn" [class.pagination-btn--active]="n === currentPage()" (click)="goToPage(n)">{{ n }}</button>
-          }
-          <button class="pagination-btn" [disabled]="currentPage() === totalPages()" (click)="goToPage(currentPage() + 1)"><i class="bi bi-chevron-right"></i></button>
-        </div>
-      </div>
-    }
+    <app-admin-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      (pageChange)="goToPage($event)">
+    </app-admin-pagination>
   }
 </div>

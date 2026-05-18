@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../../environments/environment';
+import { AdminPaginationComponent } from '../../../shared/components/pagination/pagination.component';
 
 interface InventoryItem {
   productVariantId: number;
@@ -40,7 +41,7 @@ interface PagedResult<T> {
 @Component({
   selector: 'app-admin-inventory',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, AdminPaginationComponent],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -286,15 +286,10 @@
       </table>
     </div>
 
-    @if (totalPages() > 1) {
-      <div class="admin-pagination">
-        @for (page of pages(); track page) {
-          <button
-            class="page-btn"
-            [class.active]="page === currentPage()"
-            (click)="goTo(page)">{{ page }}</button>
-        }
-      </div>
-    }
+    <app-admin-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      (pageChange)="goTo($event)">
+    </app-admin-pagination>
   }
 </div>

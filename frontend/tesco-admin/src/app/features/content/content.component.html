@@ -145,20 +145,11 @@
         </tbody>
       </table>
 
-      @if (cmsTotalPages() > 1) {
-        <div class="admin-pagination">
-          <span class="admin-pagination__info">
-            Showing {{ (cmsPage() - 1) * pageSize + 1 }}–{{ cmsPage() * pageSize < filteredPages().length ? cmsPage() * pageSize : filteredPages().length }} of {{ filteredPages().length }}
-          </span>
-          <div class="admin-pagination__controls">
-            <button class="pagination-btn" [disabled]="cmsPage() === 1" (click)="goToCmsPage(cmsPage() - 1)"><i class="bi bi-chevron-left"></i></button>
-            @for (p of cmsPageNumbers(); track p) {
-              <button class="pagination-btn" [class.pagination-btn--active]="p === cmsPage()" (click)="goToCmsPage(p)">{{ p }}</button>
-            }
-            <button class="pagination-btn" [disabled]="cmsPage() === cmsTotalPages()" (click)="goToCmsPage(cmsPage() + 1)"><i class="bi bi-chevron-right"></i></button>
-          </div>
-        </div>
-      }
+      <app-admin-pagination
+        [currentPage]="cmsPage()"
+        [totalPages]="cmsTotalPages()"
+        (pageChange)="goToCmsPage($event)">
+      </app-admin-pagination>
     </div>
   }
 
@@ -204,20 +195,11 @@
         </tbody>
       </table>
 
-      @if (bannerTotalPages() > 1) {
-        <div class="admin-pagination">
-          <span class="admin-pagination__info">
-            Showing {{ (bannerPage() - 1) * pageSize + 1 }}–{{ bannerPage() * pageSize < filteredBanners().length ? bannerPage() * pageSize : filteredBanners().length }} of {{ filteredBanners().length }}
-          </span>
-          <div class="admin-pagination__controls">
-            <button class="pagination-btn" [disabled]="bannerPage() === 1" (click)="goToBannerPage(bannerPage() - 1)"><i class="bi bi-chevron-left"></i></button>
-            @for (p of bannerPageNumbers(); track p) {
-              <button class="pagination-btn" [class.pagination-btn--active]="p === bannerPage()" (click)="goToBannerPage(p)">{{ p }}</button>
-            }
-            <button class="pagination-btn" [disabled]="bannerPage() === bannerTotalPages()" (click)="goToBannerPage(bannerPage() + 1)"><i class="bi bi-chevron-right"></i></button>
-          </div>
-        </div>
-      }
+      <app-admin-pagination
+        [currentPage]="bannerPage()"
+        [totalPages]="bannerTotalPages()"
+        (pageChange)="goToBannerPage($event)">
+      </app-admin-pagination>
     </div>
   }
 }
