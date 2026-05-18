@@ -20,6 +20,7 @@ interface InventoryItem {
   placedAndConfirmedCount: number;
   pendingOrderCount: number;
   remainingStock: number;
+  variantName?: string;
 }
 
 interface ProductSearchResult {
@@ -97,6 +98,7 @@ export class AdminInventoryComponent implements OnInit {
   protected productSearchResults = signal<ProductSearchResult[]>([]);
   protected productSearchLoading = signal(false);
   protected selectedProduct = signal<ProductSearchResult | null>(null);
+  protected isSkuAuto = true;
 
   protected newVariantForm = this._fb.group({
     sku:               ['', [Validators.required, Validators.maxLength(100)]],
@@ -128,6 +130,21 @@ export class AdminInventoryComponent implements OnInit {
           this.productSearchLoading.set(false);
         },
         error: () => this.productSearchLoading.set(false)
+      });
+
+    // Auto SKU Listeners
+    this.newVariantForm.get('variantName')?.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        if (this.isSkuAuto) {
+          this.generateSku();
+        }
+      });
+
+    this.newVariantForm.get('sku')?.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => {
+        this.isSkuAuto = false;
       });
   }
 
@@ -211,6 +228,7 @@ export class AdminInventoryComponent implements OnInit {
     this.productSearchTerm.set('');
     this.productSearchResults.set([]);
     this.selectedProduct.set(null);
+    this.isSkuAuto = true;
     this.newVariantForm.reset({
       sku: '', variantName: '', barcode: '',
       initialQuantity: 0, lowStockThreshold: 10
@@ -227,6 +245,71 @@ export class AdminInventoryComponent implements OnInit {
     this.selectedProduct.set(product);
     this.productSearchTerm.set(product.name);
     this.productSearchResults.set([]);
+    this.isSkuAuto = true;
+    this.generateSku();
+  }
+
+  protected generateSku(force = false): void {
+    const product = this.selectedProduct();
+    if (!product) return;
+
+    if (force) {
+      this.isSkuAuto = true;
+    }
+
+    const variant = this.newVariantForm.get('variantName')?.value || '';
+    const generated = this._createSku(product.name, product.categoryName, variant, product.id);
+    this.newVariantForm.get('sku')?.setValue(generated, { emitEvent: false });
+  }
+
+  private _createSku(productName: string, categoryName: string, variantName: string, productId: number): string {
+    // 1. Category code (3 chars)
+    let catCode = 'GEN';
+    if (categoryName) {
+      const cleanCat = categoryName.replace(/[^a-zA-Z]/g, '').toUpperCase();
+      if (cleanCat.length >= 3) {
+        catCode = cleanCat.substring(0, 3);
+      } else if (cleanCat.length > 0) {
+        catCode = cleanCat.padEnd(3, 'X');
+      }
+    }
+
+    // 2. Product code (4-5 chars)
+    let prodCode = 'PROD';
+    if (productName) {
+      const words = productName.trim().split(/\s+/).filter(w => w.length > 0);
+      if (words.length >= 2) {
+        prodCode = words.map(w => w[0].replace(/[^a-zA-Z0-9]/g, '')).join('').toUpperCase();
+        if (prodCode.length < 3) {
+          const cleanProd = productName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+          prodCode = (prodCode + cleanProd).substring(0, 4);
+        }
+      } else {
+        const cleanProd = productName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+        prodCode = cleanProd.substring(0, 4);
+      }
+    }
+    if (prodCode.length < 3) {
+      prodCode = prodCode.padEnd(4, 'X');
+    }
+    prodCode = prodCode.substring(0, 5);
+
+    // 3. Variant code if exists (3 chars)
+    let varCode = '';
+    if (variantName) {
+      const cleanVar = variantName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+      if (cleanVar.length >= 3) {
+        varCode = '-' + cleanVar.substring(0, 3);
+      } else if (cleanVar.length > 0) {
+        varCode = '-' + cleanVar;
+      }
+    }
+
+    // 4. Unique suffix (Product ID + random 3-digit)
+    const randomSuffix = Math.floor(100 + Math.random() * 900);
+    const suffix = `${productId}${randomSuffix}`;
+
+    return `${catCode}-${prodCode}${varCode}-${suffix}`.toUpperCase();
   }
 
   protected clearProductSelection(): void {

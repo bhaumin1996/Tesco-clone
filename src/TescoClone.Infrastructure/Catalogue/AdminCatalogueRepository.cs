@@ -332,7 +332,8 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                     IsLowStock: SqlHelper.GetValue<bool>(reader, "IsLowStock"),
                     PlacedAndConfirmedCount: SqlHelper.GetValue<int>(reader, "PlacedAndConfirmedCount"),
                     PendingOrderCount: SqlHelper.GetValue<int>(reader, "PendingOrderCount"),
-                    RemainingStock: SqlHelper.GetValue<int>(reader, "RemainingStock")),
+                    RemainingStock: SqlHelper.GetValue<int>(reader, "RemainingStock"),
+                    VariantName: SqlHelper.GetNullableString(reader, "VariantName")),
                 null,
                 cancellationToken);
         }

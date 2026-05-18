@@ -989,7 +989,7 @@
 }
 // ── Dynamic Banners ──────────────────────────────────────────────────────────
 .home__banners {
-  padding: $space-8 0;
+  padding: $space-3 0;
   background: linear-gradient(to bottom, #fff, #f8f9fa);
 }
 
@@ -1038,7 +1038,7 @@
 .banner-grid {
   display: flex;
   gap: $space-6;
-  padding: $space-2 0 $space-9;
+  padding: $space-1 0 $space-3;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
@@ -1047,7 +1047,7 @@
 
   &--single {
     display: block;
-    padding: $space-2 0 $space-8;
+    padding: $space-1 0 $space-2;
     
     .home-banner {
       flex-direction: row;

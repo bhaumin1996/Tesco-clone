@@ -16,4 +16,5 @@ public sealed record ProductDto(
     bool IsInStock,
     decimal AverageRating = 0,
     int ReviewCount = 0,
-    int? DefaultVariantId = null);
+    int? DefaultVariantId = null,
+    string? UnitPrice = null);

@@ -145,15 +145,25 @@
   &:hover { text-decoration: underline; }
 }
 
-.cat-thumb-cell { width: 68px; }
+.cat-thumb-cell { width: 76px; }
 
 .cat-thumb {
   display: block;
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   object-fit: cover;
   border-radius: 6px;
   border: 1.5px solid $color-border;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s, border-color 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.6);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-color: $color-accent;
+    position: relative;
+    z-index: 10;
+  }
 
   &--empty {
     display: flex;
@@ -162,8 +172,8 @@
     font-size: 0.625rem;
     color: $color-muted;
     background: $color-surface-alt;
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     border-radius: 6px;
     border: 1.5px dashed $color-border;
     text-align: center;

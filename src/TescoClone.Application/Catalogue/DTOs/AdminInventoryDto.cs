@@ -10,4 +10,5 @@ public sealed record AdminInventoryDto(
     bool IsLowStock,
     int PlacedAndConfirmedCount,
     int PendingOrderCount,
-    int RemainingStock);
+    int RemainingStock,
+    string? VariantName = null);

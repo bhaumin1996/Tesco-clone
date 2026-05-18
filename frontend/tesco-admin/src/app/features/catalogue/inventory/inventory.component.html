@@ -136,17 +136,27 @@
               <label class="form-label">
                 SKU (Stock Keeping Unit) <span class="form-label__required">*</span>
               </label>
-              <input
-                class="form-control form-control--mono"
-                type="text"
-                formControlName="sku"
-                placeholder="e.g. MLK-WHLF-2L-001"
-                autocomplete="off"
-              />
+              <div class="sku-input-wrap">
+                <input
+                  class="form-control form-control--mono"
+                  type="text"
+                  formControlName="sku"
+                  placeholder="e.g. MLK-WHLF-2L-001"
+                  autocomplete="off"
+                />
+                <button
+                  type="button"
+                  class="button button--secondary sku-gen-btn"
+                  (click)="generateSku(true)"
+                  title="Auto-generate SKU code based on product name and variant"
+                >
+                  <i class="bi bi-magic me-1"></i> Generate
+                </button>
+              </div>
               @if (newVariantForm.get('sku')!.invalid && newVariantForm.get('sku')!.touched) {
                 <span class="form-error"><i class="bi bi-exclamation-circle me-1"></i>SKU is required (max 100 characters).</span>
               }
-              <span class="form-hint">Must be unique across all products.</span>
+              <span class="form-hint">Must be unique. Auto-generates as you type, or edit manually. Click "Generate" to reset.</span>
             </div>
 
             <div class="form-group">
@@ -339,7 +349,14 @@
         @for (item of pagedItems(); track item.productVariantId) {
           <tr [class.inv-row--low]="item.isLowStock">
             <td class="cell--mono">{{ item.sku }}</td>
-            <td>{{ item.productName }}</td>
+            <td>
+              {{ item.productName }}
+              @if (item.variantName) {
+                <span class="badge badge--variant ms-1" style="background-color: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: inline-block; vertical-align: middle;">
+                  {{ item.variantName }}
+                </span>
+              }
+            </td>
             <td>{{ item.stockQuantity }}</td>
             <td>{{ item.lowStockThreshold }}</td>
             <td class="cell--orders">{{ item.placedAndConfirmedCount }}</td>
