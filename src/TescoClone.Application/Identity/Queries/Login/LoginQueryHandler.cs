@@ -33,6 +33,9 @@ public sealed class LoginQueryHandler : IRequestHandler<LoginQuery, AuthResultDt
         var user = await _userRepository.GetByEmailAsync(request.Email, cancellationToken)
             ?? throw new NotFoundException(nameof(Domain.Identity.User), request.Email);
 
+        if (user.Status == TescoClone.Domain.Enums.UserStatus.Disabled)
+            throw new ForbiddenException("Account is deactivated/disabled. Please contact support.");
+
         if (user.IsLocked(_clock.UtcNow))
             throw new ConflictException("Account is temporarily locked. Please try again later.");
 

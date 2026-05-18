@@ -5,8 +5,12 @@ using TescoClone.API.Authorization;
 using TescoClone.Application.Common.Abstractions;
 using TescoClone.Application.Identity.DTOs;
 using TescoClone.Application.Identity.Commands.AssignRole;
+using TescoClone.Application.Identity.Commands.CreateAdminUser;
 using TescoClone.Application.Identity.Commands.LockUser;
 using TescoClone.Application.Identity.Commands.UnlockUser;
+using TescoClone.Application.Identity.Commands.DeactivateUser;
+using TescoClone.Application.Identity.Commands.ActivateUser;
+using TescoClone.Application.Identity.Commands.DeleteUser;
 using TescoClone.Application.Identity.Commands.UpdatePermissions;
 using TescoClone.Application.Identity.Queries.GetUsers;
 using TescoClone.Application.Identity.Queries.GetPermissions;
@@ -111,6 +115,62 @@ public sealed class AdminUsersController : ControllerBase
         await _mediator.Send(new AssignRoleCommand(userId, request.RoleId, _currentUser.UserId), cancellationToken);
         return NoContent();
     }
+
+    [HttpPost("{userId:int}/deactivate")]
+    [Authorize(Policy = AuthorizationPolicies.SuperAdmin)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeactivateUser(int userId, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeactivateUserCommand(userId, _currentUser.UserId), cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPost("{userId:int}/activate")]
+    [Authorize(Policy = AuthorizationPolicies.SuperAdmin)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ActivateUser(int userId, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new ActivateUserCommand(userId, _currentUser.UserId), cancellationToken);
+        return NoContent();
+    }
+
+    [HttpDelete("{userId:int}")]
+    [Authorize(Policy = AuthorizationPolicies.SuperAdmin)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteUser(int userId, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteUserCommand(userId, _currentUser.UserId), cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Authorize(Policy = AuthorizationPolicies.SuperAdmin)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateAdminUser([FromBody] CreateAdminUserRequest request, CancellationToken cancellationToken)
+    {
+        var userId = await _mediator.Send(new CreateAdminUserCommand(
+            request.FirstName,
+            request.LastName,
+            request.Email,
+            request.Password,
+            request.Role,
+            _currentUser.UserId), cancellationToken);
+
+        return Ok(new { UserId = userId });
+    }
 }
 
 public sealed record AssignRoleRequest(int RoleId);
+public sealed record CreateAdminUserRequest(string FirstName, string LastName, string Email, string Password, string Role);

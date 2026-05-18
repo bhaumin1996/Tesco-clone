@@ -15,7 +15,24 @@
   font-size: 0.8125rem; padding: 0.25rem 0.625rem;
   transition: all 0.2s ease;
   &:hover { border-color: $color-tesco-blue; color: $color-tesco-blue; background: rgba(0, 83, 159, 0.04); }
-  &--danger:hover { border-color: #c0392b; color: #c0392b; background: rgba(192, 57, 43, 0.04); }
+  
+  &--danger {
+    color: #e74c3c;
+    border-color: rgba(231, 76, 60, 0.2);
+    &:hover { border-color: #e74c3c !important; color: #fff !important; background-color: #e74c3c !important; }
+  }
+
+  &--success {
+    color: #2ecc71;
+    border-color: rgba(46, 204, 113, 0.2);
+    &:hover { border-color: #2ecc71 !important; color: #fff !important; background-color: #2ecc71 !important; }
+  }
+
+  &--secondary {
+    color: #7f8c8d;
+    border-color: rgba(127, 140, 141, 0.2);
+    &:hover { border-color: #7f8c8d !important; color: #fff !important; background-color: #7f8c8d !important; }
+  }
   
   &--primary {
     background-color: $color-tesco-blue;

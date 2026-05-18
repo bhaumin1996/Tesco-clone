@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -14,6 +14,7 @@ interface UserRow {
   email: string;
   role: string;
   isLocked: boolean;
+  status: string;
   createdOn: string;
 }
 
@@ -49,6 +50,10 @@ export class AdminUsersComponent implements OnInit {
   protected loading = signal(true);
   protected message = signal('');
 
+  // ── add admin user state ──────────────────────────────────────────────────
+  protected showAddAdminForm = signal(false);
+  protected savingAdmin = signal(false);
+
   // ── permissions management state ──────────────────────────────────────────
   protected showPermissionsForm = signal(false);
   protected selectedUserForPermissions = signal<UserRow | null>(null);
@@ -70,6 +75,19 @@ export class AdminUsersComponent implements OnInit {
   protected filterForm = this._fb.group({ search: [''], role: [''] });
   protected readonly roles = ['Customer', 'Admin', 'SuperAdmin'];
   private readonly _roleIds: Record<string, number> = { 'Admin': 1, 'Customer': 2, 'SuperAdmin': 4 };
+
+  protected addAdminForm = this._fb.group({
+    firstName: ['', [Validators.required, Validators.maxLength(100)]],
+    lastName: ['', [Validators.required, Validators.maxLength(100)]],
+    email: ['', [Validators.required, Validators.email, Validators.maxLength(256)]],
+    password: ['', [
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(128),
+      Validators.pattern(/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/)
+    ]],
+    role: ['Admin', Validators.required]
+  });
 
   protected sortBy = signal('createdOn');
   protected sortDirection = signal<'asc' | 'desc'>('desc');
@@ -104,6 +122,7 @@ export class AdminUsersComponent implements OnInit {
           email: dto.email,
           role: dto.roles && dto.roles.includes('SuperAdmin') ? 'SuperAdmin' : (dto.roles && dto.roles.length > 0 ? dto.roles[0] : 'Customer'),
           isLocked: dto.statusName === 'Locked',
+          status: dto.statusName,
           createdOn: dto.createdOn
         }));
         this.users.set(mapped);
@@ -136,12 +155,51 @@ export class AdminUsersComponent implements OnInit {
     const action = user.isLocked ? 'unlock' : 'lock';
     this._http.post(`${this._base}/${user.userId}/${action}`, {}).subscribe({
       next: () => {
-        this.users.update(list => list.map(u => u.userId === user.userId ? { ...u, isLocked: !u.isLocked } : u));
+        this.users.update(list => list.map(u => u.userId === user.userId ? { ...u, isLocked: !u.isLocked, status: user.isLocked ? 'Active' : 'Locked' } : u));
         this.message.set(`User ${user.isLocked ? 'unlocked' : 'locked'}.`);
         setTimeout(() => this.message.set(''), 3000);
       },
       error: () => this.message.set('Action failed.')
     });
+  }
+
+  protected deactivateUser(user: UserRow): void {
+    this._http.post(`${this._base}/${user.userId}/deactivate`, {}).subscribe({
+      next: () => {
+        this.users.update(list => list.map(u => u.userId === user.userId ? { ...u, status: 'Disabled' } : u));
+        this.message.set(`User "${user.firstName} ${user.lastName}" has been deactivated.`);
+        setTimeout(() => this.message.set(''), 3500);
+      },
+      error: () => this.message.set('Deactivation failed.')
+    });
+  }
+
+  protected activateUser(user: UserRow): void {
+    this._http.post(`${this._base}/${user.userId}/activate`, {}).subscribe({
+      next: () => {
+        this.users.update(list => list.map(u => u.userId === user.userId ? { ...u, status: 'Active' } : u));
+        this.message.set(`User "${user.firstName} ${user.lastName}" has been activated.`);
+        setTimeout(() => this.message.set(''), 3500);
+      },
+      error: () => this.message.set('Activation failed.')
+    });
+  }
+
+  protected confirmDeleteUser(user: UserRow): void {
+    if (confirm(`Are you sure you want to permanently delete the admin account for "${user.firstName} ${user.lastName}"?\n\nThis action cannot be undone.`)) {
+      this._http.delete(`${this._base}/${user.userId}`).subscribe({
+        next: () => {
+          this.users.update(list => list.filter(u => u.userId !== user.userId));
+          this.message.set(`User "${user.firstName} ${user.lastName}" has been successfully deleted.`);
+          setTimeout(() => this.message.set(''), 4000);
+        },
+        error: (err) => {
+          const errorMsg = err.error?.message || 'Delete operation failed.';
+          this.message.set(errorMsg);
+          setTimeout(() => this.message.set(''), 4000);
+        }
+      });
+    }
   }
 
   protected assignRole(userId: number, role: string): void {
@@ -266,6 +324,39 @@ export class AdminUsersComponent implements OnInit {
           newItem.canView = true;
         }
         return [...list, newItem];
+      }
+    });
+  }
+
+  protected openAddAdmin(): void {
+    this.addAdminForm.reset({ role: 'Admin', firstName: '', lastName: '', email: '', password: '' });
+    this.showAddAdminForm.set(true);
+    this.showPermissionsForm.set(false);
+  }
+
+  protected cancelAddAdmin(): void {
+    this.showAddAdminForm.set(false);
+  }
+
+  protected saveAdminUser(): void {
+    if (this.addAdminForm.invalid) return;
+
+    this.savingAdmin.set(true);
+    const body = this.addAdminForm.getRawValue();
+
+    this._http.post(this._base, body).subscribe({
+      next: () => {
+        this.savingAdmin.set(false);
+        this.showAddAdminForm.set(false);
+        this.message.set('Admin user created successfully.');
+        this._load();
+        setTimeout(() => this.message.set(''), 3500);
+      },
+      error: (err) => {
+        this.savingAdmin.set(false);
+        const errorMsg = err.error?.message || 'Failed to create admin user.';
+        this.message.set(errorMsg);
+        setTimeout(() => this.message.set(''), 4000);
       }
     });
   }

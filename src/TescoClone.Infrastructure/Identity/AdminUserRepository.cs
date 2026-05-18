@@ -97,6 +97,77 @@ public sealed class AdminUserRepository : IAdminUserRepository
             cancellationToken);
     }
 
+    public async Task DeactivateUserAsync(int userId, int adminId, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+        using var command = connection.CreateCommand();
+        command.CommandType = System.Data.CommandType.Text;
+        command.CommandText = @"
+            UPDATE t.tblUser
+            SET StatusId = 3, -- Disabled/Inactive
+                ModifiedBy = @AdminId,
+                ModifiedOn = GETUTCDATE()
+            WHERE Id = @UserId AND IsDeleted = 0;
+            
+            INSERT INTO t.tblAuditLog (TableName, RecordId, Action, NewValues, ChangedBy, ChangedOn)
+            VALUES ('tblUser', @UserId, 'UPDATE', '{""StatusId"":3,""Action"":""AdminDeactivate""}', @AdminId, GETUTCDATE());
+        ";
+        command.Parameters.AddRange([
+            new SqlParameter("@UserId", userId),
+            new SqlParameter("@AdminId", adminId)
+        ]);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task ActivateUserAsync(int userId, int adminId, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+        using var command = connection.CreateCommand();
+        command.CommandType = System.Data.CommandType.Text;
+        command.CommandText = @"
+            UPDATE t.tblUser
+            SET StatusId = 1, -- Active
+                FailedLoginAttempts = 0,
+                LockedUntil = NULL,
+                ModifiedBy = @AdminId,
+                ModifiedOn = GETUTCDATE()
+            WHERE Id = @UserId AND IsDeleted = 0;
+            
+            INSERT INTO t.tblAuditLog (TableName, RecordId, Action, NewValues, ChangedBy, ChangedOn)
+            VALUES ('tblUser', @UserId, 'UPDATE', '{""StatusId"":1,""Action"":""AdminActivate""}', @AdminId, GETUTCDATE());
+        ";
+        command.Parameters.AddRange([
+            new SqlParameter("@UserId", userId),
+            new SqlParameter("@AdminId", adminId)
+        ]);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task DeleteUserAsync(int userId, int adminId, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+        using var command = connection.CreateCommand();
+        command.CommandType = System.Data.CommandType.Text;
+        command.CommandText = @"
+            UPDATE t.tblUser
+            SET IsDeleted = 1,
+                ModifiedBy = @AdminId,
+                ModifiedOn = GETUTCDATE()
+            WHERE Id = @UserId;
+            
+            INSERT INTO t.tblAuditLog (TableName, RecordId, Action, NewValues, ChangedBy, ChangedOn)
+            VALUES ('tblUser', @UserId, 'DELETE', '{""IsDeleted"":1}', @AdminId, GETUTCDATE());
+        ";
+        command.Parameters.AddRange([
+            new SqlParameter("@UserId", userId),
+            new SqlParameter("@AdminId", adminId)
+        ]);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task AssignRoleAsync(int userId, int roleId, int adminId, CancellationToken cancellationToken = default)
     {
         using var connection = _connectionFactory.CreateConnection();

@@ -9,6 +9,9 @@ public interface IAdminUserRepository
     Task<AdminUserDto?> GetUserDetailAsync(int userId, CancellationToken cancellationToken = default);
     Task LockUserAsync(int userId, int adminId, CancellationToken cancellationToken = default);
     Task UnlockUserAsync(int userId, int adminId, CancellationToken cancellationToken = default);
+    Task DeactivateUserAsync(int userId, int adminId, CancellationToken cancellationToken = default);
+    Task ActivateUserAsync(int userId, int adminId, CancellationToken cancellationToken = default);
+    Task DeleteUserAsync(int userId, int adminId, CancellationToken cancellationToken = default);
     Task AssignRoleAsync(int userId, int roleId, int adminId, CancellationToken cancellationToken = default);
     Task RemoveRoleAsync(int userId, int roleId, int adminId, CancellationToken cancellationToken = default);
     Task ClearRolesAsync(int userId, int adminId, CancellationToken cancellationToken = default);
