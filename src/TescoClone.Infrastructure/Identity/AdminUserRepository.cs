@@ -19,7 +19,7 @@ public sealed class AdminUserRepository : IAdminUserRepository
     }
 
     public async Task<PaginatedResult<AdminUserDto>> GetUsersAsync(
-        string? search, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
+        string? search, string? role, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
         using var connection = _connectionFactory.CreateConnection();
         await connection.OpenAsync(cancellationToken);
@@ -30,6 +30,7 @@ public sealed class AdminUserRepository : IAdminUserRepository
         command.Parameters.AddRange(new[]
         {
             SqlHelper.Input("@Search", search),
+            SqlHelper.Input("@Role", role),
             SqlHelper.Input("@PageNumber", pageNumber),
             SqlHelper.Input("@PageSize", pageSize)
         });
@@ -174,6 +175,38 @@ public sealed class AdminUserRepository : IAdminUserRepository
             [
                 SqlHelper.Input("@UserId", userId),
                 SqlHelper.Input("@CodeHash", codeHash)
+            ],
+            cancellationToken);
+    }
+
+    public async Task<IEnumerable<AdminPermissionDto>> GetUserPermissionsAsync(int userId, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        return await SqlHelper.ExecuteReaderAsync(
+            connection,
+            "proc_Admin_GetUserPermissions",
+            reader => new AdminPermissionDto(
+                ModuleName: SqlHelper.GetValue<string>(reader, "ModuleName"),
+                CanView: SqlHelper.GetValue<bool>(reader, "CanView"),
+                CanAdd: SqlHelper.GetValue<bool>(reader, "CanAdd"),
+                CanEdit: SqlHelper.GetValue<bool>(reader, "CanEdit"),
+                CanDelete: SqlHelper.GetValue<bool>(reader, "CanDelete")),
+            [SqlHelper.Input("@UserId", userId)],
+            cancellationToken);
+    }
+
+    public async Task SaveUserPermissionsAsync(int userId, IEnumerable<AdminPermissionDto> permissions, int adminId, CancellationToken cancellationToken = default)
+    {
+        var options = new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase };
+        var json = System.Text.Json.JsonSerializer.Serialize(permissions, options);
+        using var connection = _connectionFactory.CreateConnection();
+        await SqlHelper.ExecuteNonQueryAsync(
+            connection,
+            "proc_Admin_SaveUserPermissions",
+            [
+                SqlHelper.Input("@UserId", userId),
+                SqlHelper.Input("@AdminId", adminId),
+                SqlHelper.Input("@PermissionsJson", json)
             ],
             cancellationToken);
     }

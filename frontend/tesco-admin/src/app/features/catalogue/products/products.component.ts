@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
+import { PermissionsService } from '../../../core/services/permissions.service';
 
 interface ProductRow {
   id: number;
@@ -53,6 +54,7 @@ interface BrandOption { brandId: number; name: string; }
 export class AdminProductsComponent implements OnInit {
   private readonly _http = inject(HttpClient);
   private readonly _fb = inject(FormBuilder);
+  protected readonly perms = inject(PermissionsService);
 
   private get _base() { return `${environment.apiUrl}/admin`; }
 

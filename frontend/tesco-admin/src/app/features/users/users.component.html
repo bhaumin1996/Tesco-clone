@@ -12,6 +12,106 @@
   </div>
 }
 
+@if (showPermissionsForm() && selectedUserForPermissions()) {
+  <div class="admin-card permissions-card mb-4 animate-fade-in">
+    <div class="permissions-header">
+      <div class="d-flex align-items-center gap-3">
+        <div class="permissions-header-icon">
+          <i class="bi bi-shield-lock-fill"></i>
+        </div>
+        <div>
+          <h2 class="permissions-title">Administrative Permissions</h2>
+          <p class="permissions-subtitle">
+            Configure module-level access and action rights for 
+            <span class="user-highlight">{{ selectedUserForPermissions()?.firstName }} {{ selectedUserForPermissions()?.lastName }}</span> 
+            ({{ selectedUserForPermissions()?.email }})
+          </p>
+        </div>
+      </div>
+      <button class="permissions-close-btn" type="button" (click)="cancelPermissions()" title="Close Panel">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th style="width: 40%; padding-left: 1.5rem;">Module Name</th>
+            <th class="text-center" style="width: 15%;">View</th>
+            <th class="text-center" style="width: 15%;">Add</th>
+            <th class="text-center" style="width: 15%;">Edit</th>
+            <th class="text-center" style="width: 15%;">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of permissionModules; track m.name) {
+            <tr class="perm-row">
+              <td style="padding-left: 1.5rem;">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="module-icon-wrapper" [style.background-color]="m.color + '15'" [style.color]="m.color">
+                    <i class="bi" [class]="m.icon"></i>
+                  </div>
+                  <div>
+                    <span class="fw-semibold text-dark d-block">{{ m.label }}</span>
+                    <span class="text-muted" style="font-size: 0.725rem;">Internal ID: {{ m.name }}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="text-center">
+                <label class="perm-switch">
+                  <input type="checkbox"
+                         [checked]="hasModulePerm(m.name, 'canView')" 
+                         (change)="toggleModulePerm(m.name, 'canView')" />
+                  <span class="slider round"></span>
+                </label>
+              </td>
+              <td class="text-center">
+                <label class="perm-switch">
+                  <input type="checkbox"
+                         [checked]="hasModulePerm(m.name, 'canAdd')" 
+                         (change)="toggleModulePerm(m.name, 'canAdd')" />
+                  <span class="slider round"></span>
+                </label>
+              </td>
+              <td class="text-center">
+                <label class="perm-switch">
+                  <input type="checkbox"
+                         [checked]="hasModulePerm(m.name, 'canEdit')" 
+                         (change)="toggleModulePerm(m.name, 'canEdit')" />
+                  <span class="slider round"></span>
+                </label>
+              </td>
+              <td class="text-center">
+                <label class="perm-switch">
+                  <input type="checkbox"
+                         [checked]="hasModulePerm(m.name, 'canDelete')" 
+                         (change)="toggleModulePerm(m.name, 'canDelete')" />
+                  <span class="slider round"></span>
+                </label>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="permissions-footer">
+      <button class="button button--secondary button--premium-outline" type="button" [disabled]="permissionsSaving()" (click)="cancelPermissions()">
+        Cancel
+      </button>
+      <button class="button button--primary button--premium" type="button" [disabled]="permissionsSaving()" (click)="savePermissions()">
+        @if (permissionsSaving()) {
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Saving...
+        } @else {
+          <i class="bi bi-save2-fill me-2"></i> Save Permissions
+        }
+      </button>
+    </div>
+  </div>
+}
+
 <div class="admin-card">
   <div class="filter-bar">
     <form [formGroup]="filterForm" class="d-flex gap-3 flex-wrap w-100">
@@ -51,6 +151,7 @@
               <td>
                 <select class="form-control" style="min-width:120px;font-size:0.8125rem;padding:0.25rem 0.5rem"
                         [value]="u.role"
+                        [disabled]="auth.user()?.role !== 'SuperAdmin'"
                         (change)="assignRole(u.userId, $any($event.target).value)">
                   @for (r of roles; track r) {
                     <option [value]="r" [selected]="r === u.role">{{ r }}</option>
@@ -67,10 +168,17 @@
               </td>
               <td class="text-secondary-color">{{ u.createdOn | date:'dd MMM yyyy' }}</td>
               <td>
-                <button class="table-btn" [class.table-btn--danger]="!u.isLocked" (click)="toggleLock(u)">
-                  <i class="bi me-1" [class.bi-lock]="!u.isLocked" [class.bi-unlock]="u.isLocked"></i>
-                  {{ u.isLocked ? 'Unlock' : 'Lock' }}
-                </button>
+                <div class="d-flex align-items-center gap-2">
+                  <button class="table-btn" [class.table-btn--danger]="!u.isLocked" (click)="toggleLock(u)">
+                    <i class="bi me-1" [class.bi-lock]="!u.isLocked" [class.bi-unlock]="u.isLocked"></i>
+                    {{ u.isLocked ? 'Unlock' : 'Lock' }}
+                  </button>
+                  @if (auth.user()?.role === 'SuperAdmin' && u.role === 'Admin') {
+                    <button class="table-btn table-btn--primary" (click)="openPermissions(u)">
+                      <i class="bi bi-shield-lock-fill me-1"></i>Permissions
+                    </button>
+                  }
+                </div>
               </td>
             </tr>
           } @empty {

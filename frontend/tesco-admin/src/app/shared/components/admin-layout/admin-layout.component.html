@@ -18,16 +18,20 @@
 
     <nav class="admin-sidebar__nav" aria-label="Main navigation">
       @for (group of navGroups; track group.label) {
-        <p class="admin-nav-group">{{ group.label }}</p>
-        @for (item of group.items; track item.route) {
-          <a
-            [routerLink]="item.route"
-            class="admin-nav-item"
-            routerLinkActive="active"
-          >
-            <i [class]="'nav-icon bi ' + item.icon" aria-hidden="true"></i>
-            {{ item.label }}
-          </a>
+        @if (canViewGroup(group)) {
+          <p class="admin-nav-group">{{ group.label }}</p>
+          @for (item of group.items; track item.route) {
+            @if ((!item.module || canView(item.module)) && (!item.roles || hasRole(item.roles))) {
+              <a
+                [routerLink]="item.route"
+                class="admin-nav-item"
+                routerLinkActive="active"
+              >
+                <i [class]="'nav-icon bi ' + item.icon" aria-hidden="true"></i>
+                {{ item.label }}
+              </a>
+            }
+          }
         }
       }
     </nav>

@@ -1,1 +1,12 @@
 // Component-level styles only — global layout styles live in styles/_admin-layout.scss
+
+.sidebar-user--no-action {
+  cursor: default !important;
+  pointer-events: none !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  &:hover {
+    background: none !important;
+  }
+}

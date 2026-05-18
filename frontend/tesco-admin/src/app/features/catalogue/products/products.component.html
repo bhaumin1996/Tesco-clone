@@ -3,9 +3,11 @@
     <h1 class="admin-page-header__title">Products</h1>
     <p class="admin-page-header__subtitle">Manage your product catalogue.</p>
   </div>
-  <button class="button button--primary" (click)="openCreate()">
-    <i class="bi bi-plus-lg"></i> New Product
-  </button>
+  @if (perms.hasPermission('Products', 'add')) {
+    <button class="button button--primary" (click)="openCreate()">
+      <i class="bi bi-plus-lg"></i> New Product
+    </button>
+  }
 </div>
 
 @if (message()) {
@@ -263,12 +265,16 @@
                     <button class="table-btn table-btn--danger" (click)="confirmDelete(p.id)">Yes</button>
                     <button class="table-btn" (click)="cancelDelete()">No</button>
                   } @else {
-                    <button class="table-btn" (click)="openEdit(p)">
-                      <i class="bi bi-pencil me-1"></i>Edit
-                    </button>
-                    <button class="table-btn table-btn--danger" (click)="requestDelete(p.id)">
-                      <i class="bi bi-trash me-1"></i>Delete
-                    </button>
+                    @if (perms.hasPermission('Products', 'edit')) {
+                      <button class="table-btn" (click)="openEdit(p)">
+                        <i class="bi bi-pencil me-1"></i>Edit
+                      </button>
+                    }
+                    @if (perms.hasPermission('Products', 'delete')) {
+                      <button class="table-btn table-btn--danger" (click)="requestDelete(p.id)">
+                        <i class="bi bi-trash me-1"></i>Delete
+                      </button>
+                    }
                   }
                 </div>
               </td>

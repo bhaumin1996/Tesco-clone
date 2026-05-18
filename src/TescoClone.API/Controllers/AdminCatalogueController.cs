@@ -130,6 +130,7 @@ public sealed class AdminCatalogueController : ControllerBase
     // ── Categories ───────────────────────────────────────────────────────────
 
     [HttpGet("/api/v1/admin/categories")]
+    [HasPermission("Categories", "View")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -140,6 +141,7 @@ public sealed class AdminCatalogueController : ControllerBase
     }
 
     [HttpPost("/api/v1/admin/categories")]
+    [HasPermission("Categories", "Add")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -151,6 +153,7 @@ public sealed class AdminCatalogueController : ControllerBase
     }
 
     [HttpPut("/api/v1/admin/categories/{id:int}")]
+    [HasPermission("Categories", "Edit")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -163,6 +166,7 @@ public sealed class AdminCatalogueController : ControllerBase
     }
 
     [HttpPatch("/api/v1/admin/categories/{id:int}/deactivate")]
+    [HasPermission("Categories", "Delete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -176,6 +180,7 @@ public sealed class AdminCatalogueController : ControllerBase
     // ── Products ─────────────────────────────────────────────────────────────
 
     [HttpGet("/api/v1/admin/products")]
+    [HasPermission("Products", "View")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -194,6 +199,7 @@ public sealed class AdminCatalogueController : ControllerBase
     }
 
     [HttpPost("/api/v1/admin/products")]
+    [HasPermission("Products", "Add")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -209,6 +215,7 @@ public sealed class AdminCatalogueController : ControllerBase
     }
 
     [HttpPut("/api/v1/admin/products/{id:int}")]
+    [HasPermission("Products", "Edit")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -225,6 +232,7 @@ public sealed class AdminCatalogueController : ControllerBase
     }
 
     [HttpDelete("/api/v1/admin/products/{id:int}")]
+    [HasPermission("Products", "Delete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]

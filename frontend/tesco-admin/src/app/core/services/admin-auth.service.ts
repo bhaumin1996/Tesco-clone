@@ -66,7 +66,7 @@ export class AdminAuthService {
           firstName: r.user.firstName,
           lastName: r.user.lastName,
           email: r.user.email,
-          role: r.user.roles[0] ?? 'Admin'
+          role: r.user.roles.includes('SuperAdmin') ? 'SuperAdmin' : (r.user.roles[0] ?? 'Admin')
         };
         this._storeSession(r.token.accessToken, r.token.refreshToken, adminUser);
       })

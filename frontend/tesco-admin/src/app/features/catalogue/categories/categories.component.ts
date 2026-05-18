@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
+import { PermissionsService } from '../../../core/services/permissions.service';
 
 interface Category {
   categoryId: number;
@@ -30,6 +31,7 @@ interface Department { departmentId: number; name: string; }
 export class AdminCategoriesComponent implements OnInit {
   private readonly _http = inject(HttpClient);
   private readonly _fb = inject(FormBuilder);
+  protected readonly perms = inject(PermissionsService);
 
   protected categories = signal<Category[]>([]);
   protected departments = signal<Department[]>([]);
