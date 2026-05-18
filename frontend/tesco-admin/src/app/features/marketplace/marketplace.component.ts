@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { extractApiError } from '../../core/utils/api-error';
 
 interface Seller {
   sellerId: number;
@@ -90,21 +91,21 @@ export class AdminMarketplaceComponent implements OnInit {
   protected approveSeller(id: number): void {
     this._http.patch(`${this._base}/sellers/${id}/approve`, {}).subscribe({
       next: () => { this._load(); this.message.set('Seller approved.'); setTimeout(() => this.message.set(''), 3000); },
-      error: () => this.message.set('Action failed.')
+      error: (err) => this.message.set(extractApiError(err, 'Action failed.'))
     });
   }
 
   protected suspendSeller(id: number): void {
     this._http.patch(`${this._base}/sellers/${id}/suspend`, {}).subscribe({
       next: () => { this._load(); this.message.set('Seller suspended.'); setTimeout(() => this.message.set(''), 3000); },
-      error: () => this.message.set('Action failed.')
+      error: (err) => this.message.set(extractApiError(err, 'Action failed.'))
     });
   }
 
   protected resolveDispute(id: number, outcome: string): void {
     this._http.patch(`${this._base}/disputes/${id}/resolve`, { outcome }).subscribe({
       next: () => { this._load(); this.message.set('Dispute resolved.'); setTimeout(() => this.message.set(''), 3000); },
-      error: () => this.message.set('Action failed.')
+      error: (err) => this.message.set(extractApiError(err, 'Action failed.'))
     });
   }
 }

@@ -10,3 +10,322 @@
     background: none !important;
   }
 }
+
+// Premium Global Command Palette Styles
+.search-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.45); // Deep slate glass
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1050;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 10vh;
+  animation: fadeIn 0.15s ease-out;
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+.search-modal {
+  width: 100%;
+  max-width: 680px;
+  background: rgba(255, 255, 255, 0.85); // Light glass
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 40px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+  overflow: hidden;
+  animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes slideDown {
+    from { transform: translateY(-20px) scale(0.98); }
+    to { transform: translateY(0) scale(1); }
+  }
+
+  // Dark mode compatibility (in case admin panel has it)
+  [data-theme="dark"] & {
+    background: rgba(30, 41, 59, 0.85); // Dark glass
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #f1f5f9;
+  }
+}
+
+.search-modal__header {
+  display: flex;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+  [data-theme="dark"] & {
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+}
+
+.search-modal__icon {
+  font-size: 1.25rem;
+  color: #64748b;
+  margin-right: 16px;
+}
+
+.search-modal__input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 450;
+  color: #1e293b;
+  outline: none;
+
+  &::placeholder {
+    color: #94a3b8;
+  }
+
+  [data-theme="dark"] & {
+    color: #f1f5f9;
+  }
+}
+
+.search-modal__close-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 1rem;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #0f172a;
+  }
+
+  [data-theme="dark"] &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+  }
+}
+
+.search-modal__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 0;
+  min-height: 150px;
+}
+
+.search-modal__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.search-modal__hint,
+.search-modal__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
+  color: #64748b;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.search-modal__hint-icon,
+.search-modal__empty-icon {
+  font-size: 2.5rem;
+  color: #cbd5e1;
+  margin-bottom: 16px;
+}
+
+.search-results-container {
+  padding: 0 16px;
+}
+
+.search-group {
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 8px;
+  }
+}
+
+.search-group__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  padding-left: 12px;
+}
+
+.search-group__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.search-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: rgba(0, 92, 185, 0.06); // Tesco blue highlight
+    transform: translateX(4px);
+  }
+
+  [data-theme="dark"] &:hover {
+    background: rgba(56, 189, 248, 0.08);
+  }
+}
+
+.search-item__thumb-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-right: 14px;
+  flex-shrink: 0;
+
+  [data-theme="dark"] & {
+    background: #334155;
+    border-color: #475569;
+  }
+}
+
+.search-item__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.search-item__thumb-empty {
+  font-size: 1.1rem;
+  color: #94a3b8;
+}
+
+.search-item__icon-folder,
+.search-item__icon-grid,
+.search-item__icon-brand,
+.search-item__icon-order,
+.search-item__icon-user {
+  font-size: 1.25rem;
+  margin-right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  [data-theme="dark"] & {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.search-item__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.search-item__name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  [data-theme="dark"] & {
+    color: #f1f5f9;
+  }
+}
+
+.search-item__sub {
+  font-size: 0.75rem;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-item__price,
+.search-item__total {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-left: 12px;
+  flex-shrink: 0;
+
+  [data-theme="dark"] & {
+    color: #fff;
+  }
+}
+
+.search-modal__footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.02);
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  font-size: 0.75rem;
+  color: #64748b;
+
+  [data-theme="dark"] & {
+    background: rgba(0, 0, 0, 0.15);
+    border-color: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.search-footer-tip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  kbd {
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    color: #334155;
+    font-size: 0.7rem;
+    padding: 2px 5px;
+    font-family: inherit;
+
+    [data-theme="dark"] & {
+      background: #1e293b;
+      border-color: #475569;
+      color: #94a3b8;
+    }
+  }
+}
+

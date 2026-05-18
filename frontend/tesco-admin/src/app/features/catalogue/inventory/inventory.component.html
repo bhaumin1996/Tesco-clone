@@ -363,8 +363,8 @@
             <td class="cell--pending" [class.cell--pending-hi]="item.pendingOrderCount > 0">
               {{ item.pendingOrderCount }}
             </td>
-            <td class="cell--remaining" [class.cell--remaining-low]="item.remainingStock <= item.lowStockThreshold" [class.cell--remaining-neg]="item.remainingStock < 0">
-              {{ item.remainingStock }}
+            <td class="cell--remaining" [class.cell--remaining-low]="item.remainingStock <= item.lowStockThreshold">
+              {{ item.remainingStock < 0 ? 0 : item.remainingStock }}
             </td>
             <td>
               @if (item.isLowStock) {

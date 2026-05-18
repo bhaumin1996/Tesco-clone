@@ -286,17 +286,17 @@
                     </button>
                   }
 
-                  <!-- Permissions -->
-                  @if (auth.user()?.role === 'SuperAdmin' && u.role === 'Admin') {
-                    <button class="table-btn table-btn--primary" (click)="openPermissions(u)" title="Manage user permissions">
-                      <i class="bi bi-shield-lock-fill me-1"></i> Perms
-                    </button>
-                  }
-
                   <!-- Delete -->
                   @if (auth.user()?.role === 'SuperAdmin' && perms.hasPermission('Users', 'delete')) {
                     <button class="table-btn table-btn--danger" (click)="confirmDeleteUser(u)" title="Permanently delete user account">
                       <i class="bi bi-trash3 me-1"></i> Delete
+                    </button>
+                  }
+
+                  <!-- Permissions -->
+                  @if (auth.user()?.role === 'SuperAdmin' && u.role === 'Admin') {
+                    <button class="table-btn table-btn--primary" (click)="openPermissions(u)" title="Manage user permissions">
+                      <i class="bi bi-shield-lock-fill me-1"></i> Perms
                     </button>
                   }
                 </div>

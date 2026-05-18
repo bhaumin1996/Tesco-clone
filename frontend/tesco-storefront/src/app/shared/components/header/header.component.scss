@@ -87,29 +87,41 @@
   flex: 1;
   display: flex;
   max-width: 600px;
-  height: 44px;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
+  height: 46px;
+  background: #f1f5f9; // Soft modern slate background
+  border: 2px solid transparent;
+  border-radius: 24px; // Modern pill shape
   overflow: hidden;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    background: #e2e8f0;
+  }
 
   &:focus-within {
+    background: $color-surface;
     border-color: $color-tesco-blue;
-    box-shadow: 0 0 0 3px rgba(0, 93, 170, 0.12);
+    box-shadow: 0 10px 25px -5px rgba(0, 93, 170, 0.1), 0 8px 10px -6px rgba(0, 93, 170, 0.05);
+    transform: translateY(-1px);
   }
 }
 
 .header__search-input {
   flex: 1;
   border: none;
-  font-size: $font-size-md;
+  font-size: 0.95rem;
+  font-weight: 500;
   font-family: $font-family-base;
   outline: none;
-  padding: 0 $space-3;
-  color: $color-ink;
-  background: $color-surface;
+  padding: 0 20px;
+  color: #1e293b;
+  background: transparent;
 
-  &::placeholder { color: $color-muted; }
+  &::placeholder {
+    color: #64748b;
+    font-weight: 450;
+  }
 
   &::-webkit-search-cancel-button { display: none; }
 }
@@ -121,19 +133,33 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 $space-4;
+  padding: 0 22px;
   color: $color-surface;
-  min-width: 52px;
-  transition: background 0.15s ease;
+  min-width: 58px;
+  border-radius: 0 22px 22px 0;
+  transition: all 0.2s ease;
 
-  &:hover { background: $color-tesco-blue-dark; }
+  svg {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background: #004b87;
+    svg {
+      transform: scale(1.15) rotate(5deg);
+    }
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 // Actions row
 .header__actions {
   display: flex;
   align-items: center;
-  gap: $space-4;
+  gap: $space-3;
   margin-left: auto;
   flex-shrink: 0;
 }
@@ -141,33 +167,84 @@
 .header__icon {
   width: 24px;
   height: 24px;
-  color: $color-ink;
+  color: #475569;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .header__action-label {
-  color: $color-ink;
-  font-size: $font-size-xs;
+  color: #1e293b;
+  font-size: 0.8rem;
   font-weight: 700;
   display: none;
+  transition: color 0.25s ease;
 
   @include respond-to(md) { display: block; }
 }
 
-// Account
-.header__account {
+// Global premium design for header action items (Account, Clubcard, Basket)
+.header__account,
+.header__clubcard,
+.header__cart {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   cursor: pointer;
-  padding: $space-1;
-  border-radius: $radius-sm;
+  padding: 8px 12px;
+  border-radius: 12px;
   text-decoration: none;
+  background: transparent;
 
-  &:hover .header__icon { color: $color-tesco-blue; }
-  &:hover .header__action-label { color: $color-tesco-blue; }
-  &:focus { outline: 2px solid $color-tesco-blue; outline-offset: 2px; }
+  // Modern circular backdrop glow on hover
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0, 93, 170, 0.05);
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  // Animate only icon/label children, not the wrapper (transform on wrapper breaks dropdown z-index)
+  .header__icon,
+  .header__clubcard-icon,
+  .header__cart-wrap,
+  .header__action-label {
+    position: relative;
+    z-index: 2;
+    transition: color 0.25s ease, transform 0.25s ease;
+  }
+}
+
+// 1. Account Specific Stylings
+.header__account {
+  &:hover {
+    .header__icon {
+      color: $color-tesco-blue;
+      transform: scale(1.12) translateY(-2px);
+    }
+    .header__action-label {
+      color: $color-tesco-blue;
+      transform: translateY(-2px);
+    }
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 93, 170, 0.15);
+  }
 }
 
 .header__dropdown {
@@ -212,39 +289,52 @@
   margin: $space-1 0;
 }
 
-// Clubcard
+// 2. Clubcard Specific Stylings (Prestigious Clubcard Blue & Gold)
 .header__clubcard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  text-decoration: none;
-  cursor: pointer;
-  padding: $space-1;
-  border-radius: $radius-sm;
+  &::before {
+    background: rgba(243, 178, 35, 0.06);
+  }
 
-  &:hover .header__action-label { color: $color-tesco-blue; }
-  &:hover .header__clubcard-icon { color: $color-clubcard-blue; }
+  &:hover {
+    .header__clubcard-icon {
+      color: #00539f;
+      transform: scale(1.12) rotate(-3deg) translateY(-2px);
+    }
+    .header__action-label {
+      color: #00539f;
+      transform: translateY(-2px);
+      text-shadow: 0 0 1px rgba(0, 83, 159, 0.2);
+    }
+  }
 }
 
 .header__clubcard-icon {
-  color: $color-ink;
+  color: #475569;
   display: flex;
-  transition: color 0.15s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  svg {
+    stroke-width: 2.2;
+    fill: rgba(0, 83, 159, 0.03);
+  }
 }
 
-// Cart
+// 3. Basket Specific Stylings (Active Red Badge & Micro-bounce)
 .header__cart {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  text-decoration: none;
-  padding: $space-1;
-  border-radius: $radius-sm;
+  &::before {
+    background: rgba(230, 28, 48, 0.05);
+  }
 
-  &:hover .header__action-label { color: $color-tesco-blue; }
-  &:hover .header__icon { color: $color-tesco-blue; }
+  &:hover {
+    .header__icon {
+      color: $color-tesco-red;
+      transform: scale(1.12) translateY(-2px);
+    }
+    .header__action-label {
+      color: $color-tesco-red;
+      transform: translateY(-2px);
+    }
+  }
 }
 
 .header__cart-wrap {
@@ -254,20 +344,28 @@
 
 .header__cart-count {
   position: absolute;
-  top: -6px;
-  right: -8px;
+  top: -8px;
+  right: -10px;
   background: $color-tesco-red;
   color: $color-surface;
-  border-radius: 50%;
-  font-size: 0.625rem;
-  font-weight: 700;
-  min-width: 18px;
-  height: 18px;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0 6px;
+  min-width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid $color-surface;
+  box-shadow: 0 4px 6px -1px rgba(230, 28, 48, 0.3), 0 2px 4px -1px rgba(230, 28, 48, 0.15);
   line-height: 1;
+  animation: badgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  @keyframes badgePop {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
 }
 
 // Mobile toggle

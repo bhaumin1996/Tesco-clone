@@ -27,7 +27,9 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                 "proc_Admin_GetBrands",
                 reader => new AdminBrandDto(
                     BrandId: SqlHelper.GetValue<int>(reader, "BrandId"),
-                    Name: SqlHelper.GetValue<string>(reader, "Name")),
+                    Name: SqlHelper.GetValue<string>(reader, "Name"),
+                    Slug: SqlHelper.GetValue<string>(reader, "Slug"),
+                    LogoUrl: SqlHelper.GetNullableString(reader, "LogoUrl")),
                 null,
                 cancellationToken);
         }
@@ -48,7 +50,9 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                 "proc_Admin_GetDepartments",
                 reader => new AdminDepartmentDto(
                     DepartmentId: SqlHelper.GetValue<int>(reader, "DepartmentId"),
-                    Name: SqlHelper.GetValue<string>(reader, "Name")),
+                    Name: SqlHelper.GetValue<string>(reader, "Name"),
+                    Slug: SqlHelper.GetValue<string>(reader, "Slug"),
+                    ImageUrl: SqlHelper.GetNullableString(reader, "ImageUrl")),
                 null,
                 cancellationToken);
         }
@@ -271,7 +275,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         }
     }
 
-    public async Task<int> CreateDepartmentAsync(string name, int adminId, CancellationToken cancellationToken = default)
+    public async Task<int> CreateDepartmentAsync(string name, string slug, string? imageUrl, int adminId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -281,6 +285,8 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                 "proc_Admin_CreateDepartment",
                 [
                     SqlHelper.Input("@Name", name),
+                    SqlHelper.Input("@Slug", slug),
+                    SqlHelper.Input("@IconUrl", imageUrl),
                     SqlHelper.Input("@AdminId", adminId)
                 ],
                 cancellationToken);
@@ -292,7 +298,7 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         }
     }
 
-    public async Task UpdateDepartmentAsync(int departmentId, string name, int adminId, CancellationToken cancellationToken = default)
+    public async Task UpdateDepartmentAsync(int departmentId, string name, string slug, string? imageUrl, int adminId, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -303,6 +309,8 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
                 [
                     SqlHelper.Input("@DepartmentId", departmentId),
                     SqlHelper.Input("@Name", name),
+                    SqlHelper.Input("@Slug", slug),
+                    SqlHelper.Input("@IconUrl", imageUrl),
                     SqlHelper.Input("@AdminId", adminId)
                 ],
                 cancellationToken);
@@ -310,6 +318,95 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error in UpdateDepartmentAsync for departmentId: {DepartmentId}", departmentId);
+            throw;
+        }
+    }
+
+    public async Task SoftDeleteDepartmentAsync(int departmentId, int adminId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            await SqlHelper.ExecuteNonQueryAsync(
+                connection,
+                "proc_Admin_SoftDeleteDepartment",
+                [
+                    SqlHelper.Input("@DepartmentId", departmentId),
+                    SqlHelper.Input("@AdminId", adminId)
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in SoftDeleteDepartmentAsync for departmentId: {DepartmentId}", departmentId);
+            throw;
+        }
+    }
+
+    public async Task<int> CreateBrandAsync(string name, string slug, string? logoUrl, int adminId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            return await SqlHelper.ExecuteScalarAsync(
+                connection,
+                "proc_Admin_CreateBrand",
+                [
+                    SqlHelper.Input("@Name", name),
+                    SqlHelper.Input("@Slug", slug),
+                    SqlHelper.Input("@LogoUrl", logoUrl),
+                    SqlHelper.Input("@AdminId", adminId)
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in CreateBrandAsync for brandName: {BrandName}", name);
+            throw;
+        }
+    }
+
+    public async Task UpdateBrandAsync(int brandId, string name, string slug, string? logoUrl, int adminId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            await SqlHelper.ExecuteNonQueryAsync(
+                connection,
+                "proc_Admin_UpdateBrand",
+                [
+                    SqlHelper.Input("@BrandId", brandId),
+                    SqlHelper.Input("@Name", name),
+                    SqlHelper.Input("@Slug", slug),
+                    SqlHelper.Input("@LogoUrl", logoUrl),
+                    SqlHelper.Input("@AdminId", adminId)
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in UpdateBrandAsync for brandId: {BrandId}", brandId);
+            throw;
+        }
+    }
+
+    public async Task SoftDeleteBrandAsync(int brandId, int adminId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            await SqlHelper.ExecuteNonQueryAsync(
+                connection,
+                "proc_Admin_SoftDeleteBrand",
+                [
+                    SqlHelper.Input("@BrandId", brandId),
+                    SqlHelper.Input("@AdminId", adminId)
+                ],
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in SoftDeleteBrandAsync for brandId: {BrandId}", brandId);
             throw;
         }
     }
@@ -412,4 +509,111 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
             PlacedAndConfirmedCount: SqlHelper.GetValue<int>(reader, "PlacedAndConfirmedCount"),
             PendingOrderCount: SqlHelper.GetValue<int>(reader, "PendingOrderCount"),
             RemainingStock: SqlHelper.GetValue<int>(reader, "RemainingStock"));
+
+    public async Task<AdminGlobalSearchResultDto> GlobalSearchAsync(string searchTerm, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var connection = _connectionFactory.CreateConnection();
+            await connection.OpenAsync(cancellationToken);
+            using var initCmd = new Microsoft.Data.SqlClient.SqlCommand("SET QUOTED_IDENTIFIER ON;", connection);
+            await initCmd.ExecuteNonQueryAsync(cancellationToken);
+
+            using var command = connection.CreateCommand();
+            command.CommandType = System.Data.CommandType.StoredProcedure;
+            command.CommandText = "proc_Admin_GlobalSearch";
+            command.Parameters.Add(SqlHelper.Input("@SearchTerm", searchTerm));
+
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            var result = new AdminGlobalSearchResultDto();
+
+            // 1. Products
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                result.Products.Add(new SearchProductItemDto(
+                    ProductId: SqlHelper.GetValue<int>(reader, "ProductId"),
+                    Name: SqlHelper.GetValue<string>(reader, "Name"),
+                    Slug: SqlHelper.GetValue<string>(reader, "Slug"),
+                    ImageUrl: SqlHelper.GetNullableString(reader, "ImageUrl"),
+                    BasePrice: SqlHelper.GetValue<decimal>(reader, "BasePrice")
+                ));
+            }
+
+            // 2. Categories
+            if (await reader.NextResultAsync(cancellationToken))
+            {
+                while (await reader.ReadAsync(cancellationToken))
+                {
+                    result.Categories.Add(new SearchCategoryItemDto(
+                        CategoryId: SqlHelper.GetValue<int>(reader, "CategoryId"),
+                        Name: SqlHelper.GetValue<string>(reader, "Name"),
+                        Slug: SqlHelper.GetValue<string>(reader, "Slug"),
+                        ImageUrl: SqlHelper.GetNullableString(reader, "ImageUrl")
+                    ));
+                }
+            }
+
+            // 3. Departments
+            if (await reader.NextResultAsync(cancellationToken))
+            {
+                while (await reader.ReadAsync(cancellationToken))
+                {
+                    result.Departments.Add(new SearchDepartmentItemDto(
+                        DepartmentId: SqlHelper.GetValue<int>(reader, "DepartmentId"),
+                        Name: SqlHelper.GetValue<string>(reader, "Name"),
+                        Slug: SqlHelper.GetValue<string>(reader, "Slug"),
+                        ImageUrl: SqlHelper.GetNullableString(reader, "ImageUrl")
+                    ));
+                }
+            }
+
+            // 4. Brands
+            if (await reader.NextResultAsync(cancellationToken))
+            {
+                while (await reader.ReadAsync(cancellationToken))
+                {
+                    result.Brands.Add(new SearchBrandItemDto(
+                        BrandId: SqlHelper.GetValue<int>(reader, "BrandId"),
+                        Name: SqlHelper.GetValue<string>(reader, "Name"),
+                        Slug: SqlHelper.GetValue<string>(reader, "Slug"),
+                        LogoUrl: SqlHelper.GetNullableString(reader, "LogoUrl")
+                    ));
+                }
+            }
+
+            // 5. Orders
+            if (await reader.NextResultAsync(cancellationToken))
+            {
+                while (await reader.ReadAsync(cancellationToken))
+                {
+                    result.Orders.Add(new SearchOrderItemDto(
+                        OrderId: SqlHelper.GetValue<int>(reader, "OrderId"),
+                        OrderNumber: SqlHelper.GetValue<string>(reader, "OrderNumber"),
+                        TotalAmount: SqlHelper.GetValue<decimal>(reader, "TotalAmount")
+                    ));
+                }
+            }
+
+            // 6. Users
+            if (await reader.NextResultAsync(cancellationToken))
+            {
+                while (await reader.ReadAsync(cancellationToken))
+                {
+                    result.Users.Add(new SearchUserItemDto(
+                        UserId: SqlHelper.GetValue<int>(reader, "UserId"),
+                        FirstName: SqlHelper.GetValue<string>(reader, "FirstName"),
+                        LastName: SqlHelper.GetValue<string>(reader, "LastName"),
+                        Email: SqlHelper.GetValue<string>(reader, "Email")
+                    ));
+                }
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in GlobalSearchAsync with query: {SearchTerm}", searchTerm);
+            throw;
+        }
+    }
 }

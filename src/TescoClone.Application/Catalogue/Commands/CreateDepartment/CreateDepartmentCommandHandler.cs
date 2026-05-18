@@ -13,5 +13,5 @@ public sealed class CreateDepartmentCommandHandler : IRequestHandler<CreateDepar
     }
 
     public Task<int> Handle(CreateDepartmentCommand request, CancellationToken cancellationToken) =>
-        _adminCatalogueRepository.CreateDepartmentAsync(request.Name, request.AdminUserId, cancellationToken);
+        _adminCatalogueRepository.CreateDepartmentAsync(request.Name, request.Slug, request.ImageUrl, request.AdminUserId, cancellationToken);
 }

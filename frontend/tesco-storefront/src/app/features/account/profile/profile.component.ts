@@ -8,6 +8,7 @@ import { BreadcrumbComponent } from '../../../shared/components/breadcrumb/bread
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import { AddressService } from '../../../core/services/address.service';
 import { Address } from '../../../core/models/address.model';
+import { extractApiError } from '../../../core/utils/api-error';
 
 @Component({
   selector: 'app-profile',
@@ -364,7 +365,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.loading.set(false);
-        this._notifications.error(err?.error?.message ?? 'Failed to update profile');
+        this._notifications.error(extractApiError(err, 'Failed to update profile'));
       }
     });
   }
@@ -386,7 +387,7 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.loadingPassword.set(false);
-        this._notifications.error(err?.error?.message ?? 'Failed to update password');
+        this._notifications.error(extractApiError(err, 'Failed to update password'));
       }
     });
   }

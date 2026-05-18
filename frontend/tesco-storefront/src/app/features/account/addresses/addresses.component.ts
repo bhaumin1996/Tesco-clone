@@ -6,6 +6,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { BreadcrumbComponent } from '../../../shared/components/breadcrumb/breadcrumb.component';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import { Address } from '../../../core/models/address.model';
+import { extractApiError } from '../../../core/utils/api-error';
 
 @Component({
   selector: 'app-addresses',
@@ -365,9 +366,9 @@ export class AddressesComponent implements OnInit {
         this.showForm.set(false);
         this.load();
       },
-      error: () => {
+      error: (err) => {
         this.loading.set(false);
-        this._notifications.error('Failed to save address');
+        this._notifications.error(extractApiError(err, 'Failed to save address'));
       }
     });
   }
@@ -379,7 +380,7 @@ export class AddressesComponent implements OnInit {
         this._notifications.success('Address deleted');
         this.load();
       },
-      error: () => this._notifications.error('Failed to delete address')
+      error: (err) => this._notifications.error(extractApiError(err, 'Failed to delete address'))
     });
   }
 

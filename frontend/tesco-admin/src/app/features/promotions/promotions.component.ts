@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { extractApiError } from '../../core/utils/api-error';
 
 interface Promotion {
   id: number;
@@ -146,7 +147,7 @@ export class AdminPromotionsComponent implements OnInit {
         });
     req.subscribe({
       next: () => { this.showForm.set(false); this._load(); this._showMessage('Promotion saved.', 'success'); },
-      error: () => this._showMessage('Save failed.', 'error')
+      error: (err) => this._showMessage(extractApiError(err, 'Save failed.'), 'error')
     });
   }
 
@@ -163,7 +164,7 @@ export class AdminPromotionsComponent implements OnInit {
       isActive: activate,
     }).subscribe({
       next: () => { this._load(); this._showMessage(activate ? 'Promotion activated.' : 'Promotion deactivated.', 'success'); },
-      error: () => this._showMessage('Action failed.', 'error')
+      error: (err) => this._showMessage(extractApiError(err, 'Action failed.'), 'error')
     });
   }
 
@@ -171,7 +172,7 @@ export class AdminPromotionsComponent implements OnInit {
     if (!confirm('Permanently delete this promotion?')) return;
     this._http.delete(`${this._base}/${id}`).subscribe({
       next: () => { this._load(); this._showMessage('Promotion deleted.', 'success'); },
-      error: () => this._showMessage('Delete failed.', 'error')
+      error: (err) => this._showMessage(extractApiError(err, 'Delete failed.'), 'error')
     });
   }
 }

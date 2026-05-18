@@ -5,4 +5,6 @@ namespace TescoClone.Application.Catalogue.Commands.UpdateDepartment;
 public sealed record UpdateDepartmentCommand(
     int DepartmentId,
     string Name,
+    string Slug,
+    string? ImageUrl,
     int AdminUserId) : IRequest;

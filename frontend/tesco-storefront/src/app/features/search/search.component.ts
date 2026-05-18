@@ -39,9 +39,14 @@ export class SearchComponent implements OnInit {
     this._route.queryParams.subscribe(params => {
       const brand = params['brand'] ?? '';
       this.brandFilter.set(brand);
-      this.query.set(params['q'] ?? brand);
+      const q = params['q'] ?? brand;
+      this.query.set(q);
       this.currentPage.set(+(params['page'] ?? 1));
-      if (this.query()) this._search();
+      if (q) {
+        this._search();
+      } else {
+        this.result.set(null);
+      }
     });
   }
 

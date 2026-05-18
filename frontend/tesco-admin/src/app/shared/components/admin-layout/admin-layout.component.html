@@ -65,9 +65,9 @@
         <i class="bi bi-list" aria-hidden="true"></i>
       </button>
 
-      <div class="admin-topbar__search" role="search">
+      <div class="admin-topbar__search" role="search" (click)="toggleSearch()" style="cursor: pointer">
         <i class="bi bi-search" aria-hidden="true"></i>
-        <input type="text" placeholder="Search anything..." aria-label="Search" />
+        <input type="text" placeholder="Search anything... ⌘K" aria-label="Search" readonly style="cursor: pointer" />
         <span class="topbar-kbd">⌘K</span>
       </div>
 
@@ -96,3 +96,176 @@
 
   </div>
 </div>
+
+<!-- Premium Command Palette Global Search Modal -->
+@if (showSearch()) {
+  <div class="search-overlay" (click)="closeSearch()">
+    <div class="search-modal" (click)="$event.stopPropagation()">
+      
+      <div class="search-modal__header">
+        <i class="bi bi-search search-modal__icon"></i>
+        <input 
+          #searchInput
+          type="text" 
+          class="search-modal__input" 
+          placeholder="Search products, categories, departments, brands, orders, users..." 
+          [value]="searchQuery()"
+          (input)="onSearchInput($any($event.target).value)"
+          autofocus
+        />
+        <button class="search-modal__close-btn" (click)="closeSearch()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="search-modal__body">
+        @if (searchLoading()) {
+          <div class="search-modal__loading">
+            <span class="spinner-border spinner-border-sm me-2 text-primary" role="status"></span>
+            Searching database...
+          </div>
+        } @else if (searchResults()) {
+          <div class="search-results-container">
+            
+            <!-- Products -->
+            @if (searchResults().products?.length) {
+              <div class="search-group">
+                <div class="search-group__title">Products</div>
+                <div class="search-group__list">
+                  @for (item of searchResults().products; track item.productId) {
+                    <div class="search-item" (click)="navigateAndClose(['/catalogue/products'])">
+                      <div class="search-item__thumb-wrap">
+                        @if (item.imageUrl) {
+                          <img [src]="item.imageUrl | imageUrl" class="search-item__thumb" />
+                        } @else {
+                          <span class="search-item__thumb-empty"><i class="bi bi-bag"></i></span>
+                        }
+                      </div>
+                      <div class="search-item__info">
+                        <span class="search-item__name">{{ item.name }}</span>
+                        <span class="search-item__sub">/{{ item.slug }}</span>
+                      </div>
+                      <span class="search-item__price">{{ item.basePrice | currency:'GBP' }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Categories -->
+            @if (searchResults().categories?.length) {
+              <div class="search-group">
+                <div class="search-group__title">Categories</div>
+                <div class="search-group__list">
+                  @for (item of searchResults().categories; track item.categoryId) {
+                    <div class="search-item" (click)="navigateAndClose(['/catalogue/categories'])">
+                      <i class="bi bi-folder2-open search-item__icon-folder text-warning"></i>
+                      <div class="search-item__info">
+                        <span class="search-item__name">{{ item.name }}</span>
+                        <span class="search-item__sub">/{{ item.slug }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Departments -->
+            @if (searchResults().departments?.length) {
+              <div class="search-group">
+                <div class="search-group__title">Departments</div>
+                <div class="search-group__list">
+                  @for (item of searchResults().departments; track item.departmentId) {
+                    <div class="search-item" (click)="navigateAndClose(['/catalogue/departments'])">
+                      <i class="bi bi-grid-3x3-gap search-item__icon-grid text-primary"></i>
+                      <div class="search-item__info">
+                        <span class="search-item__name">{{ item.name }}</span>
+                        <span class="search-item__sub">/{{ item.slug }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Brands -->
+            @if (searchResults().brands?.length) {
+              <div class="search-group">
+                <div class="search-group__title">Brands</div>
+                <div class="search-group__list">
+                  @for (item of searchResults().brands; track item.brandId) {
+                    <div class="search-item" (click)="navigateAndClose(['/catalogue/brands'])">
+                      <i class="bi bi-patch-check search-item__icon-brand text-success"></i>
+                      <div class="search-item__info">
+                        <span class="search-item__name">{{ item.name }}</span>
+                        <span class="search-item__sub">/{{ item.slug }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Orders -->
+            @if (searchResults().orders?.length) {
+              <div class="search-group">
+                <div class="search-group__title">Orders</div>
+                <div class="search-group__list">
+                  @for (item of searchResults().orders; track item.orderId) {
+                    <div class="search-item" (click)="navigateAndClose(['/orders', item.orderId])">
+                      <i class="bi bi-receipt search-item__icon-order text-danger"></i>
+                      <div class="search-item__info">
+                        <span class="search-item__name">Order #{{ item.orderNumber }}</span>
+                        <span class="search-item__sub">ID: {{ item.orderId }}</span>
+                      </div>
+                      <span class="search-item__total">{{ item.totalAmount | currency:'GBP' }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Users -->
+            @if (searchResults().users?.length) {
+              <div class="search-group">
+                <div class="search-group__title">Users</div>
+                <div class="search-group__list">
+                  @for (item of searchResults().users; track item.userId) {
+                    <div class="search-item" (click)="navigateAndClose(['/users'])">
+                      <i class="bi bi-person-circle search-item__icon-user text-secondary"></i>
+                      <div class="search-item__info">
+                        <span class="search-item__name">{{ item.firstName }} {{ item.lastName }}</span>
+                        <span class="search-item__sub">{{ item.email }}</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            @if (!(searchResults().products?.length || searchResults().categories?.length || searchResults().departments?.length || searchResults().brands?.length || searchResults().orders?.length || searchResults().users?.length)) {
+              <div class="search-modal__empty">
+                <i class="bi bi-emoji-frown search-modal__empty-icon"></i>
+                <span>No results match your search query.</span>
+              </div>
+            }
+
+          </div>
+        } @else {
+          <div class="search-modal__hint">
+            <i class="bi bi-keyboard search-modal__hint-icon"></i>
+            <span>Type to search across products, categories, departments, brands, orders, or users.</span>
+          </div>
+        }
+      </div>
+
+      <div class="search-modal__footer">
+        <div class="search-footer-tip"><kbd>ESC</kbd> Close</div>
+        <div class="search-footer-tip"><kbd>Tab</kbd> Navigate</div>
+        <div class="search-footer-tip"><kbd>↵</kbd> Select</div>
+      </div>
+
+    </div>
+  </div>
+}
+

@@ -6,11 +6,15 @@ using TescoClone.Application.Catalogue.Commands.AdjustInventory;
 using TescoClone.Application.Catalogue.Commands.CreateProductVariant;
 using TescoClone.Application.Catalogue.Commands.CreateCategory;
 using TescoClone.Application.Catalogue.Commands.CreateDepartment;
+using TescoClone.Application.Catalogue.Commands.CreateBrand;
 using TescoClone.Application.Catalogue.Commands.CreateProduct;
 using TescoClone.Application.Catalogue.Commands.DeleteCategory;
 using TescoClone.Application.Catalogue.Commands.DeleteProduct;
+using TescoClone.Application.Catalogue.Commands.DeleteDepartment;
 using TescoClone.Application.Catalogue.Commands.UpdateCategory;
 using TescoClone.Application.Catalogue.Commands.UpdateDepartment;
+using TescoClone.Application.Catalogue.Commands.UpdateBrand;
+using TescoClone.Application.Catalogue.Commands.DeleteBrand;
 using TescoClone.Application.Catalogue.Commands.UpdateProduct;
 using TescoClone.Application.Catalogue.Interfaces;
 using TescoClone.Application.Catalogue.Queries.GetAdminCategories;
@@ -43,7 +47,7 @@ public sealed class AdminCatalogueController : ControllerBase
 
     private static readonly string[] _allowedMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
     private static readonly string[] _allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
-    private static readonly string[] _allowedFolders = ["categories", "products", "banners"];
+    private static readonly string[] _allowedFolders = ["categories", "products", "banners", "brands", "departments"];
     private const long _maxFileSizeBytes = 5 * 1024 * 1024; // 5 MB
 
     [HttpPost("/api/v1/admin/images/upload")]
@@ -54,7 +58,7 @@ public sealed class AdminCatalogueController : ControllerBase
     public async Task<IActionResult> UploadImage(IFormFile file, [FromQuery] string folder = "categories", CancellationToken cancellationToken = default)
     {
         if (!_allowedFolders.Contains(folder))
-            return BadRequest(new { error = "folder must be 'categories' or 'products'." });
+            return BadRequest(new { error = "Invalid folder parameter. Allowed folders: categories, products, banners, brands, departments." });
 
         if (file is null || file.Length == 0)
             return BadRequest(new { error = "No file provided." });
@@ -100,7 +104,7 @@ public sealed class AdminCatalogueController : ControllerBase
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> CreateDepartment([FromBody] CreateDepartmentRequest request, CancellationToken cancellationToken)
     {
-        var id = await _mediator.Send(new CreateDepartmentCommand(request.Name, _currentUser.UserId), cancellationToken);
+        var id = await _mediator.Send(new CreateDepartmentCommand(request.Name, request.Slug, request.ImageUrl, _currentUser.UserId), cancellationToken);
         return StatusCode(StatusCodes.Status201Created, new { id });
     }
 
@@ -111,7 +115,18 @@ public sealed class AdminCatalogueController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateDepartment(int id, [FromBody] UpdateDepartmentRequest request, CancellationToken cancellationToken)
     {
-        await _mediator.Send(new UpdateDepartmentCommand(id, request.Name, _currentUser.UserId), cancellationToken);
+        await _mediator.Send(new UpdateDepartmentCommand(id, request.Name, request.Slug, request.ImageUrl, _currentUser.UserId), cancellationToken);
+        return NoContent();
+    }
+
+    [HttpDelete("/api/v1/admin/departments/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteDepartment(int id, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteDepartmentCommand(id, _currentUser.UserId), cancellationToken);
         return NoContent();
     }
 
@@ -125,6 +140,39 @@ public sealed class AdminCatalogueController : ControllerBase
     {
         var result = await _mediator.Send(new GetAdminBrandsQuery(), cancellationToken);
         return Ok(result);
+    }
+
+    [HttpPost("/api/v1/admin/brands")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    public async Task<IActionResult> CreateBrand([FromBody] CreateBrandRequest request, CancellationToken cancellationToken)
+    {
+        var id = await _mediator.Send(new CreateBrandCommand(request.Name, request.Slug, request.LogoUrl, _currentUser.UserId), cancellationToken);
+        return StatusCode(StatusCodes.Status201Created, new { id });
+    }
+
+    [HttpPut("/api/v1/admin/brands/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateBrand(int id, [FromBody] UpdateBrandRequest request, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new UpdateBrandCommand(id, request.Name, request.Slug, request.LogoUrl, _currentUser.UserId), cancellationToken);
+        return NoContent();
+    }
+
+    [HttpDelete("/api/v1/admin/brands/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteBrand(int id, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(new DeleteBrandCommand(id, _currentUser.UserId), cancellationToken);
+        return NoContent();
     }
 
     // ── Categories ───────────────────────────────────────────────────────────
@@ -287,6 +335,25 @@ public sealed class AdminCatalogueController : ControllerBase
         var variantId = await _mediator.Send(command, cancellationToken);
         return StatusCode(StatusCodes.Status201Created, new { variantId });
     }
+
+    [HttpGet("/api/v1/admin/search")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GlobalSearch(
+        [FromQuery] string? q,
+        [FromServices] IAdminCatalogueRepository repository,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+        {
+            return Ok(new TescoClone.Application.Catalogue.DTOs.AdminGlobalSearchResultDto());
+        }
+
+        var result = await repository.GlobalSearchAsync(q.Trim(), cancellationToken);
+        return Ok(result);
+    }
 }
 
 public sealed record CreateProductRequest(
@@ -306,7 +373,9 @@ public sealed record CreateProductVariantRequest(
     int InitialQuantity,
     int LowStockThreshold);
 
-public sealed record CreateDepartmentRequest(string Name);
-public sealed record UpdateDepartmentRequest(string Name);
+public sealed record CreateDepartmentRequest(string Name, string Slug, string? ImageUrl);
+public sealed record UpdateDepartmentRequest(string Name, string Slug, string? ImageUrl);
+public sealed record CreateBrandRequest(string Name, string Slug, string? LogoUrl);
+public sealed record UpdateBrandRequest(string Name, string Slug, string? LogoUrl);
 public sealed record CreateCategoryRequest(string Name, int DepartmentId, string? ImageUrl);
 public sealed record UpdateCategoryRequest(string Name, int DepartmentId, string? ImageUrl);

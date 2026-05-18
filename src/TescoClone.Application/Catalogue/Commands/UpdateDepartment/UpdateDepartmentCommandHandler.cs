@@ -17,6 +17,8 @@ public sealed class UpdateDepartmentCommandHandler : IRequestHandler<UpdateDepar
         await _adminCatalogueRepository.UpdateDepartmentAsync(
             request.DepartmentId,
             request.Name,
+            request.Slug,
+            request.ImageUrl,
             request.AdminUserId,
             cancellationToken);
     }

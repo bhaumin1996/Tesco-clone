@@ -247,8 +247,8 @@
               <td class="cell--pending" [class.cell--pending-hi]="p.pendingOrderCount > 0">
                 {{ p.pendingOrderCount }}
               </td>
-              <td class="cell--remaining" [class.cell--remaining-low]="p.remainingStock < 10" [class.cell--remaining-neg]="p.remainingStock < 0">
-                {{ p.remainingStock }}
+              <td class="cell--remaining" [class.cell--remaining-low]="p.remainingStock < 10">
+                {{ p.remainingStock < 0 ? 0 : p.remainingStock }}
               </td>
               <td>
                 <span class="status-badge"

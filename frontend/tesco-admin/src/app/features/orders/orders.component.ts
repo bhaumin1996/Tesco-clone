@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { extractApiError } from '../../core/utils/api-error';
 
 interface OrderRow {
   id: number;
@@ -124,7 +125,7 @@ export class AdminOrdersComponent implements OnInit {
         this.message.set('Status updated.');
         setTimeout(() => this.message.set(''), 3000);
       },
-      error: () => this.message.set('Update failed.')
+      error: (err) => this.message.set(extractApiError(err, 'Update failed.'))
     });
   }
 
@@ -132,7 +133,7 @@ export class AdminOrdersComponent implements OnInit {
     if (!confirm('Issue a refund for this order?')) return;
     this._http.post(`${this._base}/${orderId}/refund`, {}).subscribe({
       next: () => { this._load(); this.message.set('Refund issued.'); setTimeout(() => this.message.set(''), 3000); },
-      error: () => this.message.set('Refund failed.')
+      error: (err) => this.message.set(extractApiError(err, 'Refund failed.'))
     });
   }
 

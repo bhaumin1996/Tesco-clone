@@ -10,6 +10,7 @@ import { environment } from '../../../../environments/environment';
 import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 import { PermissionsService } from '../../../core/services/permissions.service';
 import { AdminPaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { extractApiError } from '../../../core/utils/api-error';
 
 interface ProductRow {
   id: number;
@@ -256,10 +257,10 @@ export class AdminProductsComponent implements OnInit {
     fd.append('file', file);
     this._http.post<{ path: string }>(`${environment.apiUrl}/admin/images/upload?folder=products`, fd).subscribe({
       next: res => { this.uploading.set(false); this._doSave(res.path); },
-      error: () => {
+      error: (err) => {
         this.uploading.set(false);
         this.saving.set(false);
-        this._showMessage('Image upload failed.', 'error');
+        this._showMessage(extractApiError(err, 'Image upload failed.'), 'error');
       }
     });
   }
@@ -293,7 +294,7 @@ export class AdminProductsComponent implements OnInit {
         this._showMessage(id ? 'Product updated.' : 'Product created.', 'success');
         this.saving.set(false);
       },
-      error: () => { this._showMessage('Save failed. Please check the fields and try again.', 'error'); this.saving.set(false); }
+      error: (err) => { this._showMessage(extractApiError(err, 'Save failed. Please check the fields and try again.'), 'error'); this.saving.set(false); }
     });
   }
 
@@ -319,7 +320,7 @@ export class AdminProductsComponent implements OnInit {
         this._load();
         this._showMessage('Product deleted.', 'success');
       },
-      error: () => this._showMessage('Delete failed.', 'error')
+      error: (err) => this._showMessage(extractApiError(err, 'Delete failed.'), 'error')
     });
   }
 

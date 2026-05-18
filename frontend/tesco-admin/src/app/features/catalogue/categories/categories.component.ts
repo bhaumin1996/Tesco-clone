@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 import { PermissionsService } from '../../../core/services/permissions.service';
 import { AdminPaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { extractApiError } from '../../../core/utils/api-error';
 
 interface Category {
   categoryId: number;
@@ -197,7 +198,7 @@ export class AdminCategoriesComponent implements OnInit {
         this._showMessage('Category saved successfully.', 'success');
         this.saving.set(false);
       },
-      error: () => { this._showMessage('Save failed.', 'error'); this.saving.set(false); }
+      error: (err) => { this._showMessage(extractApiError(err, 'Save failed.'), 'error'); this.saving.set(false); }
     });
   }
 
@@ -219,7 +220,7 @@ export class AdminCategoriesComponent implements OnInit {
   protected deactivate(id: number): void {
     this._http.patch(`${this._base}/categories/${id}/deactivate`, {}).subscribe({
       next: () => { this._loadAll(); this._showMessage('Category deactivated.', 'success'); },
-      error: () => this._showMessage('Action failed.', 'error')
+      error: (err) => this._showMessage(extractApiError(err, 'Action failed.'), 'error')
     });
   }
 

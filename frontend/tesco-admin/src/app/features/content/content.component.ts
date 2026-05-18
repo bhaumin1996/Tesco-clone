@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ImageUrlPipe } from '../../shared/pipes/image-url.pipe';
 import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { extractApiError } from '../../core/utils/api-error';
 
 interface CmsPage {
   id: number;
@@ -198,8 +199,8 @@ export class AdminContentComponent implements OnInit {
   protected openBannerForm(banner?: Banner): void {
     this.formType.set('banner');
     this.editId.set(banner?.id ?? null);
-    this.existingImageUrl.set(banner?.imageUrl ?? null);
     this._resetFileState();
+    this.existingImageUrl.set(banner?.imageUrl ?? null);
     
     this.bannerForm.reset(banner
       ? { 
@@ -218,7 +219,7 @@ export class AdminContentComponent implements OnInit {
     if (this.pageForm.invalid) { this.pageForm.markAllAsTouched(); return; }
     const body = this.pageForm.getRawValue();
     const req = this.editId() ? this._http.put(`${this._base}/pages/${this.editId()}`, body) : this._http.post(`${this._base}/pages`, body);
-    req.subscribe({ next: () => { this.showForm.set(false); this._load(); this.message.set('Page saved.'); setTimeout(() => this.message.set(''), 3000); }, error: () => this.message.set('Save failed.') });
+    req.subscribe({ next: () => { this.showForm.set(false); this._load(); this.message.set('Page saved.'); setTimeout(() => this.message.set(''), 3000); }, error: (err) => this.message.set(extractApiError(err, 'Save failed.')) });
   }
 
   protected saveBanner(): void {
@@ -239,10 +240,10 @@ export class AdminContentComponent implements OnInit {
     fd.append('file', file);
     this._http.post<{ path: string }>(`${environment.apiUrl}/admin/images/upload?folder=banners`, fd).subscribe({
       next: res => { this.uploading.set(false); this._doSaveBanner(res.path); },
-      error: () => {
+      error: (err) => {
         this.uploading.set(false);
         this.saving.set(false);
-        this.message.set('Image upload failed.');
+        this.message.set(extractApiError(err, 'Image upload failed.'));
         setTimeout(() => this.message.set(''), 3000);
       }
     });
@@ -261,8 +262,8 @@ export class AdminContentComponent implements OnInit {
         setTimeout(() => this.message.set(''), 3000);
         this.saving.set(false);
       },
-      error: () => {
-        this.message.set('Save failed.');
+      error: (err) => {
+        this.message.set(extractApiError(err, 'Save failed.'));
         setTimeout(() => this.message.set(''), 3000);
         this.saving.set(false);
       }
@@ -270,10 +271,10 @@ export class AdminContentComponent implements OnInit {
   }
 
   protected publishPage(id: number): void {
-    this._http.patch(`${this._base}/pages/${id}/publish`, {}).subscribe({ next: () => this._load(), error: () => this.message.set('Action failed.') });
+    this._http.patch(`${this._base}/pages/${id}/publish`, {}).subscribe({ next: () => this._load(), error: (err) => this.message.set(extractApiError(err, 'Action failed.')) });
   }
 
   protected toggleBanner(id: number): void {
-    this._http.patch(`${this._base}/banners/${id}/toggle`, {}).subscribe({ next: () => this._load(), error: () => this.message.set('Action failed.') });
+    this._http.patch(`${this._base}/banners/${id}/toggle`, {}).subscribe({ next: () => this._load(), error: (err) => this.message.set(extractApiError(err, 'Action failed.')) });
   }
 }

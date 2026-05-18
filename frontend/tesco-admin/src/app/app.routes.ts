@@ -29,6 +29,14 @@ export const routes: Routes = [
         loadComponent: () => import('./features/catalogue/categories/categories.component').then(m => m.AdminCategoriesComponent)
       },
       {
+        path: 'catalogue/departments',
+        loadComponent: () => import('./features/catalogue/departments/departments.component').then(m => m.AdminDepartmentsComponent)
+      },
+      {
+        path: 'catalogue/brands',
+        loadComponent: () => import('./features/catalogue/brands/brands.component').then(m => m.AdminBrandsComponent)
+      },
+      {
         path: 'catalogue/inventory',
         loadComponent: () => import('./features/catalogue/inventory/inventory.component').then(m => m.AdminInventoryComponent)
       },

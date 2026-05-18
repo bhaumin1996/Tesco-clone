@@ -9,6 +9,7 @@ import { debounceTime, distinctUntilChanged, Subject, switchMap, of } from 'rxjs
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../../environments/environment';
 import { AdminPaginationComponent } from '../../../shared/components/pagination/pagination.component';
+import { extractApiError } from '../../../core/utils/api-error';
 
 interface InventoryItem {
   productVariantId: number;
@@ -185,7 +186,7 @@ export class AdminInventoryComponent implements OnInit {
         this._load();
         this._showMsg(`Added ${quantity} units to ${target.productName}.`, 'success');
       },
-      error: () => this._showMsg('Stock addition failed.', 'error')
+      error: (err) => this._showMsg(extractApiError(err, 'Stock addition failed.'), 'error')
     });
   }
 
@@ -208,7 +209,7 @@ export class AdminInventoryComponent implements OnInit {
         this._load();
         this._showMsg('Inventory adjusted successfully.', 'success');
       },
-      error: () => this._showMsg('Adjustment failed.', 'error')
+      error: (err) => this._showMsg(extractApiError(err, 'Adjustment failed.'), 'error')
     });
   }
 
@@ -348,7 +349,7 @@ export class AdminInventoryComponent implements OnInit {
         );
       },
       error: (err) => {
-        const msg = err?.error?.error?.message ?? 'Failed to create inventory record.';
+        const msg = extractApiError(err, 'Failed to create inventory record.');
         this._showMsg(msg, 'error');
       }
     });

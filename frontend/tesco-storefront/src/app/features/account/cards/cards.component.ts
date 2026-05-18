@@ -5,6 +5,7 @@ import { PaymentService, UserCard } from '../../../core/services/payment.service
 import { NotificationService } from '../../../core/services/notification.service';
 import { BreadcrumbComponent } from '../../../shared/components/breadcrumb/breadcrumb.component';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
+import { extractApiError } from '../../../core/utils/api-error';
 
 @Component({
   selector: 'app-cards',
@@ -155,8 +156,8 @@ export class CardsComponent implements OnInit {
         this.cards.set(cards);
         this.loading.set(false);
       },
-      error: () => {
-        this._notifications.error('Failed to load cards.');
+      error: (err) => {
+        this._notifications.error(extractApiError(err, 'Failed to load cards.'));
         this.loading.set(false);
       }
     });
@@ -172,8 +173,8 @@ export class CardsComponent implements OnInit {
         this._notifications.success('Card removed successfully.');
         this.deletingId.set(null);
       },
-      error: () => {
-        this._notifications.error('Failed to remove card.');
+      error: (err) => {
+        this._notifications.error(extractApiError(err, 'Failed to remove card.'));
         this.deletingId.set(null);
       }
     });

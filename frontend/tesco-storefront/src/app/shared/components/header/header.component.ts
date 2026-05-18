@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, signal, OnInit } from '@angular/core';
+import { RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,11 +14,33 @@ import { CartService } from '../../../core/services/cart.service';
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   private readonly _router = inject(Router);
   private readonly _elementRef = inject(ElementRef);
   protected readonly auth = inject(AuthService);
   protected readonly cart = inject(CartService);
+
+  ngOnInit(): void {
+    // Traverse down the router state to get the active route's 'q' query param on navigation
+    this._router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        let route = this._router.routerState.root;
+        while (route.firstChild) {
+          route = route.firstChild;
+        }
+        const q = route.snapshot.queryParams['q'] || '';
+        this.searchQuery.set(q);
+      }
+    });
+
+    // Run initial sync on load
+    let route = this._router.routerState.root;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+    const q = route.snapshot.queryParams['q'] || '';
+    this.searchQuery.set(q);
+  }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
@@ -37,7 +59,11 @@ export class HeaderComponent {
 
   protected search(): void {
     const q = this.searchQuery().trim();
-    if (q) this._router.navigate(['/search'], { queryParams: { q } });
+    if (q) {
+      this._router.navigate(['/search'], { queryParams: { q } });
+    } else {
+      this._router.navigate(['/departments']);
+    }
   }
 
   protected toggleMobileMenu(event: MouseEvent): void {
@@ -47,11 +73,13 @@ export class HeaderComponent {
 
   protected toggleAccountMenu(event: MouseEvent): void {
     event.stopPropagation();
+    this.moreMenuOpen.set(false);
     this.accountMenuOpen.update(v => !v);
   }
 
   protected toggleMoreMenu(event: MouseEvent): void {
     event.stopPropagation();
+    this.accountMenuOpen.set(false);
     this.moreMenuOpen.update(v => !v);
   }
 

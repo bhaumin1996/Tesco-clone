@@ -8,6 +8,7 @@ import { QuantityStepperComponent } from '../../shared/components/quantity-stepp
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { CartItem } from '../../core/models/cart.model';
 import { ImageUrlPipe } from '../../shared/pipes/image-url.pipe';
+import { extractApiError } from '../../core/utils/api-error';
 
 @Component({
   selector: 'app-cart',
@@ -34,14 +35,14 @@ export class CartComponent implements OnInit {
       this.removeItem(item.productId);
     } else {
       this.cartService.updateItem({ itemId: item.productId, quantity: qty }).subscribe({
-        error: () => this._notifications.error('Could not update item quantity')
+        error: (err) => this._notifications.error(extractApiError(err, 'Could not update item quantity'))
       });
     }
   }
 
   protected removeItem(productId: number): void {
     this.cartService.removeItem(productId).subscribe({
-      error: () => this._notifications.error('Could not remove item from basket')
+      error: (err) => this._notifications.error(extractApiError(err, 'Could not remove item from basket'))
     });
   }
 }

@@ -1,0 +1,160 @@
+<div class="admin-page-header">
+  <div>
+    <h1 class="admin-page-header__title">Departments</h1>
+    <p class="admin-page-header__subtitle">Manage top-level catalog departments.</p>
+  </div>
+  @if (perms.hasPermission('Categories', 'add')) {
+    <button class="button button--primary" (click)="openCreate()">
+      <i class="bi bi-plus-lg"></i> New Department
+    </button>
+  }
+</div>
+
+@if (message()) {
+  <div class="admin-alert" [class.admin-alert--success]="messageType() === 'success'" [class.admin-alert--error]="messageType() === 'error'">
+    <i class="bi" [class.bi-check-circle]="messageType() === 'success'" [class.bi-exclamation-circle]="messageType() === 'error'"></i>
+    {{ message() }}
+  </div>
+}
+
+@if (showForm()) {
+  <div class="admin-card mb-4">
+    <div class="admin-card__header">
+      <span>
+        <i class="bi me-2" [class.bi-pencil]="editId()" [class.bi-plus-circle]="!editId()"></i>
+        {{ editId() ? 'Edit Department' : 'New Department' }}
+      </span>
+    </div>
+    <div class="admin-card__body">
+      <form [formGroup]="form" (ngSubmit)="save()">
+
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">Name <span class="text-danger">*</span></label>
+              <input class="form-control" formControlName="name" placeholder="e.g. Fresh Food" />
+              @if (form.get('name')!.invalid && form.get('name')!.touched) {
+                <span class="form-error">Name is required.</span>
+              }
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label">URL Slug <span class="text-danger">*</span></label>
+              <input class="form-control" formControlName="slug" placeholder="e.g. fresh-food" />
+              @if (form.get('slug')!.invalid && form.get('slug')!.touched) {
+                <span class="form-error">Slug must contain only lowercase letters, numbers, and hyphens.</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mt-3">
+          <label class="form-label">Image <span class="text-muted fw-normal">(optional · JPEG, PNG, WebP, GIF · max 5 MB)</span></label>
+
+          @if (previewUrl() || existingImageUrl()) {
+            <div class="img-upload-preview">
+              <img
+                [src]="previewUrl() ?? (existingImageUrl() | imageUrl)"
+                alt="Preview"
+                class="img-upload-preview__img"
+              />
+              <button type="button" class="img-upload-preview__remove" (click)="removeImage()" title="Remove image">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
+            <label class="img-upload-replace" for="departmentImage">
+              <i class="bi bi-arrow-repeat me-1"></i>Replace image
+            </label>
+          } @else {
+            <label class="img-upload-zone" for="departmentImage">
+              <i class="bi bi-cloud-upload img-upload-zone__icon"></i>
+              <span class="img-upload-zone__text">Click to upload an image</span>
+              <span class="img-upload-zone__hint">JPEG · PNG · WebP · GIF &nbsp;|&nbsp; max 5 MB</span>
+            </label>
+          }
+
+          <input
+            id="departmentImage"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            class="visually-hidden"
+            (change)="onFileSelect($event)"
+          />
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="button button--primary" [disabled]="saving()">
+            <i class="bi" [class.bi-floppy]="!saving()" [class.bi-hourglass-split]="saving()"></i>
+            {{ uploading() ? 'Uploading…' : saving() ? 'Saving…' : 'Save Department' }}
+          </button>
+          <button type="button" class="button button--secondary" (click)="showForm.set(false)" [disabled]="saving()">Cancel</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+}
+
+<div class="admin-card">
+  <div class="admin-search-bar">
+    <i class="bi bi-search admin-search-bar__icon"></i>
+    <input class="admin-search-bar__input" type="search" placeholder="Search departments by name or slug…" [value]="searchQuery()" (input)="onSearch($any($event.target).value)" />
+  </div>
+
+  @if (loading()) {
+    <p class="admin-loading">Loading departments…</p>
+  } @else {
+    <div class="admin-table-wrap">
+      <table class="admin-table table table-hover align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="col-seq">#</th>
+            <th>Image</th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'name'" (click)="sort('name')">Name <i class="bi sort-icon" [ngClass]="sortIcon('name')"></i></th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'slug'" (click)="sort('slug')">URL Slug <i class="bi sort-icon" [ngClass]="sortIcon('slug')"></i></th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (dept of pagedDepartments(); track dept.departmentId; let i = $index) {
+            <tr>
+              <td class="col-seq text-muted">{{ rowIndex(i) }}</td>
+              <td class="cat-thumb-cell">
+                @if (dept.imageUrl) {
+                  <img [src]="dept.imageUrl | imageUrl" [alt]="dept.name" class="cat-thumb" />
+                } @else {
+                  <span class="cat-thumb cat-thumb--empty">No image</span>
+                }
+              </td>
+              <td><span class="fw-semibold">{{ dept.name }}</span></td>
+              <td><code class="text-muted" style="font-size:0.8125rem">/{{ dept.slug }}</code></td>
+              <td>
+                <div class="actions-cell">
+                  @if (perms.hasPermission('Categories', 'edit')) {
+                    <button class="table-btn" (click)="openEdit(dept)">
+                      <i class="bi bi-pencil me-1"></i>Edit
+                    </button>
+                  }
+                  @if (perms.hasPermission('Categories', 'delete')) {
+                    <button class="table-btn table-btn--danger" (click)="deleteDepartment(dept.departmentId)">
+                      <i class="bi bi-trash me-1"></i>Delete
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="admin-empty">No departments found.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <app-admin-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      (pageChange)="goToPage($event)">
+    </app-admin-pagination>
+  }
+</div>

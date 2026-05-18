@@ -36,6 +36,7 @@
           placeholder="Search products, brands and more…"
           [value]="searchQuery()"
           (input)="searchQuery.set($any($event.target).value)"
+          (search)="searchQuery.set($any($event.target).value); search()"
           aria-label="Search products, brands and more"
           autocomplete="off"
         />
@@ -146,7 +147,7 @@
               @for (dept of moreDepts; track dept.slug) {
                 <a [routerLink]="['/departments', dept.slug]" class="header__more-item" (click)="moreMenuOpen.set(false)">{{ dept.name }}</a>
               }
-              <a routerLink="/recipes" class="header__more-item" (click)="moreMenuOpen.set(false)">Recipes</a>
+              <a href="https://realfood.tesco.com/" target="_blank" rel="noopener noreferrer" class="header__more-item" (click)="moreMenuOpen.set(false)">Recipes</a>
             </div>
           }
         </li>

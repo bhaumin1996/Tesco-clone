@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AdminAuthService } from '../../core/services/admin-auth.service';
 import { PermissionsService, AdminPermission } from '../../core/services/permissions.service';
 import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
+import { extractApiError } from '../../core/utils/api-error';
 
 interface UserRow {
   userId: number;
@@ -160,7 +161,7 @@ export class AdminUsersComponent implements OnInit {
         this.message.set(`User ${user.isLocked ? 'unlocked' : 'locked'}.`);
         setTimeout(() => this.message.set(''), 3000);
       },
-      error: () => this.message.set('Action failed.')
+      error: (err) => this.message.set(extractApiError(err, 'Action failed.'))
     });
   }
 
@@ -171,7 +172,7 @@ export class AdminUsersComponent implements OnInit {
         this.message.set(`User "${user.firstName} ${user.lastName}" has been deactivated.`);
         setTimeout(() => this.message.set(''), 3500);
       },
-      error: () => this.message.set('Deactivation failed.')
+      error: (err) => this.message.set(extractApiError(err, 'Deactivation failed.'))
     });
   }
 
@@ -182,7 +183,7 @@ export class AdminUsersComponent implements OnInit {
         this.message.set(`User "${user.firstName} ${user.lastName}" has been activated.`);
         setTimeout(() => this.message.set(''), 3500);
       },
-      error: () => this.message.set('Activation failed.')
+      error: (err) => this.message.set(extractApiError(err, 'Activation failed.'))
     });
   }
 
@@ -195,8 +196,7 @@ export class AdminUsersComponent implements OnInit {
           setTimeout(() => this.message.set(''), 4000);
         },
         error: (err) => {
-          const errorMsg = err.error?.message || 'Delete operation failed.';
-          this.message.set(errorMsg);
+          this.message.set(extractApiError(err, 'Delete operation failed.'));
           setTimeout(() => this.message.set(''), 4000);
         }
       });
@@ -213,7 +213,7 @@ export class AdminUsersComponent implements OnInit {
         this.message.set('Role updated.');
         setTimeout(() => this.message.set(''), 3000);
       },
-      error: () => this.message.set('Role update failed.')
+      error: (err) => this.message.set(extractApiError(err, 'Role update failed.'))
     });
   }
 
@@ -247,9 +247,9 @@ export class AdminUsersComponent implements OnInit {
         this.showPermissionsForm.set(true);
         this.loading.set(false);
       },
-      error: () => {
+      error: (err) => {
         this.loading.set(false);
-        this.message.set('Failed to load user permissions.');
+        this.message.set(extractApiError(err, 'Failed to load user permissions.'));
         setTimeout(() => this.message.set(''), 3000);
       }
     });
@@ -279,9 +279,9 @@ export class AdminUsersComponent implements OnInit {
         }
         setTimeout(() => this.message.set(''), 3500);
       },
-      error: () => {
+      error: (err) => {
         this.permissionsSaving.set(false);
-        this.message.set('Failed to save permissions.');
+        this.message.set(extractApiError(err, 'Failed to save permissions.'));
         setTimeout(() => this.message.set(''), 3000);
       }
     });
@@ -355,8 +355,7 @@ export class AdminUsersComponent implements OnInit {
       },
       error: (err) => {
         this.savingAdmin.set(false);
-        const errorMsg = err.error?.message || 'Failed to create admin user.';
-        this.message.set(errorMsg);
+        this.message.set(extractApiError(err, 'Failed to create admin user.'));
         setTimeout(() => this.message.set(''), 4000);
       }
     });
