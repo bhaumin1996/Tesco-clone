@@ -117,9 +117,9 @@
         <p class="login-card__subtitle">Enter the 6-digit code sent to your device</p>
       </div>
 
-      @if (isDev && devCode()) {
+      @if (devCode()) {
         <div class="login-dev-hint" role="note">
-          <strong>Dev mode — your code:</strong> {{ devCode() }}
+          <strong>Demo mode — your code:</strong> {{ devCode() }}
         </div>
       }
 
