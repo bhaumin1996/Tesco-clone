@@ -129,12 +129,63 @@
         <button class="pdp-add-btn" [disabled]="!p.isInStock || adding()" (click)="addToCart()">
           @if (adding()) { Adding... } @else { Add to basket }
         </button>
+        <button
+          class="pdp-fav-btn"
+          [class.pdp-fav-btn--active]="isFavourited()"
+          [disabled]="togglingFavourite()"
+          (click)="toggleFavourite()"
+          [attr.aria-label]="isFavourited() ? 'Remove from favourites' : 'Save to favourites'">
+          @if (togglingFavourite()) {
+          <svg class="pdp-fav-btn__spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M21 12a9 9 0 1 1-9-9"/>
+          </svg>
+          } @else {
+          <svg class="pdp-fav-btn__heart" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78Z"/>
+          </svg>
+          <span class="pdp-fav-btn__label">{{ isFavourited() ? 'Saved' : 'Save' }}</span>
+          }
+        </button>
       </div>
 
       <!-- Country of origin -->
       @if (p.countryOfOrigin) {
       <p class="pdp-meta">Country of origin: <strong>{{ p.countryOfOrigin }}</strong></p>
       }
+
+      <!-- ── Rate this product (visible without needing to open Reviews tab) ── -->
+      @if (ratingStatus()?.canRate && !ratingStatus()?.hasRated) {
+      <div class="pdp-rate-inline">
+        <p class="pdp-rate-inline__label">You've purchased this — rate it:</p>
+        <div class="pdp-rate-stars" role="group" aria-label="Select a star rating">
+          @for (star of [1,2,3,4,5]; track star) {
+          <button type="button" class="pdp-rate-star"
+                  [class.pdp-rate-star--filled]="star <= pendingRating()"
+                  [attr.aria-label]="star + ' star' + (star > 1 ? 's' : '')"
+                  (click)="setRating(star)">★</button>
+          }
+        </div>
+        @if (pendingRating() > 0) {
+        <button class="pdp-rate-submit button button--primary"
+                [disabled]="submittingRating()"
+                (click)="submitRating()">
+          {{ submittingRating() ? 'Submitting…' : 'Submit rating' }}
+        </button>
+        }
+      </div>
+      }
+      @if (ratingStatus()?.hasRated) {
+      <div class="pdp-rate-inline pdp-rate-inline--done">
+        <p class="pdp-rate-inline__label">Your rating:</p>
+        <div class="pdp-rate-stars">
+          @for (star of [1,2,3,4,5]; track star) {
+          <span class="pdp-rate-star pdp-rate-star--static"
+                [class.pdp-rate-star--filled]="star <= (ratingStatus()!.existingRating ?? 0)">★</span>
+          }
+        </div>
+      </div>
+      }
+
     </div>
   </div>
 
@@ -197,9 +248,9 @@
       </table>
       }
       @if (selectedTab() === 'reviews') {
-      @if (p.reviewCount === 0) {
-      <p>No reviews yet. Be the first to review this product.</p>
-      } @else {
+
+      <!-- ── Overall rating summary ── -->
+      @if (p.reviewCount > 0) {
       <div class="pdp-reviews-summary">
         <div class="pdp-reviews-rating-block">
           <span class="pdp-reviews-score">{{ p.averageRating | number:'1.1-1' }}</span>
@@ -209,11 +260,48 @@
               <span class="star-rating__filled" aria-hidden="true"
                 [style.width.%]="(p.averageRating / 5) * 100">★★★★★</span>
             </div>
-            <span class="pdp-reviews-count">{{ p.reviewCount }} reviews</span>
+            <span class="pdp-reviews-count">{{ p.reviewCount }} {{ p.reviewCount === 1 ? 'review' : 'reviews' }}</span>
           </div>
         </div>
       </div>
+      } @else {
+      <p class="pdp-reviews-empty">No reviews yet. Be the first to review this product.</p>
       }
+
+      <!-- ── User rating form ── -->
+      @if (ratingStatus()) {
+        @let status = ratingStatus()!;
+        @if (status.hasRated) {
+        <div class="pdp-rate-box pdp-rate-box--done">
+          <p class="pdp-rate-box__title">Your rating</p>
+          <div class="pdp-rate-stars">
+            @for (star of [1,2,3,4,5]; track star) {
+            <span class="pdp-rate-star pdp-rate-star--static"
+                  [class.pdp-rate-star--filled]="star <= (status.existingRating ?? 0)">★</span>
+            }
+          </div>
+          <p class="pdp-rate-box__note">You have already rated this product. Ratings cannot be changed.</p>
+        </div>
+        } @else if (status.canRate) {
+        <div class="pdp-rate-box">
+          <p class="pdp-rate-box__title">Rate this product</p>
+          <div class="pdp-rate-stars" role="group" aria-label="Select a star rating">
+            @for (star of [1,2,3,4,5]; track star) {
+            <button type="button" class="pdp-rate-star"
+                    [class.pdp-rate-star--filled]="star <= pendingRating()"
+                    [attr.aria-label]="star + ' star' + (star > 1 ? 's' : '')"
+                    (click)="setRating(star)">★</button>
+            }
+          </div>
+          <button class="pdp-rate-submit button button--primary"
+                  [disabled]="pendingRating() === 0 || submittingRating()"
+                  (click)="submitRating()">
+            {{ submittingRating() ? 'Submitting…' : 'Submit rating' }}
+          </button>
+        </div>
+        }
+      }
+
       }
     </div>
   </div>

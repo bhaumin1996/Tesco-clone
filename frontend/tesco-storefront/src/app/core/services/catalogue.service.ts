@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Department, Category, Brand, ProductDetail, ProductVariant, PagedResult, ProductSummary, SearchRequest, Banner } from '../models/catalogue.model';
+import { Department, Category, Brand, ProductDetail, ProductVariant, PagedResult, ProductSummary, SearchRequest, Banner, UserRatingStatus } from '../models/catalogue.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -57,6 +57,14 @@ export class CatalogueService {
 
   getVariants(productId: number) {
     return this._http.get<ProductVariant[]>(`${this.baseUrl}/products/${productId}/variants`);
+  }
+
+  getUserRatingStatus(productId: number) {
+    return this._http.get<UserRatingStatus>(`${this.baseUrl}/products/${productId}/ratings/my`);
+  }
+
+  submitRating(productId: number, rating: number) {
+    return this._http.post(`${this.baseUrl}/products/${productId}/ratings`, { rating });
   }
 
   search(req: SearchRequest) {

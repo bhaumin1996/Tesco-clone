@@ -331,6 +331,71 @@
   }
 }
 
+// ── Favourite button ───────────────────────────────────────────────────────────
+.pdp-fav-btn {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  background: $color-surface;
+  border: 2px solid $color-border;
+  border-radius: 999px;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  font-weight: 700;
+  color: #6b7280;
+  padding: 0.6rem 1.25rem;
+  min-height: 48px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    border-color: #ee1c25;
+    color: #ee1c25;
+    transform: scale(1.03);
+
+    .pdp-fav-btn__heart {
+      stroke: #ee1c25;
+    }
+  }
+
+  &--active {
+    border-color: #ee1c25;
+    color: #ee1c25;
+    background: #fde8e8;
+
+    .pdp-fav-btn__heart {
+      fill: #ee1c25;
+      stroke: #ee1c25;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.pdp-fav-btn__heart {
+  fill: none;
+  stroke: #6b7280;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+  flex-shrink: 0;
+}
+
+.pdp-fav-btn__label {
+  font-size: $font-size-sm;
+}
+
+@keyframes pdp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.pdp-fav-btn__spin {
+  animation: pdp-spin 0.8s linear infinite;
+}
+
 // ── Meta ───────────────────────────────────────────────────────────────────────
 .pdp-meta {
   font-size: $font-size-sm;
@@ -427,4 +492,100 @@
 .pdp-reviews-count {
   font-size: $font-size-sm;
   color: $color-muted;
+}
+
+.pdp-reviews-empty {
+  color: $color-muted;
+  font-size: $font-size-sm;
+  margin: 0;
+}
+
+// ── User rating form ───────────────────────────────────────────────────────────
+.pdp-rate-box {
+  margin-top: $space-5;
+  padding: $space-4 $space-5;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  background: $color-surface-alt;
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  max-width: 400px;
+
+  &--done {
+    border-color: $color-tesco-blue;
+    background: lighten(#005cab, 52%);
+  }
+}
+
+.pdp-rate-box__title {
+  font-weight: 700;
+  font-size: $font-size-md;
+  color: $color-ink;
+  margin: 0;
+}
+
+.pdp-rate-box__note {
+  font-size: $font-size-sm;
+  color: $color-muted;
+  margin: 0;
+}
+
+.pdp-rate-stars {
+  display: flex;
+  gap: $space-1;
+}
+
+.pdp-rate-star {
+  font-size: 2rem;
+  line-height: 1;
+  color: $color-border;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.1s ease, transform 0.1s ease;
+
+  &--filled {
+    color: #f5a623;
+  }
+
+  &--static {
+    cursor: default;
+  }
+
+  &:not(.pdp-rate-star--static):hover {
+    transform: scale(1.15);
+    color: #f5a623;
+  }
+}
+
+.pdp-rate-submit {
+  align-self: flex-start;
+}
+
+// ── Inline rating prompt (product info panel) ─────────────────────────────────
+.pdp-rate-inline {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  flex-wrap: wrap;
+  padding: $space-3 $space-4;
+  background: $color-surface-alt;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  margin-top: $space-4;
+
+  &--done {
+    border-color: $color-tesco-blue;
+    background: rgba(0, 93, 170, 0.05);
+  }
+}
+
+.pdp-rate-inline__label {
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $color-ink;
+  margin: 0;
+  white-space: nowrap;
 }

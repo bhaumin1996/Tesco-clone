@@ -31,6 +31,8 @@ interface ProductRow {
   placedAndConfirmedCount: number;
   pendingOrderCount: number;
   remainingStock: number;
+  averageRating: number;
+  reviewCount: number;
 }
 
 interface PagedResult<T> {

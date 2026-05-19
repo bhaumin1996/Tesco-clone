@@ -338,28 +338,32 @@
 }
 
 .header__cart-wrap {
-  position: relative;
   display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header__cart-count {
+  // Positioned relative to .header__cart which is position: relative
   position: absolute;
-  top: -8px;
-  right: -10px;
+  top: 4px;
+  right: 4px;
   background: $color-tesco-red;
   color: $color-surface;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 0.65rem;
   font-weight: 800;
-  padding: 0 6px;
-  min-width: 20px;
-  height: 20px;
+  padding: 0 5px;
+  min-width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid $color-surface;
-  box-shadow: 0 4px 6px -1px rgba(230, 28, 48, 0.3), 0 2px 4px -1px rgba(230, 28, 48, 0.15);
+  box-shadow: 0 2px 6px rgba(230, 28, 48, 0.4);
   line-height: 1;
+  z-index: 3;
+  pointer-events: none;
   animation: badgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   @keyframes badgePop {

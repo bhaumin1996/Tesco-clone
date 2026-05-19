@@ -509,7 +509,9 @@ public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
             ModifiedOn: SqlHelper.GetNullableValue<DateTime>(reader, "ModifiedOn"),
             PlacedAndConfirmedCount: SqlHelper.GetValue<int>(reader, "PlacedAndConfirmedCount"),
             PendingOrderCount: SqlHelper.GetValue<int>(reader, "PendingOrderCount"),
-            RemainingStock: SqlHelper.GetValue<int>(reader, "RemainingStock"));
+            RemainingStock: SqlHelper.GetValue<int>(reader, "RemainingStock"),
+            AverageRating: SqlHelper.GetValue<decimal>(reader, "AverageRating"),
+            ReviewCount: SqlHelper.GetValue<int>(reader, "ReviewCount"));
 
     public async Task<AdminGlobalSearchResultDto> GlobalSearchAsync(string searchTerm, CancellationToken cancellationToken = default)
     {

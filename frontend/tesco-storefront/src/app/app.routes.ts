@@ -98,6 +98,10 @@ export const routes: Routes = [
       {
         path: 'cards',
         loadComponent: () => import('./features/account/cards/cards.component').then(m => m.CardsComponent)
+      },
+      {
+        path: 'favourites',
+        loadComponent: () => import('./features/account/favourites/favourites.component').then(m => m.FavouritesComponent)
       }
     ]
   },

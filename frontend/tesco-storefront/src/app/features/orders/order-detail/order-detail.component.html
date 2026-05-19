@@ -67,6 +67,42 @@
                   <div class="od-item__info">
                     <p class="od-item__name">{{ item.productName }}</p>
                     <p class="od-item__qty">Qty: {{ item.quantity }} × £{{ item.price | number:'1.2-2' }}</p>
+
+                    <!-- ── Inline rating (any non-cancelled order) ── -->
+                    @if (o.status !== 'Cancelled') {
+                      @let rs = ratingStatuses()[item.productId];
+                      @if (rs) {
+                        @if (rs.hasRated) {
+                          <div class="od-item-rating od-item-rating--done">
+                            <div class="od-item-rating__stars">
+                              @for (star of [1,2,3,4,5]; track star) {
+                                <span class="od-star" [class.od-star--filled]="star <= (rs.existingRating ?? 0)">★</span>
+                              }
+                            </div>
+                            <span class="od-item-rating__label">Your rating</span>
+                          </div>
+                        } @else if (rs.canRate) {
+                          <div class="od-item-rating">
+                            <div class="od-item-rating__stars"
+                                 role="group"
+                                 [attr.aria-label]="'Rate ' + item.productName"
+                                 [class.od-item-rating__stars--saving]="submittingFor() === item.productId">
+                              @for (star of [1,2,3,4,5]; track star) {
+                                <button type="button" class="od-star od-star--btn"
+                                        [class.od-star--filled]="star <= (pendingRatings()[item.productId] ?? 0)"
+                                        [attr.aria-label]="star + ' star'"
+                                        [disabled]="submittingFor() === item.productId"
+                                        (click)="setItemRating(item.productId, star)">★</button>
+                              }
+                            </div>
+                            @if (submittingFor() === item.productId) {
+                              <span class="od-item-rating__saving">Saving…</span>
+                            }
+                          </div>
+                        }
+                      }
+                    }
+
                   </div>
                   <span class="od-item__total">£{{ item.lineTotal | number:'1.2-2' }}</span>
                 </div>

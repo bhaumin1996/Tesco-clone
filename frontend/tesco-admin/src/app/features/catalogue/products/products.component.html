@@ -208,11 +208,8 @@
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'categoryName'" (click)="sort('categoryName')">Category <i class="bi sort-icon" [ngClass]="sortIcon('categoryName')"></i></th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'brandName'" (click)="sort('brandName')">Brand <i class="bi sort-icon" [ngClass]="sortIcon('brandName')"></i></th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'basePrice'" (click)="sort('basePrice')">Price <i class="bi sort-icon" [ngClass]="sortIcon('basePrice')"></i></th>
-            <th>Clubcard</th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'stockQuantity'" (click)="sort('stockQuantity')">Stock <i class="bi sort-icon" [ngClass]="sortIcon('stockQuantity')"></i></th>
-            <th>Placed &amp; Confirmed</th>
-            <th>Pending</th>
-            <th>Remaining Stock</th>
+            <th class="th-sort" [class.th-sort--active]="sortBy() === 'averageRating'" (click)="sort('averageRating')">Rating <i class="bi sort-icon" [ngClass]="sortIcon('averageRating')"></i></th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'isAvailable'" (click)="sort('isAvailable')">Status <i class="bi sort-icon" [ngClass]="sortIcon('isAvailable')"></i></th>
             <th class="th-sort" [class.th-sort--active]="sortBy() === 'createdOn'" (click)="sort('createdOn')">Date Created <i class="bi sort-icon" [ngClass]="sortIcon('createdOn')"></i></th>
             <th class="text-center">Actions</th>
@@ -234,21 +231,22 @@
               </td>
               <td>{{ p.categoryName }}</td>
               <td>{{ p.brandName ?? '—' }}</td>
-              <td class="fw-semibold">£{{ p.basePrice | number:'1.2-2' }}</td>
               <td>
+                <div class="fw-semibold">£{{ p.basePrice | number:'1.2-2' }}</div>
                 @if (p.clubcardPrice) {
-                  <span class="clubcard-price">£{{ p.clubcardPrice | number:'1.2-2' }}</span>
-                } @else {
-                  <span class="text-muted">—</span>
+                  <div class="clubcard-price" style="font-size: 0.75rem; line-height: 1.2;">£{{ p.clubcardPrice | number:'1.2-2' }} (CC)</div>
                 }
               </td>
               <td [class.low-stock]="p.stockQuantity < 10">{{ p.stockQuantity }}</td>
-              <td class="cell--orders">{{ p.placedAndConfirmedCount }}</td>
-              <td class="cell--pending" [class.cell--pending-hi]="p.pendingOrderCount > 0">
-                {{ p.pendingOrderCount }}
-              </td>
-              <td class="cell--remaining" [class.cell--remaining-low]="p.remainingStock < 10">
-                {{ p.remainingStock < 0 ? 0 : p.remainingStock }}
+              <td class="cell--rating">
+                @if (p.reviewCount > 0) {
+                  <span class="rating-stars" [attr.title]="p.averageRating + ' / 5 from ' + p.reviewCount + ' reviews'">
+                    ★ {{ p.averageRating | number:'1.1-1' }}
+                  </span>
+                  <span class="rating-count">({{ p.reviewCount }})</span>
+                } @else {
+                  <span class="text-muted">—</span>
+                }
               </td>
               <td>
                 <span class="status-badge"
@@ -280,7 +278,7 @@
               </td>
             </tr>
           } @empty {
-            <tr><td colspan="13" class="admin-empty">No products found.</td></tr>
+            <tr><td colspan="10" class="admin-empty">No products found.</td></tr>
           }
         </tbody>
       </table>

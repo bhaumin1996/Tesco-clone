@@ -107,3 +107,31 @@ export interface PagedResult<T> {
   totalCount: number;
   totalPages: number;
 }
+
+export interface UserRatingStatus {
+  canRate: boolean;
+  hasRated: boolean;
+  existingRating: number | null;
+}
+
+export interface Favourite {
+  favouriteId: number;
+  productId: number;
+  name: string;
+  brandName?: string;
+  basePrice: number;
+  clubcardPrice?: number;
+  unitPrice?: string;
+  imageUrl?: string;
+  categoryName: string;
+  promotionLabel?: string;
+  averageRating: number;
+  reviewCount: number;
+  isInStock: boolean;
+  createdOn: string;
+}
+
+export interface FavouriteStatus {
+  isFavourited: boolean;
+  favouriteId: number | null;
+}

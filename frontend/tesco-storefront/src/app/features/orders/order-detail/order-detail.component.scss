@@ -384,3 +384,56 @@
     align-items: flex-start;
   }
 }
+
+// ── Item inline rating ────────────────────────────────────────────────────────
+.od-item-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.od-item-rating__stars {
+  display: flex;
+  gap: 0.125rem;
+
+  &--saving {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+}
+
+.od-item-rating__saving {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.od-item-rating__label {
+  font-size: 0.75rem;
+  color: $color-muted;
+}
+
+.od-star {
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #dde1e9;
+
+  &--filled {
+    color: #f5a623;
+  }
+}
+
+.od-star--btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.1s ease, transform 0.1s ease;
+
+  &:hover {
+    color: #f5a623;
+    transform: scale(1.15);
+  }
+}
+

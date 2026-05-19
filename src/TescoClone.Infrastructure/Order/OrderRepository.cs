@@ -74,7 +74,7 @@ public sealed class OrderRepository : IOrderRepository
                     CustomerName = SqlHelper.GetValue<string?>(reader, "CustomerName"),
                     Item = new OrderLineDto(
                         SqlHelper.GetValue<int>(reader, "OrderLineId"),
-                        SqlHelper.GetValue<int>(reader, "ProductVariantId"),
+                        SqlHelper.GetValue<int>(reader, "ProductId"),
                         SqlHelper.GetValue<string>(reader, "ProductName"),
                         SqlHelper.GetValue<string?>(reader, "ImageUrl"),
                         SqlHelper.GetValue<decimal>(reader, "UnitPrice"),
@@ -207,7 +207,7 @@ public sealed class OrderRepository : IOrderRepository
                 CustomerName = SqlHelper.GetValue<string?>(reader, "CustomerName"),
                 Item = new OrderLineDto(
                     SqlHelper.GetValue<int>(reader, "OrderLineId"),
-                    SqlHelper.GetValue<int>(reader, "ProductVariantId"),
+                    SqlHelper.GetValue<int>(reader, "ProductId"),
                     SqlHelper.GetValue<string>(reader, "ProductName"),
                     SqlHelper.GetValue<string?>(reader, "ImageUrl"),
                     SqlHelper.GetValue<decimal>(reader, "UnitPrice"),

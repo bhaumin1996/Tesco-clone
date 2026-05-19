@@ -18,4 +18,6 @@ public sealed record AdminProductDto(
     DateTime? ModifiedOn,
     int PlacedAndConfirmedCount,
     int PendingOrderCount,
-    int RemainingStock);
+    int RemainingStock,
+    decimal AverageRating = 0,
+    int ReviewCount = 0);

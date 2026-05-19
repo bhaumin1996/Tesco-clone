@@ -208,3 +208,21 @@
 .cell--remaining-low { color: #f6971e; }
 .cell--remaining-neg { color: $color-error; }
 
+
+// ── Rating cell ────────────────────────────────────────────────────────────
+.cell--rating {
+  white-space: nowrap;
+  text-align: center;
+}
+
+.rating-stars {
+  color: #f5a623;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.rating-count {
+  font-size: 0.75rem;
+  color: $color-muted;
+  margin-left: 0.25rem;
+}

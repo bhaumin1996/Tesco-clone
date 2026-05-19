@@ -44,6 +44,8 @@ public static class DependencyInjection
 
         // Catalogue
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductRatingRepository, ProductRatingRepository>();
+        services.AddScoped<IFavouriteRepository, FavouriteRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IBrandRepository, BrandRepository>();
