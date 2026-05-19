@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Order;
 
+// Order module — placed order aggregate; enforces valid status transitions via Cancel/Confirm.
 public sealed class Order : Entity
 {
     private readonly List<OrderLine> _lines = [];

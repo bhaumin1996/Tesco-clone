@@ -10,6 +10,7 @@ using TescoClone.Application.Promotions.Queries.GetPromotions;
 
 namespace TescoClone.API.Controllers;
 
+// Admin promotion management: CRUD for discount rules with active/inactive filtering.
 [ApiController]
 [Route("api/v1/admin/promotions")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]

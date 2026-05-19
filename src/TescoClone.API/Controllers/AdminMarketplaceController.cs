@@ -10,6 +10,7 @@ using TescoClone.Application.Marketplace.Interfaces;
 
 namespace TescoClone.API.Controllers;
 
+// Admin marketplace management: seller approval/suspension and dispute resolution workflow.
 [ApiController]
 [Route("api/v1/admin/marketplace")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]

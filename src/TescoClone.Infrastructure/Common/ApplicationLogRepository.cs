@@ -5,6 +5,7 @@ using TescoClone.Application.Common.Models;
 
 namespace TescoClone.Infrastructure.Common;
 
+// ADO.NET repository for reading paginated t.tblLog application error/info entries in the admin log viewer.
 public sealed class ApplicationLogRepository : IApplicationLogRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

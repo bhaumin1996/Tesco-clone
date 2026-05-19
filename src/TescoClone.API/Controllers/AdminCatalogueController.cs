@@ -27,6 +27,7 @@ using TescoClone.Application.Common.Abstractions;
 
 namespace TescoClone.API.Controllers;
 
+// Admin catalogue management: products, categories, departments, brands, inventory, image upload, and global search.
 [ApiController]
 [Route("api/v1/admin/catalogue")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]

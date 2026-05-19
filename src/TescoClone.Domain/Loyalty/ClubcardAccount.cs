@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Loyalty;
 
+// Loyalty module — Clubcard account tracking the points balance; RedeemPoints guards against overdraft.
 public sealed class ClubcardAccount : Entity
 {
     public int UserId { get; private set; }

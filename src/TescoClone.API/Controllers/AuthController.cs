@@ -14,6 +14,7 @@ using TescoClone.Application.Identity.Commands.ResetPassword;
 
 namespace TescoClone.API.Controllers;
 
+// Handles customer registration, login, token refresh/revoke, profile, and password management.
 [ApiController]
 [Route("api/v1/auth")]
 public sealed class AuthController : ControllerBase

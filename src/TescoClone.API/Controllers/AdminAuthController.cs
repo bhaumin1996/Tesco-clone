@@ -5,6 +5,7 @@ using TescoClone.Application.Identity.Commands.VerifyTwoFactor;
 
 namespace TescoClone.API.Controllers;
 
+// Handles admin first-factor login and SHA-256 OTP second-factor verification.
 [ApiController]
 [Route("api/v1/admin/auth")]
 public sealed class AdminAuthController : ControllerBase

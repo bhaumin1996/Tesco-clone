@@ -7,6 +7,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Content;
 
+// ADO.NET repository for CMS pages and promotional banners used by both the admin panel and the storefront.
 public sealed class ContentRepository : IContentRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

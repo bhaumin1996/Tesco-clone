@@ -5,6 +5,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Loyalty;
 
+// ADO.NET repository for Clubcard voucher reads and single-use redemption against an order.
 public sealed class VoucherRepository : IVoucherRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

@@ -8,6 +8,7 @@ using TescoClone.Application.Analytics.Queries.GetAnalyticsExport;
 
 namespace TescoClone.API.Controllers;
 
+// Admin analytics: sales summary, top products, and CSV export for a given date range.
 [ApiController]
 [Route("api/v1/admin/analytics")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]

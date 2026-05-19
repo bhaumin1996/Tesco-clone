@@ -10,6 +10,7 @@ using TescoClone.Application.Content.Queries.GetPages;
 
 namespace TescoClone.API.Controllers;
 
+// Admin CMS management: pages (create, edit, publish, list) and banners (create, edit, toggle active).
 [ApiController]
 [Route("api/v1/admin/content")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]

@@ -7,6 +7,7 @@ using TescoClone.Application.Common.Queries.GetAuditLogs;
 
 namespace TescoClone.API.Controllers;
 
+// Admin observability: paginated t.tblAuditLog viewer and t.tblLog application error log viewer.
 [ApiController]
 [Route("api/v1/admin/audit")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]

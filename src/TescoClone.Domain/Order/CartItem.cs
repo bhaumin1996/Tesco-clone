@@ -2,6 +2,7 @@ using TescoClone.Domain.Common;
 
 namespace TescoClone.Domain.Order;
 
+// Order module — a single line within a cart scoped to one product variant.
 public sealed class CartItem : Entity
 {
     public int CartId { get; private set; }

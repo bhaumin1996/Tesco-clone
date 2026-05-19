@@ -5,6 +5,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Order;
 
+// ADO.NET repository for server-side cart operations; delivery charge threshold (£40) is applied here pending a dedicated SP.
 public sealed class CartRepository : ICartRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

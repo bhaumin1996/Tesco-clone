@@ -10,6 +10,7 @@ using TescoClone.Application.Common.Abstractions;
 
 namespace TescoClone.API.Controllers;
 
+// Manages the authenticated user's address book (CRUD, default, and import from past orders).
 [ApiController]
 [Authorize]
 [Route("api/v1/addresses")]

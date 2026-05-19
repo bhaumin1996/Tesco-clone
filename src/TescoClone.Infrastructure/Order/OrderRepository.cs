@@ -8,6 +8,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Order;
 
+// ADO.NET repository for customer order reads and write operations; BuildOrderAsync assembles header + lines from a single SP result set.
 public sealed class OrderRepository : IOrderRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

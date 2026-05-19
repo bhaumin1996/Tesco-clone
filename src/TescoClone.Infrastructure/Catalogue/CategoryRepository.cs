@@ -5,6 +5,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Catalogue;
 
+// ADO.NET repository for customer-facing category reads, optionally filtered by department.
 public sealed class CategoryRepository : ICategoryRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

@@ -7,6 +7,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Marketplace;
 
+// ADO.NET repository for marketplace seller and dispute management in the admin panel.
 public sealed class MarketplaceRepository : IMarketplaceRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

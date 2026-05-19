@@ -17,6 +17,8 @@ using TescoClone.Application.Identity.Queries.GetPermissions;
 
 namespace TescoClone.API.Controllers;
 
+// Admin user management: list, lock/unlock, role assignment, permissions, activate/deactivate, and delete.
+// SuperAdmin policy is required for destructive or role-elevation operations.
 [ApiController]
 [Route("api/v1/admin/users")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]

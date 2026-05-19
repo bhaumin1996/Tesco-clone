@@ -5,6 +5,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Catalogue;
 
+// ADO.NET repository for customer-facing department list and single-department lookup.
 public sealed class DepartmentRepository : IDepartmentRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

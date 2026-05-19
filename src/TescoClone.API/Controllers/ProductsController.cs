@@ -6,6 +6,7 @@ using TescoClone.Application.Catalogue.Queries.SearchProducts;
 
 namespace TescoClone.API.Controllers;
 
+// Public catalogue endpoints: full-text product search with filters, product detail, and variant list.
 [ApiController]
 [Route("api/v1/products")]
 public sealed class ProductsController : ControllerBase

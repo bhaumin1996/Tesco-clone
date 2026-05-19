@@ -2,6 +2,7 @@ using TescoClone.Domain.Common;
 
 namespace TescoClone.Domain.Identity;
 
+// Identity module — Stripe-tokenised saved payment card; no raw card data is ever stored.
 public sealed class UserCard : Entity
 {
     public int UserId { get; private set; }

@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Catalogue;
 
+// Catalogue module — sellable product with an optional Clubcard-exclusive discounted price.
 public sealed class Product : Entity
 {
     public int CategoryId { get; private set; }

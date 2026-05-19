@@ -8,6 +8,7 @@ using TescoClone.Application.Order.Queries.GetOrderById;
 
 namespace TescoClone.API.Controllers;
 
+// Customer order endpoints: list own orders, get detail, place order from cart, and cancel.
 [ApiController]
 [Route("api/v1/orders")]
 [Authorize]

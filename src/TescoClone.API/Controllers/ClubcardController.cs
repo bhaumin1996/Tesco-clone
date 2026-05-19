@@ -8,6 +8,7 @@ using TescoClone.Application.Loyalty.Queries.GetVouchers;
 
 namespace TescoClone.API.Controllers;
 
+// Loyalty endpoints: Clubcard balance, voucher list, and voucher redemption at checkout.
 [ApiController]
 [Route("api/v1/clubcard")]
 [Authorize]

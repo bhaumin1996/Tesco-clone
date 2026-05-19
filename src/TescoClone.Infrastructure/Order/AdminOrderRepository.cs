@@ -8,6 +8,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Order;
 
+// ADO.NET repository for admin order operations: paginated all-orders list, status update, and refund processing.
 public sealed class AdminOrderRepository : IAdminOrderRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

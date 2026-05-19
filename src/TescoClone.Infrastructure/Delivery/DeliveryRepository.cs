@@ -6,6 +6,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Delivery;
 
+// ADO.NET repository for delivery slots; BookSlotAsync relies on UPDLOCK in proc_Delivery_BookSlot to prevent double-booking.
 public sealed class DeliveryRepository : IDeliveryRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

@@ -4,6 +4,7 @@ using TescoClone.Application.Promotions.Queries.GetActivePromotions;
 
 namespace TescoClone.API.Controllers;
 
+// Public promotions endpoint: returns currently active promotions for the storefront.
 [ApiController]
 [Route("api/v1/[controller]")]
 public sealed class PromotionsController : ControllerBase

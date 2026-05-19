@@ -6,6 +6,7 @@ using TescoClone.Application.Analytics.Queries.GetDashboardStats;
 
 namespace TescoClone.API.Controllers;
 
+// Admin dashboard KPI endpoint: today's orders, revenue, new customers, low-stock count, and open disputes.
 [ApiController]
 [Route("api/v1/admin/dashboard")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]

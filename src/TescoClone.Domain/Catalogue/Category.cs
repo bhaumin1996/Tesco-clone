@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Catalogue;
 
+// Catalogue module — product category nested under a department; supports one level of sub-categories via ParentCategoryId.
 public sealed class Category : Entity
 {
     public int DepartmentId { get; private set; }

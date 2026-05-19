@@ -6,6 +6,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Analytics;
 
+// ADO.NET repository for admin analytics: dashboard KPIs, date-range sales summary with daily breakdown, and top products.
 public sealed class AnalyticsRepository : IAnalyticsRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

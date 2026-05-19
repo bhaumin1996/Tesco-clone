@@ -2,6 +2,7 @@ using TescoClone.Domain.Common;
 
 namespace TescoClone.Domain.Order;
 
+// Order module — immutable snapshot of a product variant at the time of ordering.
 public sealed class OrderLine : Entity
 {
     public int OrderId { get; private set; }

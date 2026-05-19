@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Catalogue;
 
+// Catalogue module — top-level product grouping shown in the storefront navigation (e.g. Fresh Food).
 public sealed class Department : Entity
 {
     public string Name { get; private set; } = string.Empty;

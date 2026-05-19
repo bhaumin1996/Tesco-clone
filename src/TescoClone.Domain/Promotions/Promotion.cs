@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Promotions;
 
+// Promotions module — discount rule with date-bounded validity and optional Clubcard requirement.
 public sealed class Promotion : Entity
 {
     public string Name { get; private set; } = string.Empty;

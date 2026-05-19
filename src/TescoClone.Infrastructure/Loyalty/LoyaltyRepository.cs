@@ -5,6 +5,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Loyalty;
 
+// ADO.NET repository for Clubcard account reads, points earning, and points redemption.
 public sealed class LoyaltyRepository : ILoyaltyRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

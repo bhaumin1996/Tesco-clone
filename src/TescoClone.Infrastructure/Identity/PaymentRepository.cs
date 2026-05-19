@@ -6,6 +6,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Identity;
 
+// ADO.NET repository for Stripe-tokenised saved payment cards; stores only the PM id and last-four, never raw card data.
 public sealed class PaymentRepository : IPaymentRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

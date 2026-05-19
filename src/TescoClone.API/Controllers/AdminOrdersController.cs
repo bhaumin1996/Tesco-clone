@@ -11,6 +11,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.API.Controllers;
 
+// Admin order management: paginated order list, status transitions, and Stripe refund initiation.
 [ApiController]
 [Route("api/v1/admin/orders")]
 [Authorize(Policy = AuthorizationPolicies.Admin)]

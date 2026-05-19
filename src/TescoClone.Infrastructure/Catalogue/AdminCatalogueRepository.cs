@@ -6,6 +6,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Catalogue;
 
+// ADO.NET repository for admin catalogue operations: product/category/department/brand CRUD, inventory adjustment, and global search across six entity types.
 public sealed class AdminCatalogueRepository : IAdminCatalogueRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

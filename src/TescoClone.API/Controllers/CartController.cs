@@ -11,6 +11,7 @@ using TescoClone.Application.Order.Queries.GetCart;
 
 namespace TescoClone.API.Controllers;
 
+// Manages the authenticated user's server-side persistent cart (add, update, remove, clear).
 [ApiController]
 [Route("api/v1/cart")]
 [Authorize]

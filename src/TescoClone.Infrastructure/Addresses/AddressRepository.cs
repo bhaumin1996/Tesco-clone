@@ -6,6 +6,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Addresses;
 
+// ADO.NET repository for the user address book; ImportFromOrdersAsync seeds saved addresses from historic delivery addresses.
 public sealed class AddressRepository : IAddressRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

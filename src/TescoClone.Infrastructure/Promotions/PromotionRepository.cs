@@ -7,6 +7,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Promotions;
 
+// ADO.NET repository for promotions: admin CRUD and storefront active-promotion listing (separate SPs for each context).
 public sealed class PromotionRepository : IPromotionRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

@@ -6,6 +6,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Catalogue;
 
+// ADO.NET repository for customer-facing product reads: single product, paginated search with filters, and variant list.
 public sealed class ProductRepository : IProductRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

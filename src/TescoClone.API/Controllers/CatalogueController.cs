@@ -6,6 +6,7 @@ using TescoClone.Application.Catalogue.Queries.GetDepartments;
 
 namespace TescoClone.API.Controllers;
 
+// Public catalogue structure endpoints: departments, categories, and brands for navigation menus.
 [ApiController]
 [Route("api/v1/catalogue")]
 public sealed class CatalogueController : ControllerBase

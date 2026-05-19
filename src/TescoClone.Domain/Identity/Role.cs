@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Identity;
 
+// Identity module — named permission role (User, Admin, SuperAdmin).
 public sealed class Role : Entity
 {
     public string Name { get; private set; } = string.Empty;

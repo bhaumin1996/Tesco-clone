@@ -7,6 +7,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Identity;
 
+// ADO.NET repository for admin user management: paginated list, lock/unlock, role assignment, 2FA codes, and fine-grained permissions.
 public sealed class AdminUserRepository : IAdminUserRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Delivery;
 
+// Delivery module — bookable time window at a store; Book() enforces capacity and is guarded by UPDLOCK in the SP.
 public sealed class DeliverySlot : Entity
 {
     public int StoreId { get; private set; }

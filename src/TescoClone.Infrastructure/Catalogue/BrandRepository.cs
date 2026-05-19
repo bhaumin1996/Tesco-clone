@@ -5,6 +5,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Catalogue;
 
+// ADO.NET repository for customer-facing brand list used by the filter panel.
 public sealed class BrandRepository : IBrandRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

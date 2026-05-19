@@ -5,6 +5,7 @@ using TescoClone.Application.Common.Models;
 
 namespace TescoClone.Infrastructure.Common;
 
+// ADO.NET repository for reading paginated t.tblAuditLog entries in the admin audit viewer.
 public sealed class AuditLogRepository : IAuditLogRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

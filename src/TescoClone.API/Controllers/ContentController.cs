@@ -5,6 +5,7 @@ using TescoClone.Application.Content.Queries.GetPageBySlug;
 
 namespace TescoClone.API.Controllers;
 
+// Public CMS endpoints: fetch a published page by slug and list active promotional banners.
 [ApiController]
 [Route("api/v1/[controller]")]
 public sealed class ContentController : ControllerBase

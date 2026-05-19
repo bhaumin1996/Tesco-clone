@@ -6,6 +6,7 @@ using TescoClone.Application.Identity.Queries.GetMyCards;
 
 namespace TescoClone.API.Controllers;
 
+// Manages the authenticated user's saved Stripe payment cards (list and soft-delete).
 [Authorize]
 [ApiController]
 [Route("api/v1/payments")]

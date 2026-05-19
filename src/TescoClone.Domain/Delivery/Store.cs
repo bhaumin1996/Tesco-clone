@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Delivery;
 
+// Delivery module — physical fulfilment store with geo-coordinates used for slot lookup.
 public sealed class Store : Entity
 {
     public string Name { get; private set; } = string.Empty;

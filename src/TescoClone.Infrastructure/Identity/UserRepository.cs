@@ -8,6 +8,7 @@ using TescoClone.Infrastructure.Common;
 
 namespace TescoClone.Infrastructure.Identity;
 
+// ADO.NET repository for customer/admin user reads, writes, refresh-token storage, and password-reset token management.
 public sealed class UserRepository : IUserRepository
 {
     private readonly SqlConnectionFactory _connectionFactory;

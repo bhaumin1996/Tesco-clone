@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Identity;
 
+// Identity module — customer/admin account aggregate with lockout and password-reset logic.
 public sealed class User : Entity
 {
     public string FirstName { get; private set; } = string.Empty;

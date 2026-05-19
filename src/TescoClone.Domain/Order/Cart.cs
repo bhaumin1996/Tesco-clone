@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Order;
 
+// Order module — server-side persistent shopping cart aggregate owned by one user.
 public sealed class Cart : Entity
 {
     private readonly List<CartItem> _items = [];

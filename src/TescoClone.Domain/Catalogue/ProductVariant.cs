@@ -3,6 +3,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.Domain.Catalogue;
 
+// Catalogue module — SKU-level variant of a product (size, colour, pack size, etc.) with its own stock count.
 public sealed class ProductVariant : Entity
 {
     public int ProductId { get; private set; }

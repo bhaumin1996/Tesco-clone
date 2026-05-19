@@ -7,6 +7,7 @@ using TescoClone.Domain.Enums;
 
 namespace TescoClone.API.Controllers;
 
+// Delivery slot endpoints: search available slots by postcode/date, and book a slot against an order.
 [ApiController]
 [Route("api/v1/slots")]
 public sealed class SlotsController : ControllerBase
