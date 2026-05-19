@@ -7,16 +7,26 @@
   <div class="header__utility">
     <div class="page-container header__utility-inner">
       <nav class="header__utility-links" aria-label="Secondary navigation">
-        <a href="#" class="header__utility-link">Tesco Bank</a>
-        <a href="https://www.tescomobile.com/" class="header__utility-link" target="_blank" rel="noopener noreferrer">Tesco Mobile</a>
-        <a routerLink="/delivery-saver" class="header__utility-link">Delivery Saver</a>
-        <a routerLink="/stores" class="header__utility-link">Store Locator</a>
-        <a routerLink="/help" class="header__utility-link">Help</a>
+        @if (minimal()) {
+          <a routerLink="/" class="header__utility-link">Tesco.com</a>
+          <a routerLink="/help" class="header__utility-link">Contact Us</a>
+          <a routerLink="/help" class="header__utility-link">Help</a>
+        } @else {
+          <a href="#" class="header__utility-link">Tesco Bank</a>
+          <a href="https://www.tescomobile.com/" class="header__utility-link" target="_blank" rel="noopener noreferrer">Tesco Mobile</a>
+          <a routerLink="/delivery-saver" class="header__utility-link">Delivery Saver</a>
+          <a routerLink="/stores" class="header__utility-link">Store Locator</a>
+          <a routerLink="/help" class="header__utility-link">Help</a>
+          @if (!isDashboard()) {
+            <a routerLink="/help" class="header__utility-link">Contact Us</a>
+          }
+        }
       </nav>
     </div>
   </div>
 
   <!-- Main header bar — white background -->
+  @if (!minimal()) {
   <div class="header__main">
     <div class="page-container header__main-inner">
 
@@ -118,7 +128,10 @@
     </div>
   </div>
 
+  } <!-- end @if !minimal -->
+
   <!-- Department nav bar — light grey -->
+  @if (!minimal()) {
   <nav class="header__dept-nav" [class.open]="mobileMenuOpen()" aria-label="Department navigation">
     <div class="page-container">
       <ul class="header__dept-list" role="list">
@@ -154,4 +167,5 @@
       </ul>
     </div>
   </nav>
+  } <!-- end @if !minimal -->
 </header>

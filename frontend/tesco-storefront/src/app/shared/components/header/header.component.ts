@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, HostListener, inject, input, signal, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,10 +20,14 @@ export class HeaderComponent implements OnInit {
   protected readonly auth = inject(AuthService);
   protected readonly cart = inject(CartService);
 
+  private readonly _currentUrl = signal(this._router.url);
+  protected readonly isDashboard = computed(() => this._currentUrl() === '/');
+
   ngOnInit(): void {
-    // Traverse down the router state to get the active route's 'q' query param on navigation
     this._router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
+        this._currentUrl.set(event.urlAfterRedirects);
+
         let route = this._router.routerState.root;
         while (route.firstChild) {
           route = route.firstChild;
@@ -51,6 +55,8 @@ export class HeaderComponent implements OnInit {
       this.moreMenuOpen.set(false);
     }
   }
+
+  readonly minimal = input(false);
 
   protected searchQuery = signal('');
   protected mobileMenuOpen = signal(false);
