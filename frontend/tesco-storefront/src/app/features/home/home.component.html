@@ -1,3 +1,29 @@
+<!-- ── Announcement Ticker ────────────────────────────────────────────────── -->
+<div class="home__ticker" aria-hidden="true">
+  <div class="home__ticker-track">
+    <span class="home__ticker-item">🏷️ <strong>Up to 50% off</strong> summer essentials</span>
+    <span class="home__ticker-sep">•</span>
+    <span class="home__ticker-item">⚡ <strong>Whoosh delivery</strong> in 60 minutes</span>
+    <span class="home__ticker-sep">•</span>
+    <span class="home__ticker-item">💳 Earn <strong>3× Clubcard points</strong> this weekend</span>
+    <span class="home__ticker-sep">•</span>
+    <span class="home__ticker-item">🚚 <strong>Free delivery</strong> on orders over £40</span>
+    <span class="home__ticker-sep">•</span>
+    <span class="home__ticker-item">🌱 New <strong>organic range</strong> now in store</span>
+    <span class="home__ticker-sep">•</span>
+    <span class="home__ticker-item">🏷️ <strong>Up to 50% off</strong> summer essentials</span>
+    <span class="home__ticker-sep">•</span>
+    <span class="home__ticker-item">⚡ <strong>Whoosh delivery</strong> in 60 minutes</span>
+    <span class="home__ticker-sep">•</span>
+    <span class="home__ticker-item">💳 Earn <strong>3× Clubcard points</strong> this weekend</span>
+    <span class="home__ticker-sep">•</span>
+    <span class="home__ticker-item">🚚 <strong>Free delivery</strong> on orders over £40</span>
+    <span class="home__ticker-sep">•</span>
+    <span class="home__ticker-item">🌱 New <strong>organic range</strong> now in store</span>
+    <span class="home__ticker-sep">•</span>
+  </div>
+</div>
+
 <main class="home" id="main-content">
 
   <!-- ── Hero ──────────────────────────────────────────────────────────────── -->
@@ -44,6 +70,45 @@
       </div>
     </div>
   </section>
+
+  <!-- ── Trust Bar ─────────────────────────────────────────────────────────── -->
+  <div class="home__trust-bar" aria-label="Why shop with Tesco">
+    <div class="page-container">
+      <ul class="trust-bar" role="list">
+        <li class="trust-bar__item">
+          <span class="trust-bar__icon" aria-hidden="true">⚡</span>
+          <div class="trust-bar__text">
+            <strong>60-minute delivery</strong>
+            <span>Whoosh express</span>
+          </div>
+        </li>
+        <li class="trust-bar__divider" aria-hidden="true"></li>
+        <li class="trust-bar__item">
+          <span class="trust-bar__icon" aria-hidden="true">🏪</span>
+          <div class="trust-bar__text">
+            <strong>3,000+ stores</strong>
+            <span>Across the UK</span>
+          </div>
+        </li>
+        <li class="trust-bar__divider" aria-hidden="true"></li>
+        <li class="trust-bar__item">
+          <span class="trust-bar__icon" aria-hidden="true">💳</span>
+          <div class="trust-bar__text">
+            <strong>20M+ Clubcard members</strong>
+            <span>Saving every day</span>
+          </div>
+        </li>
+        <li class="trust-bar__divider" aria-hidden="true"></li>
+        <li class="trust-bar__item">
+          <span class="trust-bar__icon" aria-hidden="true">🌿</span>
+          <div class="trust-bar__text">
+            <strong>Net zero pledge</strong>
+            <span>A greener Tesco</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
 
   <!-- ── Banners ───────────────────────────────────────────────────────────── -->
   @if (banners().length > 0) {
@@ -152,8 +217,8 @@
         <a routerLink="/departments" class="section-head__link">Explore the range <span aria-hidden="true">→</span></a>
       </div>
       <div class="promo-grid promo-grid--3">
-        @for (card of newThisWeek; track card.title) {
-          <a [routerLink]="card.url" class="promo-card">
+        @for (card of newThisWeek; track card.title; let i = $index) {
+          <a [routerLink]="card.url" class="promo-card" [class.promo-card--featured]="i === 0">
             <div class="promo-card__img" [style.background]="card.bg">
               <span class="promo-card__img-icon" aria-hidden="true">{{ card.icon }}</span>
               <div class="promo-card__img-overlay">
@@ -236,9 +301,41 @@
     </div>
   </section>
 
+  <!-- ── Deal of the Day ──────────────────────────────────────────────────── -->
+  <section class="home__deal-strip" aria-label="Today's special deal">
+    <div class="page-container">
+      <div class="deal-strip">
+        <div class="deal-strip__left">
+          <div class="deal-strip__badge-row">
+            <span class="deal-strip__badge">🔥 Deal of the day</span>
+            <span class="deal-strip__pulse" aria-hidden="true"></span>
+          </div>
+          <h2 class="deal-strip__title">Up to <em>50% off</em> summer essentials</h2>
+          <p class="deal-strip__sub">BBQ favourites, ice cream, garden drinks and more — while stocks last.</p>
+        </div>
+        <div class="deal-strip__right">
+          <a routerLink="/offers" class="deal-strip__cta">
+            Explore all deals
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </a>
+          <span class="deal-strip__timer">⏱ Ends tonight</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ── Clubcard banner ────────────────────────────────────────────────────── -->
   <section class="home__clubcard-banner" aria-label="Tesco Clubcard promotion">
     <div class="clubcard-banner__bg-dots" aria-hidden="true"></div>
+    <div class="clubcard-banner__deco" aria-hidden="true">
+      <span class="clubcard-banner__deco-star clubcard-banner__deco-star--1">✦</span>
+      <span class="clubcard-banner__deco-star clubcard-banner__deco-star--2">✦</span>
+      <span class="clubcard-banner__deco-star clubcard-banner__deco-star--3">✦</span>
+      <span class="clubcard-banner__deco-star clubcard-banner__deco-star--4">✦</span>
+    </div>
     <div class="page-container">
       <div class="clubcard-banner">
         <div class="clubcard-banner__content">

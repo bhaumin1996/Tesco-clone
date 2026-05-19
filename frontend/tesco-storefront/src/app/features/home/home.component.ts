@@ -113,7 +113,7 @@ export class HomeComponent implements OnInit {
     {
       title: 'Delivery Saver',
       text: 'Unlimited free delivery from £7.99/month — save every time.',
-      url: '/delivery',
+      url: '/delivery-saver',
       icon: '🚚',
       color: '#007A33'
     },
@@ -139,7 +139,7 @@ export class HomeComponent implements OnInit {
       title: 'Delivery Saver',
       text: 'Unlimited deliveries from £7.99/month. Save every time you shop.',
       cta: 'Learn more',
-      url: '/delivery',
+      url: '/delivery-saver',
       icon: '🚚',
       theme: 'blue'
     },
