@@ -1,0 +1,88 @@
+<div class="msg-page">
+  <div class="msg-page__header">
+    <h1>Messages</h1>
+    <button class="msg-btn msg-btn--primary" (click)="startCompose()">+ New Message</button>
+  </div>
+
+  <div class="msg-layout">
+    <aside class="msg-threads">
+      @if (loading()) { <p class="msg-loading">Loading…</p> }
+      @for (t of threads(); track t.id) {
+      <button class="msg-thread" [class.msg-thread--active]="activeThread()?.id === t.id"
+        [class.msg-thread--unread]="t.unreadCount > 0" (click)="openThread(t)">
+        <div class="msg-thread__subject">
+          {{ t.subject }}
+          @if (t.unreadCount > 0) {
+          <span class="msg-thread__badge">{{ t.unreadCount }}</span>
+          }
+        </div>
+        <div class="msg-thread__preview">{{ t.lastMessage }}</div>
+        <div class="msg-thread__meta">{{ t.lastMessageOn | date:'d MMM, h:mm a' }} · <span [class.msg-thread__status--open]="t.status === 'open'">{{ t.status }}</span></div>
+      </button>
+      }
+      @if (!loading() && threads().length === 0) {
+      <p class="msg-empty-threads">No messages yet.</p>
+      }
+    </aside>
+
+    <div class="msg-pane">
+      @if (!activeThread() && !composing()) {
+      <div class="msg-pane__placeholder">
+        <span>Select a conversation or start a new message.</span>
+      </div>
+      }
+
+      @if (composing()) {
+      <div class="msg-compose">
+        <h2>New Message to Tesco Marketplace Team</h2>
+        <label class="msg-label">
+          Subject
+          <input class="msg-input" type="text" [value]="newSubject()" (input)="newSubject.set($any($event.target).value)" placeholder="e.g. Query about commission rates" />
+        </label>
+        <label class="msg-label">
+          Message
+          <textarea class="msg-textarea msg-textarea--tall" rows="6" [value]="newBody()"
+            (input)="newBody.set($any($event.target).value)" placeholder="Describe your query…"></textarea>
+        </label>
+        <div class="msg-compose__actions">
+          <button class="msg-btn msg-btn--ghost" (click)="cancelCompose()">Cancel</button>
+          <button class="msg-btn msg-btn--primary" [disabled]="sending() || !newSubject() || !newBody()" (click)="sendNewMessage()">
+            {{ sending() ? 'Sending…' : 'Send' }}
+          </button>
+        </div>
+      </div>
+      }
+
+      @if (activeThread() && !composing()) {
+      <div class="msg-conversation">
+        <div class="msg-conversation__header">
+          <h2>{{ activeThread()!.subject }}</h2>
+          <span class="msg-status msg-status--{{ activeThread()!.status }}">{{ activeThread()!.status }}</span>
+        </div>
+        <div class="msg-bubbles">
+          @for (m of messages(); track m.id) {
+          <div class="msg-bubble" [class.msg-bubble--seller]="m.senderType === 'seller'" [class.msg-bubble--admin]="m.senderType === 'admin'">
+            <div class="msg-bubble__meta">{{ m.senderName }} · {{ m.sentOn | date:'d MMM, h:mm a' }}</div>
+            <div class="msg-bubble__body">{{ m.body }}</div>
+          </div>
+          }
+          @if (messages().length === 0) {
+          <p class="msg-empty">Loading messages…</p>
+          }
+        </div>
+        @if (activeThread()!.status === 'open') {
+        <div class="msg-reply">
+          <textarea class="msg-textarea" rows="3" placeholder="Type your reply…"
+            [value]="replyText()" (input)="replyText.set($any($event.target).value)"></textarea>
+          <div class="msg-reply__actions">
+            <button class="msg-btn msg-btn--primary" [disabled]="sending() || !replyText().trim()" (click)="sendReply()">
+              {{ sending() ? 'Sending…' : 'Send Reply' }}
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+</div>

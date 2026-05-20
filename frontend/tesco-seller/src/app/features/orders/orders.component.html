@@ -1,0 +1,75 @@
+<div class="so-page">
+  <div class="so-page__header">
+    <h1>Orders</h1>
+    @if (message()) { <div class="so-msg">{{ message() }}</div> }
+  </div>
+
+  <div class="so-tabs">
+    @for (tab of tabs; track tab) {
+    <button class="so-tab" [class.so-tab--active]="activeTab() === tab" (click)="activeTab.set(tab)">
+      {{ tab }}
+      <span class="so-tab__count">{{ orders() | orderCount:tab }}</span>
+    </button>
+    }
+  </div>
+
+  @if (loading()) { <p class="so-loading">Loading…</p> }
+  @else {
+  <table class="so-table">
+    <thead><tr><th>Order</th><th>Items</th><th>Value</th><th>Date</th><th>Actions</th></tr></thead>
+    <tbody>
+      @for (o of filtered(); track o.id) {
+      <tr>
+        <td>{{ o.orderNumber }}</td>
+        <td>{{ o.lineCount }}</td>
+        <td>£{{ o.sellerTotal | number:'1.2-2' }}</td>
+        <td>{{ o.orderPlacedOn | date:'d MMM yyyy' }}</td>
+        <td><button class="so-btn so-btn--ghost" (click)="open(o)">View</button></td>
+      </tr>
+      }
+      @empty { <tr><td colspan="5" class="so-empty">No orders in this tab.</td></tr> }
+    </tbody>
+  </table>
+  }
+</div>
+
+@if (selected()) {
+<div class="so-overlay" (click)="close()"></div>
+<aside class="so-drawer">
+  <div class="so-drawer__header">
+    <h2>Order {{ selected()!.orderNumber }}</h2>
+    <button class="so-drawer__close" (click)="close()">✕</button>
+  </div>
+  <div class="so-drawer__body">
+    @if (selected()!.deliveryAddress) {
+    <p class="so-drawer__addr"><strong>Deliver to:</strong> {{ selected()!.deliveryAddress }}</p>
+    }
+    @if (selected()!.items?.length) {
+    <table class="so-items">
+      <thead><tr><th>Item</th><th>Qty</th><th>Price</th></tr></thead>
+      <tbody>
+        @for (item of selected()!.items!; track item.id) {
+        <tr><td>{{ item.productName }}</td><td>{{ item.quantity }}</td><td>£{{ item.price | number:'1.2-2' }}</td></tr>
+        }
+      </tbody>
+    </table>
+    }
+
+    @if (selected()!.statusName === 'Pending') {
+    <button class="so-btn so-btn--primary so-drawer__action" [disabled]="submitting()" (click)="confirm(selected()!.id)">
+      {{ submitting() ? 'Confirming…' : 'Confirm Order' }}
+    </button>
+    }
+
+    @if (selected()!.statusName === 'Confirmed') {
+    <div class="so-dispatch-form">
+      <label>Carrier Name <input class="so-input" [value]="carrier()" (input)="carrier.set($any($event.target).value)" placeholder="e.g. Royal Mail" /></label>
+      <label>Tracking Number <input class="so-input" [value]="tracking()" (input)="tracking.set($any($event.target).value)" placeholder="Track. no." /></label>
+      <button class="so-btn so-btn--primary" [disabled]="submitting() || !carrier() || !tracking()" (click)="dispatch(selected()!.id)">
+        {{ submitting() ? 'Dispatching…' : 'Mark Dispatched' }}
+      </button>
+    </div>
+    }
+  </div>
+</aside>
+}

@@ -1,0 +1,133 @@
+<div class="ma-page">
+
+  <div class="ma-header">
+    <div>
+      <h1 class="ma-header__title">Marketplace Analytics</h1>
+      <p class="ma-header__sub">Revenue, dispute, and seller performance insights</p>
+    </div>
+  </div>
+
+  <!-- Date range filter -->
+  <div class="ma-filter-bar">
+    <div class="ma-filter-bar__group">
+      <label class="ma-filter-bar__label">From</label>
+      <input class="ma-filter-bar__input" type="date"
+        [value]="dateFrom()" (change)="dateFrom.set($any($event.target).value)" />
+    </div>
+    <div class="ma-filter-bar__group">
+      <label class="ma-filter-bar__label">To</label>
+      <input class="ma-filter-bar__input" type="date"
+        [value]="dateTo()" (change)="dateTo.set($any($event.target).value)" />
+    </div>
+    <button class="ma-btn ma-btn--primary" (click)="applyFilter()">
+      <i class="bi bi-arrow-clockwise"></i> Apply
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="ma-loading">
+      <span class="ma-loading__spinner"></span> Loading analytics…
+    </div>
+  } @else {
+
+    @if (kpis()) {
+      <div class="ma-kpis">
+        <div class="ma-kpi">
+          <div class="ma-kpi__icon ma-kpi__icon--blue"><i class="bi bi-currency-pound"></i></div>
+          <div class="ma-kpi__body">
+            <div class="ma-kpi__val">£{{ kpis()!.gmv | number:'1.0-0' }}</div>
+            <div class="ma-kpi__label">Gross Merchandise Value</div>
+          </div>
+        </div>
+
+        <div class="ma-kpi">
+          <div class="ma-kpi__icon ma-kpi__icon--green"><i class="bi bi-cart3"></i></div>
+          <div class="ma-kpi__body">
+            <div class="ma-kpi__val">{{ kpis()!.totalOrders | number }}</div>
+            <div class="ma-kpi__label">Total Orders</div>
+          </div>
+        </div>
+
+        <div class="ma-kpi">
+          <div class="ma-kpi__icon ma-kpi__icon--purple"><i class="bi bi-receipt"></i></div>
+          <div class="ma-kpi__body">
+            <div class="ma-kpi__val">£{{ kpis()!.averageOrderValue | number:'1.2-2' }}</div>
+            <div class="ma-kpi__label">Average Order Value</div>
+          </div>
+        </div>
+
+        <div class="ma-kpi" [class.ma-kpi--warn]="kpis()!.disputeRate > 5">
+          <div class="ma-kpi__icon" [class.ma-kpi__icon--orange]="kpis()!.disputeRate > 5"
+               [class.ma-kpi__icon--green]="kpis()!.disputeRate <= 5">
+            <i class="bi bi-flag"></i>
+          </div>
+          <div class="ma-kpi__body">
+            <div class="ma-kpi__val">{{ kpis()!.disputeRate | number:'1.1-1' }}%</div>
+            <div class="ma-kpi__label">Dispute Rate</div>
+          </div>
+        </div>
+
+        <div class="ma-kpi" [class.ma-kpi--warn]="kpis()!.returnRate > 10">
+          <div class="ma-kpi__icon" [class.ma-kpi__icon--orange]="kpis()!.returnRate > 10"
+               [class.ma-kpi__icon--green]="kpis()!.returnRate <= 10">
+            <i class="bi bi-arrow-return-left"></i>
+          </div>
+          <div class="ma-kpi__body">
+            <div class="ma-kpi__val">{{ kpis()!.returnRate | number:'1.1-1' }}%</div>
+            <div class="ma-kpi__label">Return Rate</div>
+          </div>
+        </div>
+
+        <div class="ma-kpi">
+          <div class="ma-kpi__icon ma-kpi__icon--blue"><i class="bi bi-person-plus"></i></div>
+          <div class="ma-kpi__body">
+            <div class="ma-kpi__val">{{ kpis()!.newApplicationsCount }}</div>
+            <div class="ma-kpi__label">New Applications</div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (topSellers().length > 0) {
+      <div class="ma-card">
+        <div class="ma-card__header">
+          <span class="ma-card__title"><i class="bi bi-trophy"></i> Top Sellers by Revenue</span>
+        </div>
+        <div class="ma-card__body">
+          <table class="ma-table">
+            <thead>
+              <tr>
+                <th class="ma-rank-col">Rank</th>
+                <th>Seller</th>
+                <th>Revenue</th>
+                <th>Orders</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (seller of topSellers(); track seller.sellerId; let i = $index) {
+                <tr>
+                  <td>
+                    <span class="ma-rank" [class.ma-rank--gold]="i === 0"
+                          [class.ma-rank--silver]="i === 1"
+                          [class.ma-rank--bronze]="i === 2">
+                      {{ i + 1 }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="ma-seller">
+                      <span class="ma-seller__avatar">{{ seller.businessName.charAt(0) }}</span>
+                      {{ seller.businessName }}
+                    </div>
+                  </td>
+                  <td><strong>£{{ seller.revenue | number:'1.2-2' }}</strong></td>
+                  <td class="ma-text-secondary">{{ seller.orderCount }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+  }
+</div>

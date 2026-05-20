@@ -1,0 +1,23 @@
+.lf-page {
+  &__header { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1rem;
+    h1 { font-size:1.4rem; font-weight:800; margin:0; flex:1; }
+  }
+}
+.lf-error { background:#fdf1f1; color:#b00; border-radius:6px; padding:.4rem .9rem; font-size:.82rem; font-weight:600; }
+.lf-loading { padding:2rem; text-align:center; color:#777; }
+.lf-form { display:flex; flex-direction:column; gap:.75rem; }
+.lf-section { background:#fff; border:1px solid #e8ecf0; border-radius:8px; padding:1.5rem; display:flex; flex-direction:column; gap:.75rem;
+  h2 { font-size:1rem; font-weight:700; margin:0; color:#1c1c1c; }
+}
+.lf-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:.75rem; }
+.lf-label { display:flex; flex-direction:column; gap:.25rem; font-size:.82rem; font-weight:600; color:#444;
+  &--full { grid-column:1/-1; }
+}
+.lf-hint { font-size:.72rem; color:#777; font-weight:400; }
+.lf-input, .lf-select { padding:.45rem .65rem; border:1px solid #d1d5db; border-radius:6px; font-size:.875rem; }
+.lf-textarea { padding:.45rem .65rem; border:1px solid #d1d5db; border-radius:6px; font-size:.875rem; resize:vertical; }
+.lf-actions { display:flex; justify-content:flex-end; gap:.5rem; padding:.5rem 0 1rem; }
+.lf-btn { border:none; border-radius:5px; padding:.55rem 1.5rem; font-size:.9rem; font-weight:600; cursor:pointer;
+  &--primary { background:#00539f; color:#fff; &:hover:not(:disabled) { background:#003a70; } &:disabled { opacity:.5; cursor:not-allowed; } }
+  &--ghost { background:none; color:#00539f; border:1.5px solid #00539f; &:hover { background:#e8f0fb; } }
+}

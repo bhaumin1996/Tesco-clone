@@ -1,0 +1,261 @@
+@use '../../../../styles/tokens' as *;
+
+.ma-page {}
+
+.ma-header {
+  margin-bottom: 1.5rem;
+
+  &__title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $color-ink;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  &__sub { font-size: $font-size-sm; color: $color-text-secondary; margin: 0; }
+}
+
+// ── Date filter bar ──────────────────────────────────────────────────────────
+.ma-filter-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+
+  &__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3125rem;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__input {
+    padding: 0.4375rem 0.75rem;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+    font-family: $font-family-base;
+    color: $color-ink;
+    background: $color-surface;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus {
+      outline: none;
+      border-color: $color-tesco-blue;
+      box-shadow: 0 0 0 3px rgba($color-tesco-blue, 0.1);
+    }
+  }
+}
+
+.ma-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.4375rem 1rem;
+  font-family: $font-family-base;
+  transition: background 0.15s;
+
+  &--primary { background: $color-tesco-blue; color: #fff;
+    &:hover { background: $color-tesco-blue-dark; } }
+}
+
+.ma-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 4rem;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+
+  &__spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid $color-border;
+    border-top-color: $color-tesco-blue;
+    border-radius: 50%;
+    animation: ma-spin 0.65s linear infinite;
+  }
+}
+
+@keyframes ma-spin { to { transform: rotate(360deg); } }
+
+// ── KPI grid ─────────────────────────────────────────────────────────────────
+.ma-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ma-kpi {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  padding: 1.125rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  transition: box-shadow 0.15s;
+
+  &:hover { box-shadow: $shadow-hover; }
+  &--warn { border-color: $color-warning; background: $color-warning-light; }
+
+  &__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.0625rem;
+    flex-shrink: 0;
+
+    &--blue   { background: $color-tesco-blue-light; color: $color-tesco-blue; }
+    &--green  { background: $color-success-light; color: $color-success; }
+    &--purple { background: $color-accent-light; color: $color-accent; }
+    &--orange { background: $color-warning-light; color: $color-warning; }
+  }
+
+  &__body { flex: 1; min-width: 0; }
+
+  &__val {
+    font-size: 1.375rem;
+    font-weight: 800;
+    color: $color-ink;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    color: $color-text-secondary;
+    margin-top: 0.1875rem;
+  }
+}
+
+// ── Card ─────────────────────────────────────────────────────────────────────
+.ma-card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid $color-border;
+  }
+
+  &__title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: $color-ink;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i { color: $color-warning; }
+  }
+
+  &__body { overflow-x: auto; }
+}
+
+// ── Table ────────────────────────────────────────────────────────────────────
+.ma-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+
+  th {
+    text-align: left;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: $color-surface-alt;
+    border-bottom: 1px solid $color-border;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid $color-border;
+    color: $color-ink;
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background 0.1s;
+    &:last-child td { border-bottom: none; }
+    &:hover td { background: $color-surface-alt; }
+  }
+}
+
+.ma-rank-col { width: 60px; }
+
+.ma-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: $font-size-sm;
+  background: $color-surface-alt;
+  border: 1px solid $color-border;
+  color: $color-text-secondary;
+
+  &--gold   { background: #fefce8; border-color: #fbbf24; color: #b45309; }
+  &--silver { background: #f8fafc; border-color: #94a3b8; color: #475569; }
+  &--bronze { background: #fff7ed; border-color: #fb923c; color: #c2410c; }
+}
+
+.ma-seller {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-weight: 500;
+
+  &__avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: $color-tesco-blue-light;
+    color: $color-tesco-blue;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+}
+
+.ma-text-secondary { color: $color-text-secondary; }

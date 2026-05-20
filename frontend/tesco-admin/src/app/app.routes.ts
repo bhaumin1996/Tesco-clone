@@ -57,6 +57,38 @@ export const routes: Routes = [
         loadComponent: () => import('./features/marketplace/marketplace.component').then(m => m.AdminMarketplaceComponent)
       },
       {
+        path: 'marketplace/applications',
+        loadComponent: () => import('./features/marketplace/seller-applications/seller-applications.component').then(m => m.SellerApplicationsComponent)
+      },
+      {
+        path: 'marketplace/performance',
+        loadComponent: () => import('./features/marketplace/seller-performance/seller-performance.component').then(m => m.SellerPerformanceComponent)
+      },
+      {
+        path: 'marketplace/commissions',
+        loadComponent: () => import('./features/marketplace/commissions/commissions.component').then(m => m.CommissionsComponent)
+      },
+      {
+        path: 'marketplace/analytics',
+        loadComponent: () => import('./features/marketplace/marketplace-analytics/marketplace-analytics.component').then(m => m.MarketplaceAnalyticsComponent)
+      },
+      {
+        path: 'marketplace/payouts',
+        loadComponent: () => import('./features/marketplace/payouts/payouts.component').then(m => m.PayoutsComponent)
+      },
+      {
+        path: 'marketplace/messages',
+        loadComponent: () => import('./features/marketplace/messages/messages.component').then(m => m.MessagesComponent)
+      },
+      {
+        path: 'marketplace/category-eligibility',
+        loadComponent: () => import('./features/marketplace/category-eligibility/category-eligibility.component').then(m => m.CategoryEligibilityComponent)
+      },
+      {
+        path: 'marketplace/returns',
+        loadComponent: () => import('./features/marketplace/marketplace-returns/marketplace-returns.component').then(m => m.MarketplaceReturnsComponent)
+      },
+      {
         path: 'users',
         loadComponent: () => import('./features/users/users.component').then(m => m.AdminUsersComponent)
       },

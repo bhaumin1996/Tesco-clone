@@ -9,6 +9,11 @@ export interface CartItem {
   unitPrice?: string;
   promotionLabel?: string;
   lineTotal: number;
+  isMarketplace?: boolean;
+  sellerId?: number;
+  sellerName?: string;
+  marketplaceDeliveryCharge?: number;
+  marketplaceFreeDeliveryThreshold?: number;
 }
 
 export interface Cart {

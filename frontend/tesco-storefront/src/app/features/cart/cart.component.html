@@ -74,10 +74,32 @@
               <span>-£{{ c.clubcardSavings | number:'1.2-2' }}</span>
             </div>
           }
+          @if (hasMarketplaceItems()) {
+          <div class="summary-row">
+            <span>Tesco delivery</span>
+            <span>{{ c.deliveryCharge === 0 ? 'Free' : '£' + (c.deliveryCharge | number:'1.2-2') }}</span>
+          </div>
+          @for (group of marketplaceSellerGroups(); track group.sellerId) {
+          <div class="summary-row summary-row--marketplace">
+            <span class="summary-marketplace-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              {{ group.sellerName }}
+            </span>
+            @if (group.freeThreshold != null && group.lineTotal >= group.freeThreshold) {
+            <span class="summary-row--free">Free delivery</span>
+            } @else if (group.deliveryCharge != null) {
+            <span>£{{ group.deliveryCharge | number:'1.2-2' }}</span>
+            } @else {
+            <span class="summary-row--tbd">Calculated at checkout</span>
+            }
+          </div>
+          }
+          } @else {
           <div class="summary-row">
             <span>Delivery</span>
             <span>{{ c.deliveryCharge === 0 ? 'Free' : '£' + (c.deliveryCharge | number:'1.2-2') }}</span>
           </div>
+          }
           <hr class="summary-divider" />
           <div class="summary-row summary-row--total">
             <span>Total</span>

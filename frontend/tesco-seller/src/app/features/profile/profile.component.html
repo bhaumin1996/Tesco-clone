@@ -1,0 +1,101 @@
+<div class="prof-page">
+  <div class="prof-page__header">
+    <h1>Profile Settings</h1>
+    @if (message()) { <div class="prof-msg">{{ message() }}</div> }
+  </div>
+
+  @if (loading()) { <p class="prof-loading">Loading…</p> }
+  @else {
+  <form class="prof-form" (ngSubmit)="save()">
+
+    <section class="prof-section">
+      <h2>Business Details</h2>
+      <div class="prof-grid">
+        <label class="prof-label">
+          Business Name
+          <input class="prof-input" type="text" [value]="profile().businessName"
+            (input)="update({ businessName: $any($event.target).value })" required />
+        </label>
+        <label class="prof-label">
+          Support Email
+          <input class="prof-input" type="email" [value]="profile().supportEmail"
+            (input)="update({ supportEmail: $any($event.target).value })" />
+        </label>
+      </div>
+      <label class="prof-label">
+        Business Description
+        <textarea class="prof-textarea" rows="4" [value]="profile().description"
+          (input)="update({ description: $any($event.target).value })"></textarea>
+        <span class="prof-hint">Shown on your seller profile page. Max 500 characters.</span>
+      </label>
+    </section>
+
+    <section class="prof-section">
+      <h2>Return Policy</h2>
+      <label class="prof-label">
+        Return Policy Text
+        <textarea class="prof-textarea" rows="5" [value]="profile().returnPolicyText"
+          (input)="update({ returnPolicyText: $any($event.target).value })"></textarea>
+        <span class="prof-hint">Displayed on product pages and order confirmation. Be specific about return windows and conditions.</span>
+      </label>
+    </section>
+
+    <section class="prof-section">
+      <h2>Delivery Options</h2>
+      <div class="prof-grid">
+        <label class="prof-label">
+          Standard Delivery (days)
+          <input class="prof-input prof-input--sm" type="number" min="1" max="14"
+            [value]="profile().standardDeliveryDays"
+            (input)="update({ standardDeliveryDays: +$any($event.target).value })" />
+        </label>
+        <label class="prof-label">
+          Standard Delivery Charge (£)
+          <input class="prof-input prof-input--sm" type="number" min="0" step="0.01"
+            [value]="profile().standardDeliveryCharge"
+            (input)="update({ standardDeliveryCharge: +$any($event.target).value })" />
+        </label>
+        <label class="prof-label">
+          Free Delivery Threshold (£)
+          <input class="prof-input prof-input--sm" type="number" min="0" step="0.01"
+            [value]="profile().freeDeliveryThreshold"
+            (input)="update({ freeDeliveryThreshold: +$any($event.target).value })" />
+          <span class="prof-hint">Orders over this amount get free standard delivery.</span>
+        </label>
+      </div>
+
+      <div class="prof-toggle">
+        <label class="prof-toggle__label">
+          <input type="checkbox" class="prof-toggle__check"
+            [checked]="profile().expressDeliveryEnabled"
+            (change)="update({ expressDeliveryEnabled: $any($event.target).checked })" />
+          Enable Express Delivery
+        </label>
+      </div>
+
+      @if (profile().expressDeliveryEnabled) {
+      <div class="prof-grid prof-grid--indent">
+        <label class="prof-label">
+          Express Delivery (days)
+          <input class="prof-input prof-input--sm" type="number" min="1" max="3"
+            [value]="profile().expressDeliveryDays"
+            (input)="update({ expressDeliveryDays: +$any($event.target).value })" />
+        </label>
+        <label class="prof-label">
+          Express Charge (£)
+          <input class="prof-input prof-input--sm" type="number" min="0" step="0.01"
+            [value]="profile().expressDeliveryCharge"
+            (input)="update({ expressDeliveryCharge: +$any($event.target).value })" />
+        </label>
+      </div>
+      }
+    </section>
+
+    <div class="prof-actions">
+      <button class="prof-btn prof-btn--primary" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : 'Save Changes' }}
+      </button>
+    </div>
+  </form>
+  }
+</div>

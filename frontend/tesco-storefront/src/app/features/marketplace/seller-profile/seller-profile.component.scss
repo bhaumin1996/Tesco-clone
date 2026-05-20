@@ -1,0 +1,45 @@
+.sp-not-found { padding: 3rem; text-align: center; color: #777; }
+
+.sp-header {
+  background: #f7f9fc; border-bottom: 1px solid #e8ecf0; padding: 2rem 0;
+  &__inner { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
+  &__avatar {
+    width: 72px; height: 72px; border-radius: 50%; background: #00539f; color: #fff;
+    font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  &__info { flex: 1; }
+  &__name { font-size: 1.6rem; font-weight: 800; margin: 0 0 .3rem; }
+  &__desc { color: #555; font-size: .9rem; margin: 0 0 .75rem; line-height: 1.5; }
+  &__meta { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  &__badge { background: #e8f4e8; color: #1a6b2a; font-size: .8rem; font-weight: 600; padding: .25rem .6rem; border-radius: 4px; }
+  &__contact-cta { margin-left: auto; font-size: .875rem; color: #00539f; font-weight: 600; text-decoration: none; align-self: flex-start; white-space: nowrap; &:hover { text-decoration: underline; } }
+}
+
+.sp-rating { display: flex; align-items: center; gap: .4rem; }
+.sp-rating__stars { color: #f0a500; font-size: 1rem; letter-spacing: .05em; }
+.sp-rating__score { font-weight: 700; font-size: .9rem; }
+
+.sp-metrics {
+  border-bottom: 1px solid #e8ecf0;
+  &__inner { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; gap: 2rem; }
+}
+.sp-metric {
+  display: flex; flex-direction: column; align-items: center;
+  &__value { font-size: 1.4rem; font-weight: 800; color: #1c1c1c; }
+  &__label { font-size: .75rem; color: #666; }
+}
+
+.sp-policy {
+  &__inner { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+  &__title { font-size: 1rem; font-weight: 700; margin: 0 0 .5rem; }
+  p { color: #555; font-size: .9rem; line-height: 1.6; margin: 0; }
+}
+
+.sp-listings {
+  padding: 1.5rem 0;
+  &__inner { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+  &__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  &__title { font-size: 1.2rem; font-weight: 700; margin: 0; }
+  &__link { font-size: .875rem; color: #00539f; font-weight: 600; text-decoration: none; &:hover { text-decoration: underline; } }
+  &__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; }
+}

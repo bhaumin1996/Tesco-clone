@@ -20,6 +20,8 @@ public interface IProductRepository
         string? sortDirection,
         int pageNumber,
         int pageSize,
+        bool includeMarketplace = false,
+        int? sellerId = null,
         CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ProductVariantDto>> GetVariantsAsync(int productId, CancellationToken cancellationToken = default);
 }

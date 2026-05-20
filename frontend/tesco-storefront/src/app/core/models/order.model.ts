@@ -25,6 +25,12 @@ export interface OrderItem {
   price: number;
   quantity: number;
   lineTotal: number;
+  isMarketplace?: boolean;
+  sellerId?: number;
+  sellerName?: string;
+  trackingNumber?: string;
+  carrierName?: string;
+  sellerOrderStatus?: string;
 }
 
 export interface PlaceOrderRequest {

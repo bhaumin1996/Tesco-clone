@@ -154,6 +154,54 @@
   color: $color-muted;
 }
 
+// ── Seller badge ───────────────────────────────────────────────────────────────
+.pdp-info__seller {
+  font-size: 0.875rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.pdp-info__seller-link {
+  color: #00539f;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+}
+
+.pdp-info__seller-badge {
+  background: #e8f0fb;
+  color: #00539f;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+}
+
+// ── Seller rating block ─────────────────────────────────────────────────────────
+.pdp-seller-rating {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.85rem;
+  background: #f7f9fc;
+  border: 1px solid #e8ecf0;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+
+  &__stars { display: flex; align-items: center; gap: .35rem; }
+  &__score { font-weight: 700; color: #1c1c1c; }
+  &__label { color: #777; }
+  &__metric { color: #1a6b2a; font-weight: 500; }
+  &__link { color: #00539f; font-weight: 600; text-decoration: none; margin-left: auto; &:hover { text-decoration: underline; } }
+}
+
 // ── Pricing ────────────────────────────────────────────────────────────────────
 .pdp-pricing {
   border-top: 1px solid $color-border;

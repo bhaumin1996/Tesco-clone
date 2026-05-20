@@ -1,0 +1,208 @@
+<div class="sa-page">
+
+  <div class="sa-header">
+    <div>
+      <h1 class="sa-header__title">Seller Applications</h1>
+      <p class="sa-header__sub">Review and process new marketplace seller applications</p>
+    </div>
+    @if (message()) {
+      <div class="sa-header__msg" [class.sa-header__msg--success]="message().includes('approved')"
+           [class.sa-header__msg--danger]="message().includes('rejected') || message().includes('failed')">
+        {{ message() }}
+      </div>
+    }
+  </div>
+
+  <!-- Status filter tabs -->
+  <div class="sa-tabs">
+    @for (tab of [
+      { key: 'all',        label: 'All',          count: statusCounts().all },
+      { key: 'submitted',  label: 'Submitted',    count: statusCounts().submitted },
+      { key: 'underreview',label: 'Under Review', count: statusCounts().underReview },
+      { key: 'approved',   label: 'Approved',     count: statusCounts().approved },
+      { key: 'rejected',   label: 'Rejected',     count: statusCounts().rejected }
+    ]; track tab.key) {
+      <button class="sa-tab" [class.sa-tab--active]="statusFilter() === tab.key"
+        (click)="statusFilter.set(tab.key)">
+        {{ tab.label }}
+        <span class="sa-tab__count" [class.sa-tab__count--zero]="tab.count === 0">{{ tab.count }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Toolbar -->
+  <div class="sa-toolbar">
+    <div class="sa-search">
+      <i class="bi bi-search sa-search__icon"></i>
+      <input class="sa-search__input" type="search" placeholder="Search by business name or email…"
+        [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value)" />
+    </div>
+    <span class="sa-toolbar__count">{{ filtered().length }} result{{ filtered().length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  @if (loading()) {
+    <div class="sa-loading">
+      <span class="sa-loading__spinner"></span>
+      Loading applications…
+    </div>
+  } @else {
+    <div class="sa-card">
+      <table class="sa-table">
+        <thead>
+          <tr>
+            <th>Business Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Applied</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (app of filtered(); track app.id) {
+            <tr>
+              <td>
+                <div class="sa-entity">
+                  <span class="sa-entity__avatar">{{ app.businessName.charAt(0) }}</span>
+                  <span class="sa-entity__name">{{ app.businessName }}</span>
+                </div>
+              </td>
+              <td class="sa-text-secondary">{{ app.businessEmail }}</td>
+              <td class="sa-text-secondary">{{ app.phone ?? '—' }}</td>
+              <td class="sa-text-secondary">{{ app.createdOn | date:'d MMM yyyy' }}</td>
+              <td>
+                <span class="sa-badge sa-badge--{{ app.statusName | lowercase }}">{{ app.statusName }}</span>
+              </td>
+              <td>
+                <button class="sa-btn sa-btn--ghost" (click)="selectApp(app)">
+                  <i class="bi bi-eye"></i> Review
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="sa-empty">
+                <i class="bi bi-person-plus"></i>
+                <span>No applications found.</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
+
+<!-- Detail panel overlay -->
+@if (selectedApp()) {
+  <div class="sa-overlay" (click)="closeDetail()"></div>
+  <aside class="sa-panel">
+    <div class="sa-panel__header">
+      <div class="sa-panel__title-row">
+        <div class="sa-panel__avatar">{{ selectedApp()!.businessName.charAt(0) }}</div>
+        <div>
+          <h2 class="sa-panel__title">{{ selectedApp()!.businessName }}</h2>
+          <span class="sa-badge sa-badge--{{ selectedApp()!.statusName | lowercase }}">{{ selectedApp()!.statusName }}</span>
+        </div>
+      </div>
+      <button class="sa-panel__close" (click)="closeDetail()" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="sa-panel__body">
+      <div class="sa-dl">
+        <div class="sa-dl__row">
+          <dt>Email</dt>
+          <dd>{{ selectedApp()!.businessEmail }}</dd>
+        </div>
+        <div class="sa-dl__row">
+          <dt>Phone</dt>
+          <dd>{{ selectedApp()!.phone ?? '—' }}</dd>
+        </div>
+        <div class="sa-dl__row">
+          <dt>Company Number</dt>
+          <dd>{{ selectedApp()!.registrationNumber ?? '—' }}</dd>
+        </div>
+        <div class="sa-dl__row">
+          <dt>VAT Number</dt>
+          <dd>{{ selectedApp()!.vatNumber ?? '—' }}</dd>
+        </div>
+        <div class="sa-dl__row">
+          <dt>Description</dt>
+          <dd>{{ selectedApp()!.description ?? '—' }}</dd>
+        </div>
+        <div class="sa-dl__row">
+          <dt>Bank Reference</dt>
+          <dd>{{ selectedApp()!.bankDetailsRef ?? '—' }}</dd>
+        </div>
+        <div class="sa-dl__row">
+          <dt>Category IDs</dt>
+          <dd>{{ selectedApp()!.categoryIds ?? '—' }}</dd>
+        </div>
+        @if (selectedApp()?.website; as website) {
+          <div class="sa-dl__row">
+            <dt>Website</dt>
+            <dd>
+              <a [href]="website.startsWith('http') ? website : 'https://' + website"
+                 target="_blank" rel="noopener" class="sa-link">
+                {{ website }}
+                <i class="bi bi-box-arrow-up-right sa-link__icon"></i>
+              </a>
+            </dd>
+          </div>
+        }
+        <div class="sa-dl__row">
+          <dt>T&amp;Cs Accepted</dt>
+          <dd>
+            @if (selectedApp()!.tsAndCsAccepted) {
+              <span class="sa-badge sa-badge--approved"><i class="bi bi-check-lg"></i> Yes</span>
+            } @else {
+              <span class="sa-badge sa-badge--rejected"><i class="bi bi-x-lg"></i> No</span>
+            }
+          </dd>
+        </div>
+        <div class="sa-dl__row">
+          <dt>Applied On</dt>
+          <dd>{{ selectedApp()!.createdOn | date:'d MMM yyyy, h:mm a' }}</dd>
+        </div>
+        @if (selectedApp()!.reviewedOn) {
+          <div class="sa-dl__row">
+            <dt>Reviewed On</dt>
+            <dd>{{ selectedApp()!.reviewedOn | date:'d MMM yyyy' }}</dd>
+          </div>
+        }
+        @if (selectedApp()!.reviewNotes) {
+          <div class="sa-dl__row">
+            <dt>Review Notes</dt>
+            <dd class="sa-dl__notes">{{ selectedApp()!.reviewNotes }}</dd>
+          </div>
+        }
+      </div>
+
+      @if (selectedApp()!.statusName === 'Submitted' || selectedApp()!.statusName === 'UnderReview') {
+        <div class="sa-panel__section">
+          <label class="sa-panel__label">Notes for applicant <span class="sa-panel__optional">(optional)</span></label>
+          <textarea class="sa-panel__textarea" rows="3"
+            [value]="actionNotes()"
+            (input)="actionNotes.set($any($event.target).value)"
+            placeholder="Add notes that will be shared with the applicant…"></textarea>
+        </div>
+
+        <div class="sa-panel__actions">
+          <button class="sa-btn sa-btn--success" [disabled]="submitting()"
+            (click)="approve(selectedApp()!.id)">
+            @if (actionInProgress() === 'approve') { <span class="sa-btn__spinner"></span> }
+            <i class="bi bi-check-circle"></i> Approve
+          </button>
+          <button class="sa-btn sa-btn--danger" [disabled]="submitting()"
+            (click)="reject(selectedApp()!.id)">
+            @if (actionInProgress() === 'reject') { <span class="sa-btn__spinner"></span> }
+            <i class="bi bi-x-circle"></i> Reject
+          </button>
+        </div>
+      }
+    </div>
+  </aside>
+}

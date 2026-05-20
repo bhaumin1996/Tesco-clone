@@ -1,0 +1,65 @@
+<div class="msg-page">
+  <div class="msg-page__header">
+    <h1 class="msg-page__title">Seller Messages
+      @if (unreadTotal() > 0) {
+      <span class="msg-page__badge">{{ unreadTotal() }} unread</span>
+      }
+    </h1>
+  </div>
+
+  <div class="msg-layout">
+    <!-- Thread list -->
+    <div class="msg-threads">
+      @if (loading()) {
+      <div class="msg-loading">Loading…</div>
+      } @else if (threads().length === 0) {
+      <div class="msg-empty">No message threads.</div>
+      } @else {
+      @for (thread of threads(); track thread.threadId) {
+      <button class="msg-thread" [class.msg-thread--active]="activeThread()?.threadId === thread.threadId"
+        [class.msg-thread--unread]="thread.unreadCount > 0" (click)="openThread(thread)">
+        <div class="msg-thread__seller">{{ thread.sellerName }}</div>
+        @if (thread.subject) {
+        <div class="msg-thread__subject">{{ thread.subject }}</div>
+        }
+        <div class="msg-thread__meta">
+          <span class="msg-thread__time">{{ thread.lastMessageAt | date:'d MMM, h:mm a' }}</span>
+          @if (thread.unreadCount > 0) {
+          <span class="msg-thread__count">{{ thread.unreadCount }}</span>
+          }
+        </div>
+      </button>
+      }
+      }
+    </div>
+
+    <!-- Message pane -->
+    <div class="msg-pane">
+      @if (!activeThread()) {
+      <div class="msg-pane__empty">Select a conversation to view messages.</div>
+      } @else {
+      <div class="msg-pane__header">
+        <strong>{{ activeThread()!.sellerName }}</strong>
+        @if (activeThread()!.subject) { <span> — {{ activeThread()!.subject }}</span> }
+      </div>
+      <div class="msg-pane__body">
+        @for (msg of messages(); track msg.id) {
+        <div class="msg-bubble" [class.msg-bubble--admin]="msg.isAdmin">
+          <span class="msg-bubble__sender">{{ msg.senderName }}</span>
+          <p class="msg-bubble__body">{{ msg.body }}</p>
+          <span class="msg-bubble__time">{{ msg.sentAt | date:'d MMM, h:mm a' }}</span>
+        </div>
+        }
+      </div>
+      <div class="msg-pane__reply">
+        <textarea class="msg-pane__textarea" rows="3" placeholder="Type your reply…"
+          [value]="replyBody()" (input)="replyBody.set($any($event.target).value)"></textarea>
+        <button class="msg-btn msg-btn--primary" [disabled]="sending() || !replyBody().trim()"
+          (click)="sendReply()">
+          {{ sending() ? 'Sending…' : 'Send' }}
+        </button>
+      </div>
+      }
+    </div>
+  </div>
+</div>

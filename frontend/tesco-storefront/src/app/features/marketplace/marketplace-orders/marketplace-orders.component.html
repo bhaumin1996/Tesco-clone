@@ -1,0 +1,87 @@
+<app-breadcrumb [items]="breadcrumbs" />
+
+<div class="mo">
+  <div class="mo__inner">
+    <h1 class="mo__title">My Marketplace Orders</h1>
+
+    @if (loading()) {
+    <div class="mo__spinner"><app-spinner /></div>
+    } @else if (error()) {
+    <div class="mo__error">{{ error() }}</div>
+    } @else if (marketplaceOrders().length === 0) {
+    <div class="mo__empty">
+      <p>You haven't placed any Marketplace orders yet.</p>
+      <a routerLink="/marketplace" class="mo__cta-btn">Browse the Marketplace</a>
+    </div>
+    } @else {
+    <div class="mo__list">
+      @for (order of marketplaceOrders(); track order.id) {
+      <div class="mo-order">
+        <div class="mo-order__header">
+          <div class="mo-order__meta">
+            <span class="mo-order__number">Order #{{ order.orderNumber }}</span>
+            <span class="mo-order__date">{{ order.createdAt | date:'d MMM yyyy' }}</span>
+          </div>
+          <span class="mo-order__status mo-order__status--{{ order.status | lowercase }}">{{ order.status }}</span>
+        </div>
+
+        @for (group of getSellerGroups(order); track group.sellerId) {
+        <div class="mo-seller">
+          <div class="mo-seller__header">
+            <a [routerLink]="['/marketplace/sellers', group.sellerId]" class="mo-seller__name">
+              {{ group.sellerName }}
+            </a>
+            @if (group.sellerOrderStatus) {
+            <span class="mo-seller__fulfil-status">{{ group.sellerOrderStatus }}</span>
+            }
+          </div>
+
+          <div class="mo-seller__items">
+            @for (item of group.items; track item.id) {
+            <div class="mo-item">
+              <div class="mo-item__img-wrap">
+                @if (item.imageUrl) {
+                <img [src]="item.imageUrl" [alt]="item.productName" class="mo-item__img" loading="lazy" />
+                } @else {
+                <div class="mo-item__img-placeholder"></div>
+                }
+              </div>
+              <div class="mo-item__detail">
+                <span class="mo-item__name">{{ item.productName }}</span>
+                <span class="mo-item__qty">Qty: {{ item.quantity }}</span>
+              </div>
+              <span class="mo-item__price">£{{ item.lineTotal | number:'1.2-2' }}</span>
+            </div>
+            }
+          </div>
+
+          @if (group.trackingNumber) {
+          <div class="mo-seller__tracking">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span>{{ group.carrierName }}</span>
+            <span class="mo-seller__tracking-num">{{ group.trackingNumber }}</span>
+          </div>
+          }
+
+          @if (canRaiseReturn(order)) {
+          <div class="mo-seller__actions">
+            <a [routerLink]="['/account/orders/marketplace', order.id, 'return']"
+              [queryParams]="{ sellerId: group.sellerId }"
+              class="mo-seller__return-cta">
+              Raise a return
+            </a>
+          </div>
+          }
+        </div>
+        }
+
+        <div class="mo-order__footer">
+          <span class="mo-order__total">Order total: <strong>£{{ order.total | number:'1.2-2' }}</strong></span>
+          <a [routerLink]="['/account/orders', order.id]" class="mo-order__view-link">View full order</a>
+        </div>
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>

@@ -5,10 +5,12 @@ import { CatalogueService } from '../../../core/services/catalogue.service';
 import { CartService } from '../../../core/services/cart.service';
 import { FavouritesService } from '../../../core/services/favourites.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { MarketplaceService } from '../../../core/services/marketplace.service';
 import { SpinnerComponent } from '../../../shared/components/spinner/spinner.component';
 import { BreadcrumbComponent } from '../../../shared/components/breadcrumb/breadcrumb.component';
 import { QuantityStepperComponent } from '../../../shared/components/quantity-stepper/quantity-stepper.component';
 import { ProductDetail, UserRatingStatus } from '../../../core/models/catalogue.model';
+import { SellerPerformance } from '../../../core/models/marketplace.model';
 import { ImageUrlPipe } from '../../../shared/pipes/image-url.pipe';
 
 @Component({
@@ -25,6 +27,7 @@ export class ProductDetailComponent implements OnInit {
   private readonly _cart = inject(CartService);
   private readonly _favourites = inject(FavouritesService);
   private readonly _notifications = inject(NotificationService);
+  private readonly _marketplace = inject(MarketplaceService);
 
   protected product = signal<ProductDetail | null>(null);
   protected loading = signal(true);
@@ -42,6 +45,9 @@ export class ProductDetailComponent implements OnInit {
   // Favourite state
   protected isFavourited = signal(false);
   protected togglingFavourite = signal(false);
+
+  // Seller performance (marketplace products only)
+  protected sellerPerformance = signal<SellerPerformance | null>(null);
 
   ngOnInit(): void {
     this._route.params.subscribe(p => {
@@ -69,6 +75,13 @@ export class ProductDetailComponent implements OnInit {
             next: status => this.isFavourited.set(status.isFavourited),
             error: () => { /* unauthenticated — button still shows, will prompt login */ }
           });
+          // Load seller performance for marketplace products
+          if (product.isMarketplace && product.sellerId) {
+            this._marketplace.getSellerPerformance(product.sellerId).subscribe({
+              next: perf => this.sellerPerformance.set(perf),
+              error: () => {}
+            });
+          }
         },
         error: () => { this.error.set(true); this.loading.set(false); }
       });

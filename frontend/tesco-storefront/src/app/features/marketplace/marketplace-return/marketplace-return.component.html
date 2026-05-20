@@ -1,0 +1,130 @@
+<app-breadcrumb [items]="breadcrumbs()" />
+
+<div class="mr">
+  <div class="mr__inner">
+    @if (loading()) {
+    <div class="mr__spinner"><app-spinner /></div>
+    } @else if (error()) {
+    <div class="mr__error">{{ error() }}</div>
+    } @else if (submitted()) {
+    <!-- Confirmation state -->
+    <div class="mr-confirm">
+      <div class="mr-confirm__icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#1a6b2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+      </div>
+      <h1 class="mr-confirm__title">Return request submitted</h1>
+      <p class="mr-confirm__desc">
+        Your return request for <strong>{{ selectedItem()?.productName }}</strong> has been sent to the seller.
+        They have <strong>72 hours</strong> to respond. If they don't respond in time, Tesco will step in to resolve the issue.
+      </p>
+      <div class="mr-confirm__actions">
+        <a routerLink="/account/orders/marketplace" class="mr-confirm__btn">Back to Marketplace Orders</a>
+      </div>
+    </div>
+
+    } @else {
+    <h1 class="mr__title">Raise a Return</h1>
+
+    @if (order()) {
+    <p class="mr__order-ref">Order #{{ order()!.orderNumber }} — placed {{ order()!.createdAt | date:'d MMM yyyy' }}</p>
+    }
+
+    <!-- Item selector -->
+    <section class="mr-section">
+      <h2 class="mr-section__title">Select item to return</h2>
+      <div class="mr-items">
+        @for (item of marketplaceItems(); track item.id) {
+        @let existingReturn = getReturnForItem(item.id);
+        <button class="mr-item"
+          [class.mr-item--selected]="selectedItemId() === item.id"
+          [class.mr-item--returned]="!!existingReturn"
+          [disabled]="!!existingReturn"
+          (click)="selectItem(item)">
+          <div class="mr-item__img-wrap">
+            @if (item.imageUrl) {
+            <img [src]="item.imageUrl" [alt]="item.productName" class="mr-item__img" loading="lazy" />
+            } @else {
+            <div class="mr-item__img-placeholder"></div>
+            }
+          </div>
+          <div class="mr-item__info">
+            <span class="mr-item__name">{{ item.productName }}</span>
+            <span class="mr-item__seller">Sold by {{ item.sellerName }}</span>
+            <span class="mr-item__price">£{{ item.lineTotal | number:'1.2-2' }}</span>
+          </div>
+          @if (existingReturn) {
+          <span class="mr-item__badge">Return {{ existingReturn.statusName }}</span>
+          }
+        </button>
+        }
+      </div>
+    </section>
+
+    <!-- Reason selector -->
+    @if (selectedItemId()) {
+    <section class="mr-section">
+      <h2 class="mr-section__title">Reason for return</h2>
+      <div class="mr-reasons">
+        @for (reason of returnReasons; track reason) {
+        <label class="mr-reason" [class.mr-reason--selected]="selectedReason() === reason">
+          <input type="radio" name="returnReason" [value]="reason"
+            [checked]="selectedReason() === reason"
+            (change)="selectedReason.set(reason)" />
+          {{ reason }}
+        </label>
+        }
+      </div>
+    </section>
+    }
+
+    @if (submitError()) {
+    <div class="mr__submit-error">{{ submitError() }}</div>
+    }
+
+    <!-- Status tracker for existing returns -->
+    @if (existingReturns().length > 0) {
+    <section class="mr-section">
+      <h2 class="mr-section__title">Your existing returns for this order</h2>
+      @for (ret of existingReturns(); track ret.id) {
+      <div class="mr-tracker">
+        <div class="mr-tracker__steps">
+          <div class="mr-tracker__step" [class.mr-tracker__step--done]="getStatusStep(ret.statusName) >= 1">
+            <div class="mr-tracker__dot"></div>
+            <span>Requested</span>
+          </div>
+          <div class="mr-tracker__line" [class.mr-tracker__line--done]="getStatusStep(ret.statusName) >= 2"></div>
+          <div class="mr-tracker__step" [class.mr-tracker__step--done]="getStatusStep(ret.statusName) >= 2">
+            <div class="mr-tracker__dot"></div>
+            <span>Seller Response</span>
+          </div>
+          <div class="mr-tracker__line" [class.mr-tracker__line--done]="getStatusStep(ret.statusName) >= 3"></div>
+          <div class="mr-tracker__step" [class.mr-tracker__step--done]="getStatusStep(ret.statusName) >= 3">
+            <div class="mr-tracker__dot"></div>
+            <span>Resolved</span>
+          </div>
+        </div>
+        <div class="mr-tracker__meta">
+          <span class="mr-tracker__status">Status: <strong>{{ ret.statusName }}</strong></span>
+          <span class="mr-tracker__reason">Reason: {{ ret.returnReason }}</span>
+          @if (ret.sellerResponse) {
+          <span class="mr-tracker__response">Seller response: {{ ret.sellerResponse }}</span>
+          }
+          @if (ret.refundAmount) {
+          <span class="mr-tracker__refund">Refund: £{{ ret.refundAmount | number:'1.2-2' }}</span>
+          }
+          <span class="mr-tracker__sla">SLA deadline: {{ ret.slaDeadline | date:'d MMM yyyy, h:mm a' }}</span>
+        </div>
+      </div>
+      }
+    </section>
+    }
+
+    <div class="mr__footer">
+      <button class="mr__submit-btn" [disabled]="!canSubmit()" (click)="submit()">
+        @if (submitting()) { Submitting... } @else { Submit return request }
+      </button>
+      <a routerLink="/account/orders/marketplace" class="mr__cancel-link">Cancel</a>
+    </div>
+    }
+  </div>
+</div>

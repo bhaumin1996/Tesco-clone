@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { AdminPaginationComponent } from '../../shared/components/pagination/pagination.component';
@@ -75,10 +75,56 @@ export class AdminMarketplaceComponent implements OnInit {
 
   private _load(): void {
     this.loading.set(true);
-    this._http.get<Seller[]>(`${this._base}/sellers`).subscribe({ next: r => { this.sellers.set(r); this.sellerPage.set(1); } });
-    this._http.get<Dispute[]>(`${this._base}/disputes`).subscribe({
-      next: r => { this.disputes.set(r); this.disputePage.set(1); this.loading.set(false); },
-      error: () => this.loading.set(false)
+    this.message.set('');
+    let pendingRequests = 2;
+    const finishRequest = () => {
+      pendingRequests -= 1;
+      if (pendingRequests === 0) {
+        this.loading.set(false);
+      }
+    };
+
+    this._http.get<any>(`${this._base}/sellers`).subscribe({
+      next: r => {
+        const rawItems = Array.isArray(r) ? r : (r?.items ?? []);
+        const items: Seller[] = rawItems.map((s: any) => ({
+          sellerId: s.id,
+          businessName: s.businessName ?? '',
+          email: s.contactEmail ?? '',
+          status: s.statusName ?? 'Pending',
+          totalListings: s.totalListings ?? 0,
+          joinedOn: s.createdOn ?? ''
+        }));
+        this.sellers.set(items);
+        this.sellerPage.set(1);
+      },
+      error: err => {
+        this.sellers.set([]);
+        this.message.set(extractApiError(err, 'Unable to load sellers.'));
+        finishRequest();
+      },
+      complete: finishRequest
+    });
+    this._http.get<any>(`${this._base}/disputes`).subscribe({
+      next: r => {
+        const rawItems = Array.isArray(r) ? r : (r?.items ?? []);
+        const items: Dispute[] = rawItems.map((d: any) => ({
+          disputeId: d.id,
+          orderId: d.orderId,
+          sellerName: d.sellerName ?? '',
+          reason: d.reason ?? '',
+          status: d.statusName ?? '',
+          createdOn: d.createdOn ?? ''
+        }));
+        this.disputes.set(items);
+        this.disputePage.set(1);
+      },
+      error: err => {
+        this.disputes.set([]);
+        this.message.set(extractApiError(err, 'Unable to load disputes.'));
+        finishRequest();
+      },
+      complete: finishRequest
     });
   }
 
@@ -89,21 +135,21 @@ export class AdminMarketplaceComponent implements OnInit {
   protected goToDisputePage(page: number): void { if (page >= 1 && page <= this.disputeTotalPages()) this.disputePage.set(page); }
 
   protected approveSeller(id: number): void {
-    this._http.patch(`${this._base}/sellers/${id}/approve`, {}).subscribe({
+    this._http.post(`${this._base}/sellers/${id}/approve`, {}).subscribe({
       next: () => { this._load(); this.message.set('Seller approved.'); setTimeout(() => this.message.set(''), 3000); },
       error: (err) => this.message.set(extractApiError(err, 'Action failed.'))
     });
   }
 
   protected suspendSeller(id: number): void {
-    this._http.patch(`${this._base}/sellers/${id}/suspend`, {}).subscribe({
+    this._http.post(`${this._base}/sellers/${id}/suspend`, { reason: 'Suspended by admin' }).subscribe({
       next: () => { this._load(); this.message.set('Seller suspended.'); setTimeout(() => this.message.set(''), 3000); },
       error: (err) => this.message.set(extractApiError(err, 'Action failed.'))
     });
   }
 
   protected resolveDispute(id: number, outcome: string): void {
-    this._http.patch(`${this._base}/disputes/${id}/resolve`, { outcome }).subscribe({
+    this._http.post(`${this._base}/disputes/${id}/resolve`, { resolution: outcome }).subscribe({
       next: () => { this._load(); this.message.set('Dispute resolved.'); setTimeout(() => this.message.set(''), 3000); },
       error: (err) => this.message.set(extractApiError(err, 'Action failed.'))
     });

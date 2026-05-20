@@ -1,0 +1,57 @@
+<app-breadcrumb [items]="breadcrumbs()" />
+
+<div class="mp-shop">
+  <!-- Sidebar filters -->
+  <aside class="mp-shop__sidebar">
+    <h2 class="mp-shop__sidebar-title">Filter</h2>
+
+    <div class="mp-filter-group">
+      <h3 class="mp-filter-group__label">Price</h3>
+      <div class="mp-price-inputs">
+        <label class="mp-price-inputs__label">
+          <span>Min £</span>
+          <input type="number" class="mp-price-inputs__input" [ngModel]="minPrice()"
+            (ngModelChange)="minPrice.set($event)" min="0" />
+        </label>
+        <label class="mp-price-inputs__label">
+          <span>Max £</span>
+          <input type="number" class="mp-price-inputs__input" [ngModel]="maxPrice()"
+            (ngModelChange)="maxPrice.set($event)" min="0" />
+        </label>
+      </div>
+    </div>
+
+    <button class="mp-filter-apply-btn" (click)="applyFilters()">Apply filters</button>
+  </aside>
+
+  <!-- Main content -->
+  <main class="mp-shop__main">
+    <div class="mp-shop__toolbar">
+      <p class="mp-shop__count">{{ totalCount() | number }} products</p>
+      <div class="mp-shop__sort">
+        <label for="mp-sort" class="mp-shop__sort-label">Sort by:</label>
+        <select id="mp-sort" class="mp-shop__sort-select"
+          [ngModel]="sortBy()" (ngModelChange)="onSortChange($event)">
+          @for (opt of sortOptions; track opt.value) {
+          <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    @if (loading()) {
+    <app-spinner />
+    } @else if (!result()?.items?.length) {
+    <div class="mp-shop__empty">
+      <p>No marketplace products found. Try adjusting your filters.</p>
+    </div>
+    } @else {
+    <div class="mp-shop__grid">
+      @for (product of result()!.items; track product.id) {
+      <app-product-card [product]="product" />
+      }
+    </div>
+    <app-pagination [currentPage]="currentPage()" [totalPages]="totalPages()" (pageChange)="onPageChange($event)" />
+    }
+  </main>
+</div>

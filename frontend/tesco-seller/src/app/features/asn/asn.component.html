@@ -1,0 +1,83 @@
+<div class="asn-page">
+  <div class="asn-page__header">
+    <h1>Advance Shipping Notices</h1>
+    <button class="asn-btn asn-btn--primary" (click)="openForm()">+ New ASN</button>
+  </div>
+  @if (message()) { <div class="asn-msg">{{ message() }}</div> }
+
+  @if (loading()) { <p class="asn-loading">Loading…</p> }
+  @else {
+
+  @if (showForm()) {
+  <div class="asn-form-card">
+    <div class="asn-form-card__header">
+      <h2>New Advance Shipping Notice</h2>
+      <button class="asn-close" (click)="closeForm()">✕</button>
+    </div>
+    <div class="asn-form-card__body">
+      <label class="asn-label">
+        Expected Arrival Date
+        <input class="asn-input asn-input--sm" type="date" [value]="expectedDate()"
+          (input)="expectedDate.set($any($event.target).value)" [min]="''" />
+      </label>
+
+      <h3 class="asn-subheading">SKU Lines</h3>
+      <table class="asn-lines-table">
+        <thead><tr><th>SKU</th><th>Quantity</th><th></th></tr></thead>
+        <tbody>
+          @for (line of lines(); track $index) {
+          <tr>
+            <td><input class="asn-input" type="text" placeholder="e.g. SKU-001" [value]="line.sku"
+              (input)="updateLine($index, { sku: $any($event.target).value })" /></td>
+            <td><input class="asn-input asn-input--sm" type="number" min="1" [value]="line.quantity"
+              (input)="updateLine($index, { quantity: +$any($event.target).value })" /></td>
+            <td>
+              @if (lines().length > 1) {
+              <button class="asn-remove" (click)="removeLine($index)" title="Remove">✕</button>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+      <button class="asn-btn asn-btn--ghost asn-btn--sm" (click)="addLine()">+ Add Line</button>
+    </div>
+    <div class="asn-form-card__footer">
+      <button class="asn-btn asn-btn--ghost" (click)="closeForm()">Cancel</button>
+      <button class="asn-btn asn-btn--primary" [disabled]="submitting() || !isFormValid()" (click)="submit()">
+        {{ submitting() ? 'Submitting…' : 'Submit ASN' }}
+      </button>
+    </div>
+  </div>
+  }
+
+  @if (asnList().length === 0 && !showForm()) {
+  <p class="asn-empty">No ASNs submitted yet. Click "New ASN" to notify us of an upcoming shipment.</p>
+  } @else {
+  <div class="asn-list">
+    @for (asn of asnList(); track asn.id) {
+    <div class="asn-card">
+      <div class="asn-card__header">
+        <span class="asn-card__ref">ASN #{{ asn.reference || asn.id }}</span>
+        <span class="asn-badge asn-badge--{{ asn.status | lowercase }}">{{ asn.status }}</span>
+      </div>
+      <div class="asn-card__meta">
+        <span>Expected: <strong>{{ asn.expectedArrivalDate | date:'d MMM yyyy' }}</strong></span>
+        <span>{{ asn.lineCount }} SKU line{{ asn.lineCount !== 1 ? 's' : '' }}</span>
+        <span>Submitted: {{ asn.submittedOn | date:'d MMM yyyy' }}</span>
+      </div>
+      <div class="asn-tracker">
+        @for (step of ['Submitted', 'Received', 'Processed']; track step) {
+        <div class="asn-tracker__step" [class.asn-tracker__step--done]="statusStep(asn.status) >= $index + 1">
+          <div class="asn-tracker__dot"></div>
+          <span class="asn-tracker__label">{{ step }}</span>
+        </div>
+        @if ($index < 2) { <div class="asn-tracker__line" [class.asn-tracker__line--done]="statusStep(asn.status) > $index + 1"></div> }
+        }
+      </div>
+    </div>
+    }
+  </div>
+  }
+  }
+</div>

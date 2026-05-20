@@ -1,0 +1,273 @@
+@use '../../../../styles/tokens' as *;
+
+.sp-page {}
+
+.sp-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+
+  &__title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $color-ink;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  &__sub { font-size: $font-size-sm; color: $color-text-secondary; margin: 0; }
+
+  &__alert {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: $color-warning-light;
+    color: $color-warning;
+    border-radius: $radius-sm;
+    padding: 0.5rem 0.875rem;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    align-self: center;
+  }
+}
+
+.sp-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  &--success { background: $color-success-light; color: $color-success; }
+}
+
+.sp-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+
+  &__count { font-size: $font-size-sm; color: $color-text-secondary; margin-left: auto; }
+}
+
+.sp-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  user-select: none;
+
+  &__input { display: none; }
+
+  &__track {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    background: $color-border;
+    border-radius: 999px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+  }
+
+  &__input:checked ~ &__track {
+    background: $color-tesco-blue;
+    &::after { transform: translateX(16px); }
+  }
+
+  &__label { font-size: $font-size-sm; font-weight: 500; color: $color-ink; }
+}
+
+.sp-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 4rem;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+
+  &__spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid $color-border;
+    border-top-color: $color-tesco-blue;
+    border-radius: 50%;
+    animation: sp-spin 0.65s linear infinite;
+  }
+}
+
+@keyframes sp-spin { to { transform: rotate(360deg); } }
+
+.sp-card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.sp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+
+  th {
+    text-align: left;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: $color-surface-alt;
+    border-bottom: 1px solid $color-border;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid $color-border;
+    color: $color-ink;
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background 0.1s;
+    &:last-child td { border-bottom: none; }
+    &:hover td { background: $color-surface-alt; }
+  }
+}
+
+.sp-row--flagged td { background: rgba($color-warning, 0.05); }
+
+.sp-entity {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: $color-tesco-blue-light;
+    color: $color-tesco-blue;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-transform: uppercase;
+
+    &--warn { background: $color-warning-light; color: $color-warning; }
+  }
+
+  &__name { font-weight: 500; }
+}
+
+.sp-flag {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: $color-warning;
+  background: $color-warning-light;
+  border-radius: 3px;
+  padding: 0.0625rem 0.375rem;
+  margin-top: 0.125rem;
+}
+
+.sp-muted { color: $color-muted; }
+
+.sp-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+
+  span { font-size: 0.875rem; color: $color-border; }
+  &__filled { color: $color-clubcard-yellow !important; }
+  &__val { font-size: $font-size-sm; font-weight: 600; color: $color-ink; margin-left: 0.25rem; }
+}
+
+.sp-metric {
+  font-weight: 600;
+  font-size: $font-size-sm;
+
+  &--good { color: $color-success; }
+  &--warn { color: $color-warning; }
+  &--bad  { color: $color-error; }
+}
+
+.sp-score {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+
+  &__bar {
+    flex: 1;
+    height: 6px;
+    background: $color-border;
+    border-radius: 999px;
+    overflow: hidden;
+    max-width: 70px;
+  }
+
+  &__fill {
+    height: 100%;
+    background: $color-success;
+    border-radius: 999px;
+
+    &--low { background: $color-error; }
+  }
+
+  &__val {
+    font-size: $font-size-sm;
+    font-weight: 700;
+    color: $color-ink;
+    min-width: 2rem;
+
+    &--low { color: $color-error; }
+  }
+}
+
+.sp-empty {
+  text-align: center;
+  padding: 3.5rem;
+  color: $color-muted;
+  font-size: $font-size-sm;
+
+  i { display: block; font-size: 1.75rem; margin-bottom: 0.5rem; opacity: 0.5; }
+}
+
+.sp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.3125rem 0.6875rem;
+  font-family: $font-family-base;
+
+  &--danger { background: $color-error; color: #fff; &:hover { filter: brightness(0.92); } }
+}

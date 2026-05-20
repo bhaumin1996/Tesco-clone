@@ -1,0 +1,301 @@
+<div class="sa-page">
+
+  <!-- Top nav -->
+  <nav class="sa-nav">
+    <div class="sa-nav__inner">
+      <div class="sa-nav__brand">
+        <span class="sa-nav__mark">T</span>
+        <div>
+          <span class="sa-nav__name">Tesco</span>
+          <span class="sa-nav__sub">Seller Portal</span>
+        </div>
+      </div>
+      <a routerLink="/auth/login" class="sa-nav__signin">
+        Already a seller? <strong>Sign in</strong>
+      </a>
+    </div>
+  </nav>
+
+  <div class="sa-body">
+
+    <!-- ── Success state ─────────────────────────────────────────────────── -->
+    @if (submitted()) {
+      <div class="sa-success-card">
+        <div class="sa-success">
+          <div class="sa-success__ring">
+            <span class="sa-success__check">✓</span>
+          </div>
+          <h1 class="sa-success__title">Application Received!</h1>
+          <p class="sa-success__body">
+            Thank you for applying to sell on Tesco Marketplace. Our team will review your
+            application and respond within <strong>5 business days</strong>.
+          </p>
+          <p class="sa-success__email">
+            Confirmation sent to <strong>{{ form().email }}</strong>
+          </p>
+          <a routerLink="/auth/login" class="sa-cta">Return to Sign In →</a>
+        </div>
+      </div>
+
+    } @else {
+
+      <!-- ── Hero ──────────────────────────────────────────────────────── -->
+      <div class="sa-hero">
+        <h1 class="sa-hero__title">Join Tesco Marketplace</h1>
+        <p class="sa-hero__sub">Complete three quick steps to apply — we'll be in touch within 5 business days.</p>
+      </div>
+
+      <!-- ── Step progress bar ──────────────────────────────────────────── -->
+      <div class="sa-progress">
+        <div class="sa-progress__track">
+          <div class="sa-progress__fill"
+            [style.width.%]="((currentStep() - 1) / (totalSteps - 1)) * 100"></div>
+        </div>
+
+        @for (i of [1, 2, 3]; track i) {
+          <div class="sa-progress__step"
+            [class.is-done]="currentStep() > i"
+            [class.is-active]="currentStep() === i">
+            <div class="sa-progress__dot">
+              @if (currentStep() > i) {
+                <span class="sa-progress__check">✓</span>
+              } @else {
+                <span>{{ i }}</span>
+              }
+            </div>
+            <span class="sa-progress__label">
+              {{ i === 1 ? 'Business' : i === 2 ? 'Contact' : 'Products' }}
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- ── Step card ──────────────────────────────────────────────────── -->
+      <div class="sa-card">
+
+        <!-- Global error -->
+        @if (error()) {
+          <div class="sa-alert">
+            <span class="sa-alert__icon">⚠</span>
+            <span>{{ error() }}</span>
+          </div>
+        }
+
+        <!-- Step 1: Business Information -->
+        @if (currentStep() === 1) {
+          <div class="sa-step">
+            <div class="sa-step__head">
+              <div class="sa-step__badge">1</div>
+              <div>
+                <h2 class="sa-step__title">Business Information</h2>
+                <p class="sa-step__desc">Tell us about your company</p>
+              </div>
+            </div>
+
+            <div class="sa-grid">
+              <div class="sa-field sa-field--full">
+                <label class="sa-field__label" for="businessName">
+                  Business Name <span class="sa-req">*</span>
+                </label>
+                <input class="sa-field__input" id="businessName"
+                  [class.sa-field__input--error]="fieldErrors()['businessName']"
+                  type="text" required placeholder="e.g. Acme Foods Ltd"
+                  [value]="form().businessName"
+                  (input)="update({ businessName: $any($event.target).value })" />
+                @if (fieldErrors()['businessName']) {
+                  <span class="sa-field__error">{{ fieldErrors()['businessName'] }}</span>
+                }
+              </div>
+
+              <div class="sa-field">
+                <label class="sa-field__label" for="businessType">
+                  Business Type <span class="sa-req">*</span>
+                </label>
+                <select class="sa-field__input sa-field__select" id="businessType"
+                  [class.sa-field__input--error]="fieldErrors()['businessType']"
+                  required [value]="form().businessType"
+                  (change)="update({ businessType: $any($event.target).value })">
+                  <option value="">Select type…</option>
+                  @for (t of businessTypes; track t) {
+                    <option [value]="t">{{ t }}</option>
+                  }
+                </select>
+                @if (fieldErrors()['businessType']) {
+                  <span class="sa-field__error">{{ fieldErrors()['businessType'] }}</span>
+                }
+              </div>
+
+              <div class="sa-field">
+                <label class="sa-field__label" for="vatNumber">VAT Number <span class="sa-optional">(optional)</span></label>
+                <input class="sa-field__input" id="vatNumber"
+                  [class.sa-field__input--error]="fieldErrors()['vatNumber']"
+                  type="text" placeholder="GB123456789"
+                  [value]="form().vatNumber"
+                  (input)="update({ vatNumber: $any($event.target).value })" />
+                @if (fieldErrors()['vatNumber']) {
+                  <span class="sa-field__error">{{ fieldErrors()['vatNumber'] }}</span>
+                }
+              </div>
+
+              <div class="sa-field sa-field--full">
+                <label class="sa-field__label" for="website">Website <span class="sa-optional">(optional)</span></label>
+                <input class="sa-field__input" id="website"
+                  [class.sa-field__input--error]="fieldErrors()['website']"
+                  type="url" placeholder="https://yourwebsite.com"
+                  [value]="form().website"
+                  (input)="update({ website: $any($event.target).value })" />
+                @if (fieldErrors()['website']) {
+                  <span class="sa-field__error">{{ fieldErrors()['website'] }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Step 2: Contact Details -->
+        @if (currentStep() === 2) {
+          <div class="sa-step">
+            <div class="sa-step__head">
+              <div class="sa-step__badge">2</div>
+              <div>
+                <h2 class="sa-step__title">Contact Details</h2>
+                <p class="sa-step__desc">Who should we get in touch with?</p>
+              </div>
+            </div>
+
+            <div class="sa-grid">
+              <div class="sa-field sa-field--full">
+                <label class="sa-field__label" for="contactName">
+                  Your Full Name <span class="sa-req">*</span>
+                </label>
+                <input class="sa-field__input" id="contactName"
+                  [class.sa-field__input--error]="fieldErrors()['contactName']"
+                  type="text" required placeholder="e.g. Jane Smith"
+                  [value]="form().contactName"
+                  (input)="update({ contactName: $any($event.target).value })" />
+                @if (fieldErrors()['contactName']) {
+                  <span class="sa-field__error">{{ fieldErrors()['contactName'] }}</span>
+                }
+              </div>
+
+              <div class="sa-field">
+                <label class="sa-field__label" for="email">
+                  Email Address <span class="sa-req">*</span>
+                </label>
+                <input class="sa-field__input" id="email"
+                  [class.sa-field__input--error]="fieldErrors()['email']"
+                  type="email" required placeholder="jane@acmefoods.com"
+                  [value]="form().email"
+                  (input)="update({ email: $any($event.target).value })" />
+                @if (fieldErrors()['email']) {
+                  <span class="sa-field__error">{{ fieldErrors()['email'] }}</span>
+                }
+              </div>
+
+              <div class="sa-field">
+                <label class="sa-field__label" for="phone">
+                  Phone Number <span class="sa-req">*</span>
+                </label>
+                <input class="sa-field__input" id="phone"
+                  [class.sa-field__input--error]="fieldErrors()['phone']"
+                  type="tel" required placeholder="+44 7700 000000"
+                  [value]="form().phone"
+                  (input)="update({ phone: $any($event.target).value })" />
+                @if (fieldErrors()['phone']) {
+                  <span class="sa-field__error">{{ fieldErrors()['phone'] }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Step 3: About Your Products -->
+        @if (currentStep() === 3) {
+          <div class="sa-step">
+            <div class="sa-step__head">
+              <div class="sa-step__badge">3</div>
+              <div>
+                <h2 class="sa-step__title">About Your Products</h2>
+                <p class="sa-step__desc">Help us understand what you sell</p>
+              </div>
+            </div>
+
+            <div class="sa-grid">
+              <div class="sa-field sa-field--full">
+                <label class="sa-field__label" for="description">
+                  What do you sell? <span class="sa-req">*</span>
+                </label>
+                <textarea class="sa-field__input sa-field__textarea" id="description"
+                  [class.sa-field__input--error]="fieldErrors()['description']"
+                  rows="5" required
+                  placeholder="Briefly describe your product range, categories, and any unique aspects of your business…"
+                  [value]="form().description"
+                  (input)="update({ description: $any($event.target).value })"></textarea>
+                @if (fieldErrors()['description']) {
+                  <span class="sa-field__error">{{ fieldErrors()['description'] }}</span>
+                }
+              </div>
+
+              <div class="sa-field sa-field--full">
+                <label class="sa-field__label" for="turnover">
+                  Estimated Monthly Turnover <span class="sa-optional">(optional)</span>
+                </label>
+                <select class="sa-field__input sa-field__select" id="turnover"
+                  [value]="form().estimatedMonthlyTurnover"
+                  (change)="update({ estimatedMonthlyTurnover: $any($event.target).value })">
+                  <option value="">Prefer not to say</option>
+                  @for (r of turnoverRanges; track r) {
+                    <option [value]="r">{{ r }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="sa-terms sa-field--full">
+                By submitting, you agree to the
+                <a href="#" target="_blank">Tesco Marketplace Seller Terms</a>
+                and <a href="#" target="_blank">Privacy Policy</a>.
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- ── Navigation buttons ─────────────────────────────────────── -->
+        <div class="sa-nav-btns"
+          [class.sa-nav-btns--first]="currentStep() === 1"
+          [class.sa-nav-btns--last]="currentStep() === totalSteps">
+
+          @if (currentStep() > 1) {
+            <button class="sa-btn sa-btn--back" type="button" (click)="prev()">
+              ← Back
+            </button>
+          }
+
+          @if (currentStep() < totalSteps) {
+            <button class="sa-btn sa-btn--next" type="button" (click)="next()">
+              Continue →
+            </button>
+          }
+
+          @if (currentStep() === totalSteps) {
+            <button class="sa-btn sa-btn--submit" type="button"
+              [disabled]="submitting()" (click)="submit()">
+              @if (submitting()) {
+                <span class="sa-btn__spinner"></span>
+                <span>Submitting…</span>
+              } @else {
+                <span>Submit Application</span>
+                <span>→</span>
+              }
+            </button>
+          }
+
+        </div>
+
+      </div><!-- /sa-card -->
+
+      <!-- Step counter hint -->
+      <p class="sa-counter">Step {{ currentStep() }} of {{ totalSteps }}</p>
+
+    }
+  </div>
+</div>

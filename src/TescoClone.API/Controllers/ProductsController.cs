@@ -45,9 +45,11 @@ public sealed class ProductsController : ControllerBase
         [FromQuery] string? sortDirection,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 20,
+        [FromQuery] bool includeMarketplace = false,
+        [FromQuery] int? sellerId = null,
         CancellationToken cancellationToken = default)
     {
-        var query = new SearchProductsQuery(searchTerm, categoryId, brandId, minPrice, maxPrice, inStockOnly, clubcardOnly, brands, dietary, sortBy, sortDirection, pageNumber, pageSize);
+        var query = new SearchProductsQuery(searchTerm, categoryId, brandId, minPrice, maxPrice, inStockOnly, clubcardOnly, brands, dietary, sortBy, sortDirection, pageNumber, pageSize, includeMarketplace, sellerId);
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }
@@ -69,9 +71,11 @@ public sealed class ProductsController : ControllerBase
         [FromQuery] string? sortDirection,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 20,
+        [FromQuery] bool includeMarketplace = false,
+        [FromQuery] int? sellerId = null,
         CancellationToken cancellationToken = default)
     {
-        var query = new SearchProductsQuery(searchTerm, categoryId, brandId, minPrice, maxPrice, inStockOnly, clubcardOnly, brands, dietary, sortBy, sortDirection, pageNumber, pageSize);
+        var query = new SearchProductsQuery(searchTerm, categoryId, brandId, minPrice, maxPrice, inStockOnly, clubcardOnly, brands, dietary, sortBy, sortDirection, pageNumber, pageSize, includeMarketplace, sellerId);
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }

@@ -215,8 +215,8 @@
 - `[ ]` Implement push notifications: wire `INotificationService` for browser push on order updates.
 - `[ ]` Implement Stripe payment webhook handler: async payment confirmation and refund events.
 - `[ ]` Implement eCoupon management: stored procedures, API endpoints, admin UI, and storefront redemption.
-- `[ ]` Implement marketplace seller listing CRUD: sellers can add and manage product listings.
-- `[ ]` Implement marketplace commission engine: `fn_Marketplace_CalculateCommission` SP and wiring.
+- `[x]` Implement marketplace seller listing CRUD: sellers can add and manage product listings.
+- `[x]` Implement marketplace commission engine: `fn_Marketplace_CalculateCommission` SP and wiring.
 - `[ ]` Implement delivery zone management admin UI: list, create, edit zones (DB tables exist).
 - `[ ]` Implement recipes CRUD in admin panel: create, edit, publish, soft-delete.
 - `[ ]` Implement product reviews and ratings: tables, stored procedures, API endpoints, storefront UI.
@@ -258,6 +258,150 @@
 - `[ ]` Add HTTP response caching headers for public catalogue endpoints.
 - `[ ]` Bundle and compress Angular production builds with Brotli.
 - `[ ]` Implement image optimisation pipeline (WebP conversion, responsive srcset).
+
+---
+
+## Phase 10: Advanced Clubcard & Loyalty Features
+
+### Backend — Clubcard Enhancements
+
+- `[ ]` Add Clubcard number (13-digit) auto-generated and stored on user registration; expose on account profile API.
+- `[ ]` Implement Clubcard Challenges engine: `m.tblClubcardChallenge` (type, qualifying category/brand, spend/quantity target, bonus points, start/end date, target segment), `t.tblCustomerChallengeProgress` for per-user tracking, automatic points award via Hangfire job on completion.
+- `[ ]` Implement supplier-funded Clubcard Challenges: challenge records linked to a supplier/brand, commission tracking, reporting endpoint for suppliers.
+- `[ ]` Implement Personalised "Your Clubcard Prices": `m.tblPersonalisedClubcardPrice` (ProductId, SegmentId, PersonalisedPrice, ValidFrom, ValidTo); surfaced on product search and detail pages for the signed-in Clubcard holder.
+- `[ ]` Implement Clubcard Plus subscription: Stripe recurring billing at £7.99/month; entitlement check on account (two 10%-off monthly shop vouchers, enhanced points multiplier); subscription lifecycle (create, cancel, renew, lapse); stored in `t.tblClubcardPlusSubscription`.
+- `[ ]` Implement Reward Partners: `m.tblRewardPartner` (name, logo, exchange rate, category, active dates); `proc_Loyalty_RedeemRewardPartner` that converts Clubcard voucher value to partner reward code; API endpoints for partner listing and redemption.
+- `[ ]` Implement digital Clubcard barcode: generate EAN-13 or Code 128 barcode (base64 image or SVG) from Clubcard number for in-app scanning; endpoint GET /api/v1/clubcard/barcode.
+- `[ ]` Implement on-demand points-to-vouchers conversion: POST /api/v1/clubcard/convert-points — converts eligible accumulated points to voucher balance at any time, not just quarterly.
+- `[ ]` Implement automatic quarterly points-to-vouchers conversion: Hangfire scheduled job running in January, April, July, and October; converts all eligible balances and queues welcome-voucher email.
+- `[ ]` Implement customer segmentation engine: `m.tblCustomerSegment` (name, rules JSON), `t.tblCustomerSegmentMembership`; nightly Hangfire job re-evaluates segment membership based on purchase history, spend tier, postcode, and registration date.
+- `[ ]` Implement "Who Likes" anonymised product discovery: stored function `fn_Loyalty_GetCo购BoughtProducts` returning top co-purchased products for a given SKU; endpoint on product detail API.
+- `[ ]` Implement back-in-stock notification: `t.tblStockAlert` (UserId, ProductVariantId, CreatedOn); Hangfire job checks stock levels and dispatches email/push when stock is restored; POST /api/v1/products/{id}/notify-stock and DELETE to cancel.
+- `[ ]` Implement points manual adjustment: POST /api/v1/admin/clubcard/adjust-points with UserId, Amount (±), ReasonCode, and AdminId; writes to `t.tblAuditLog`; requires SuperAdmin policy.
+- `[ ]` Implement eCoupon management (full): `m.tblECoupon` (code, type, discount, qualifying products/categories, max uses, expiry), `proc_Loyalty_RedeemECoupon`, admin CRUD API, and storefront redemption at checkout distinct from standard vouchers.
+
+### Storefront — Clubcard UI
+
+- `[ ]` Redesign Clubcard hub page: balance tile with digital barcode, quick-action tiles (Challenges, Vouchers, Reward Partners, Clubcard Plus), points-to-vouchers conversion CTA, personalised offers strip.
+- `[ ]` Build Clubcard Challenges page (`/account/clubcard/challenges`): active challenge cards with progress bars, days remaining, bonus points on completion, completed/expired tabs, challenge category filter.
+- `[ ]` Build Clubcard Plus upgrade page (`/account/clubcard/plus`): plan comparison (standard vs Plus benefits), Stripe subscription sign-up flow, active subscriber view with monthly vouchers, cancellation option.
+- `[ ]` Build Reward Partners page (`/account/clubcard/reward-partners`): partner grid by category (travel, dining, entertainment, streaming), voucher exchange calculator (e.g. £1.50 voucher → £3.00 partner credit), partner redemption confirmation and reward code display.
+- `[ ]` Build digital barcode component in Clubcard hub: full-width scannable barcode/QR with Clubcard number; "Add to Apple/Google Wallet" CTA.
+- `[ ]` Build on-demand voucher conversion UI: amount selector, conversion confirmation modal, updated balance summary.
+- `[ ]` Build "Your Clubcard Prices" personalised offers page (`/account/clubcard/your-prices`): grid of personalised discounted products exclusive to the signed-in customer.
+- `[ ]` Add Clubcard Prices filter toggle on category and search pages: one-click filter to show only products with active Clubcard or personalised pricing.
+- `[ ]` Add challenge progress micro-badge on product cards: when a product contributes to an active challenge, display a mini "Challenge" badge with progress count.
+- `[ ]` Add "Notify me" back-in-stock CTA on product detail for out-of-stock variants: confirmation toast and manage-alerts link in account.
+- `[ ]` Build Shopping List feature (`/account/lists`): create and rename multiple named lists; add/remove products from any catalogue page; "Add all to basket" action; share list via link.
+- `[ ]` Build eCoupons page (`/account/clubcard/ecoupons`): list active digital coupons with expiry, qualifying products; clip-to-account action; auto-applied at checkout when qualifying items are in basket.
+
+### Admin — Clubcard Management
+
+- `[ ]` Build Clubcard Challenges admin page: create/edit challenge form (name, type, qualifying category or brand, spend/quantity target, bonus points, start/end date, target segment, supplier-funded flag); active/upcoming/expired tabs; deactivate action.
+- `[ ]` Build Reward Partners admin page: create/edit partner form (name, logo, description, exchange rate, voucher template, redemption URL, active date range); deactivate action; redemption volume stats.
+- `[ ]` Build customer segmentation admin: define named segments with rule builder (purchase history, spend tier, postcode district, registration date range); preview estimated segment size; trigger manual re-evaluation.
+- `[ ]` Build Clubcard Plus subscription admin: subscriber list with status filter; subscription detail (billing history, next renewal, benefit usage); manual cancel/refund action with audit trail.
+- `[ ]` Build personalised Clubcard Prices admin: create per-segment price rules (product scope, discount amount, validity dates); preview rule impact; activate/deactivate.
+- `[ ]` Build loyalty analytics dashboard page in admin: KPI tiles — challenges completed (month), vouchers issued, vouchers redeemed, Reward Partner redemptions, Clubcard Plus subscriber count, points issued vs redeemed ratio; trend charts.
+- `[ ]` Build points adjustment admin tool: search customer by email; credit/debit points with mandatory reason code dropdown; confirmation step; full write to `t.tblAuditLog`.
+- `[ ]` Build eCoupon admin page: create/edit eCoupon (code, discount type/value, qualifying products/categories, per-customer use limit, expiry, active status); distribution CSV upload; usage stats.
+
+---
+
+## Phase 11: Marketplace Full Platform
+
+### Backend — Marketplace Platform
+
+- `[x]` Implement seller account type: extend `m.tblUser` with `IsSeller` flag and `SellerId` FK; add `m.tblSeller` (business name, registration number, VAT number, bank details ref, status, approvedOn, suspendedOn, commissionTierId).
+- `[x]` Implement seller onboarding API: multi-step application (business details, bank account, product categories, T&Cs acceptance); document upload endpoint (Companies House number, VAT certificate, public liability insurance); status workflow (Draft → Submitted → Under Review → Approved / Rejected); POST /api/v1/marketplace/sellers/apply.
+- `[x]` Implement seller product listing CRUD: sellers create, edit, publish/unpublish, and soft-delete their own listings (`m.tblMarketplaceListing`); listing validation rules (title max length, min 1 image, EAN/barcode required, price > 0, category must be marketplace-eligible); GET/POST/PUT/DELETE /api/v1/marketplace/listings.
+- `[x]` Implement marketplace catalogue integration: approved and published seller listings indexed alongside Tesco-own products; visible on customer catalogue with `IsMarketplace = 1` flag and SellerId; inventory and price synced from listing.
+- `[x]` Implement commission engine: `m.tblCommissionTier` (categoryId, rate%), `fn_Marketplace_CalculateCommission` computes commission per order line; `proc_Marketplace_RecordCommission` writes to `t.tblSellerCommission` on order placement.
+- `[x]` Implement seller order fulfillment workflow: marketplace orders routed to seller via `t.tblSellerOrder`; seller confirms, packs, marks dispatched with carrier name and tracking number; order status updates propagate to customer order detail.
+- `[x]` Implement advance shipping notices (ASN): `t.tblSellerASN` (SellerId, ExpectedArrivalDate, SKUs JSON, Status); POST /api/v1/marketplace/asn.
+- `[x]` Implement seller performance scoring: nightly Hangfire job computes delivery speed, on-time rate, return rate, cancellation rate, and average customer rating per seller; stores daily snapshot in `t.tblSellerPerformanceScore`; flags sellers below threshold.
+- `[x]` Implement marketplace returns workflow: customer raises return on marketplace order line; routed to seller for accept/dispute within SLA (72 hours); resolution triggers Stripe refund; escalate to admin dispute if SLA breached.
+- `[x]` Implement seller fee invoicing: monthly Hangfire job generates PDF invoice (QuestPDF) for commissions and platform fees per seller; stored in file storage and linked in `t.tblSellerInvoice`; downloadable via seller portal.
+- `[x]` Implement seller payout management: `t.tblSellerPayout` (SellerId, PeriodStart, PeriodEnd, GrossSales, CommissionDeducted, NetPayout, Status, ProcessedOn); admin-triggered payout run endpoint.
+- `[x]` Implement seller-to-admin messaging: `t.tblSellerMessage` (thread per SellerId, messages with sender, body, timestamp, readAt); POST /api/v1/marketplace/messages.
+- `[x]` Extend product search to support marketplace filter: query param `includeMarketplace=true/false`; filter by SellerId; sort by marketplace delivery speed badge.
+- `[x]` Implement Clubcard points on marketplace purchases: points earned at standard 1-per-£1 rate on marketplace order value; integrated into existing loyalty earn flow on order completion.
+- `[x]` Implement per-seller configurable delivery options: `m.tblSellerDeliveryOption` (SellerId, Type: Standard/Express, Price, FreeThresholdAmount, EstimatedDays); displayed on product card and cart.
+
+### Storefront — Marketplace Customer UI
+
+- `[x]` Build Marketplace landing page (`/marketplace`): hero banner, featured seller spotlight carousel, top marketplace categories grid, trending products, "Earn Clubcard points" trust badge.
+- `[x]` Build Marketplace category browsing (`/marketplace/shop/{category}`): product grid filtered to marketplace listings, seller badge on every card, delivery speed filter, seller filter, price range filter.
+- `[x]` Build Seller profile page (`/marketplace/sellers/{id}`): seller logo, name, description, performance rating stars, on-time delivery %, active listing count, return policy, contact support CTA.
+- `[x]` Add "Sold by [Seller Name]" badge on marketplace product cards and product detail page with link to seller profile.
+- `[x]` Build Marketplace orders section in account (`/account/orders/marketplace`): separate tab listing marketplace orders with per-order seller name, item thumbnails, tracking link, estimated delivery, and return CTA.
+- `[x]` Build Marketplace returns portal (`/account/orders/marketplace/{id}/return`): item selector with return reason dropdown; submission confirmation; return status tracker (Requested → Seller Response → Resolved).
+- `[x]` Build Marketplace guarantee and FAQs page (`/marketplace/guarantee`): customer-facing explanation of Tesco's fulfilment guarantee, returns policy, dispute escalation process, Clubcard points on marketplace purchases.
+- `[x]` Add delivery cost breakdown on cart and checkout: clearly separate Tesco grocery delivery fee from per-seller marketplace delivery fees; "Free delivery" eligibility shown per seller.
+- `[x]` Add seller rating display on marketplace product detail: star rating, number of reviews, top 3 recent customer reviews, "See all reviews" link to seller profile.
+
+### Admin — Marketplace Management
+
+- `[x]` Build seller application review page: paginated list of submitted applications with status filter; application detail view with document download; approve/reject action with notes; trigger email notification to applicant.
+- `[x]` Build seller performance dashboard: leaderboard table of sellers ranked by composite performance score; flag sellers below threshold; drill into individual seller metrics; suspend action from dashboard.
+- `[x]` Build commission configuration admin: category-level commission rate table; create/edit rate entries with effective date; tier assignment per seller; preview commission impact calculator.
+- `[x]` Build marketplace analytics page: GMV by date range, top sellers by revenue, category breakdown pie chart, average order value trend, dispute rate, return rate, new seller applications count; CSV export.
+- `[x]` Build seller payout run admin: pre-payout summary table (seller, gross, commission, net); confirm payout run; mark individual payouts as processed; download payout file.
+- `[x]` Build seller messaging admin: inbox of all open seller threads; reply on behalf of Tesco; assign to admin user; close/escalate thread.
+- `[x]` Build marketplace category eligibility config: toggle which Tesco catalogue categories allow marketplace listings; set category-level commission tier; restrict by seller type.
+- `[x]` Enhance existing dispute admin page: add marketplace return escalations alongside standard disputes; SLA timer display; auto-refund trigger on admin resolution.
+
+### Seller Portal (`frontend/tesco-seller` Angular app)
+
+- `[x]` Set up `frontend/tesco-seller` Angular 18 app: standalone components, lazy-loaded routes, seller JWT auth guard, Tesco Marketplace brand tokens, port 8084 locally.
+- `[x]` Build Seller Login page: email/password auth against seller-scoped JWT; 2FA step (OTP email); temp-token handoff pattern matching admin 2FA flow.
+- `[x]` Build Seller Dashboard: KPI tiles (total orders today, GMV this month, pending dispatches, open return requests, performance score), recent orders table, low-stock alerts widget.
+- `[x]` Build Seller Listings page: paginated list of own listings with status badges (Draft / Published / Unpublished); inline publish/unpublish toggle; create, edit, soft-delete; bulk CSV upload template download and import.
+- `[x]` Build Seller Product Create/Edit form: title, description (rich text), category selector (marketplace-eligible only), EAN/barcode, images (multi-upload), price, compare-at price, stock quantity, weight/dimensions, delivery option selector.
+- `[x]` Build Seller Orders page: orders in tabs (Pending Confirmation / Confirmed / Dispatched / Delivered); mark confirmed; mark dispatched with carrier name and tracking number entry; order detail drawer with line items and customer address.
+- `[x]` Build Seller Returns page: open return requests with SLA countdown; accept return (trigger refund); dispute return (enter dispute notes); resolved tab with outcome summary.
+- `[x]` Build Seller Inventory page: per-SKU stock levels; low-stock threshold setting; stock adjustment modal with reason code; export to CSV.
+- `[x]` Build Seller Performance page: score tiles (delivery speed, on-time rate, return rate, cancellation rate, average rating); trend charts; improvement guidance cards; comparison vs marketplace average.
+- `[x]` Build Seller Finance page: monthly commission statement table (period, gross sales, commission, net); payout history; downloadable PDF invoice per month.
+- `[x]` Build Seller Profile settings page: business name, logo upload, description, return policy text, support contact email, delivery options management.
+- `[x]` Build Seller Messages page: threaded conversation list with Tesco marketplace team; compose new message; read/unread indicators.
+- `[x]` Build Seller ASN page: submit advance shipping notice (expected arrival date, SKU list, quantities); ASN status tracker (Submitted → Received → Processed).
+- `[x]` Wire all seller routes inside a SellerLayout shell with auth guard; apply `ChangeDetectionStrategy.OnPush` to all seller components; use `inject()` for all DI.
+
+---
+
+## Phase 12: Enhanced Shopping Experience
+
+### Backend
+
+- `[ ]` Implement Whoosh (express delivery) slot type: `m.tblSlotType` with `Whoosh` variant; 20–60 minute delivery windows from nearest Whoosh-enabled store; premium delivery fee; availability check by postcode radius; separate slot grid API query param `slotType=whoosh`.
+- `[ ]` Implement Click & Collect: collection slot booking at selected store (`m.tblStore.IsClickCollectEnabled`); separate delivery mode (`DeliveryMode = ClickCollect`) in checkout; order-ready push/email notification; collection PIN generation.
+- `[ ]` Implement order amendment: allow customers to add/remove items and change delivery slot up to the amendment cutoff shown in the order confirmation; `proc_Order_AmendOrder` with idempotency guard; amendment history in `t.tblOrderAmendment`.
+- `[ ]` Implement product substitution preferences: per-account default (AllowSubstitutions BIT) and per-order override; checkout step to set substitution preference; substituted items flagged on order confirmation and delivery notification.
+- `[ ]` Implement age-restricted product verification: `m.tblProduct.IsAgeRestricted` and `AgeRestrictionLevel` (18/16); checkout age declaration step; delivery note to driver for ID check; `t.tblAgeVerificationLog`.
+- `[ ]` Implement nutritional/dietary filtering: `m.tblProductAttribute` (ProductId, AttributeTypeId: Vegan/Vegetarian/GlutenFree/DairyFree/Halal/Kosher/LowCalorie/etc.); filter parameters on product search and category endpoints; dietary badge rendering on product cards.
+- `[ ]` Implement "Buy Again" quick-reorder: query last N distinct products ordered by the customer, excluding discontinued SKUs; GET /api/v1/orders/buy-again; add-to-basket from this endpoint.
+- `[ ]` Implement Tesco Delivery Pass tiers: `m.tblDeliveryPassTier` (Anytime, Midweek, Off-Peak); tier benefit check on slot booking (waive delivery fee); upgrade/downgrade endpoint; billing via Stripe subscription; stored in `t.tblDeliveryPassSubscription`.
+- `[ ]` Implement meal deal builder: `m.tblMealDealGroup` (name, components, trigger price); `fn_Order_ApplyMealDeal` checks cart for qualifying combinations and applies deal price; indicator returned on cart line items.
+- `[ ]` Implement recurring basket / subscription order: `t.tblRecurringOrder` (UserId, BasketSnapshot JSON, Frequency: Weekly/Fortnightly, NextDeliveryDate, Status); Hangfire job creates order on schedule; manage active subscriptions endpoint.
+
+### Storefront
+
+- `[ ]` Build Whoosh slot selector: dedicated express delivery option in checkout delivery step; map view of nearest Whoosh stores; 20–60 min time slot grid; premium fee displayed.
+- `[ ]` Build Click & Collect flow: store selector with map and collection hours on checkout delivery step; collection slot grid; confirmation page with collection PIN and QR code.
+- `[ ]` Build order amendment page (`/account/orders/{id}/amend`): editable basket for the order with add/remove items; slot change option; amendment cutoff countdown; re-confirm CTA.
+- `[ ]` Add substitution preference toggle on checkout review step and account settings: "Allow substitutions" / "No substitutions please" with info tooltip.
+- `[ ]` Add dietary attribute filter badges on category and search pages: pill selectors (Vegan, Vegetarian, Gluten Free, Dairy Free, Halal, Kosher) with multi-select support; dietary badges on product cards for matching products.
+- `[ ]` Build "Buy Again" section on account dashboard and home page: horizontal scroll carousel of last-purchased products with quantity stepper and add-to-basket.
+- `[ ]` Build Delivery Pass management page (`/account/delivery-pass`): current tier display, benefits summary, tier upgrade/downgrade with pricing comparison, next billing date, cancel subscription CTA.
+- `[ ]` Add meal deal builder indicator on product cards and cart: "Part of a meal deal" badge; cart highlights completed meal deal combinations with saving amount; incomplete deal prompt showing missing components.
+- `[ ]` Build recurring order management page (`/account/subscriptions`): list of active recurring baskets with next delivery date, frequency, item count; pause, edit, cancel actions; upcoming order preview.
+
+### Admin
+
+- `[ ]` Build meal deal admin page: create/edit meal deal groups (name, component products/categories, trigger price, validity dates); active/inactive filter; usage stats.
+- `[ ]` Build Delivery Pass tier admin: configure tier names, prices, benefits (slot types allowed, free delivery threshold, monthly cost); subscriber count per tier; manual subscription management.
+- `[ ]` Build nutritional attribute admin: manage attribute types and assign attributes to products in bulk; CSV import for product attribute mapping.
 
 ---
 

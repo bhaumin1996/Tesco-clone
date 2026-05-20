@@ -1,0 +1,94 @@
+<app-breadcrumb [items]="breadcrumbs" />
+
+@if (loading()) {
+<app-spinner />
+} @else if (!seller()) {
+<div class="sp-not-found"><p>Seller not found.</p></div>
+} @else {
+<div class="sp">
+  <!-- Seller header -->
+  <section class="sp-header">
+    <div class="sp-header__inner">
+      <div class="sp-header__avatar">{{ seller()!.businessName[0] }}</div>
+      <div class="sp-header__info">
+        <h1 class="sp-header__name">{{ seller()!.businessName }}</h1>
+        @if (seller()!.description) {
+        <p class="sp-header__desc">{{ seller()!.description }}</p>
+        }
+        <div class="sp-header__meta">
+          @if (performance()?.averageRating) {
+          <div class="sp-rating">
+            <span class="sp-rating__stars">
+              @for (s of stars(performance()!.averageRating!); track $index) { {{ s }} }
+            </span>
+            <span class="sp-rating__score">{{ performance()!.averageRating! | number:'1.1-1' }}</span>
+          </div>
+          }
+          @if (performance()?.onTimeDeliveryRate) {
+          <span class="sp-header__badge">
+            🚚 {{ performance()!.onTimeDeliveryRate! | number:'1.0-0' }}% on time
+          </span>
+          }
+          @if (seller()!.phone) {
+          <span class="sp-header__badge">📞 {{ seller()!.phone }}</span>
+          }
+        </div>
+      </div>
+      <a routerLink="/marketplace/guarantee" class="sp-header__contact-cta">
+        Need help? Contact support →
+      </a>
+    </div>
+  </section>
+
+  <!-- Performance metrics -->
+  @if (performance()) {
+  <section class="sp-metrics">
+    <div class="sp-metrics__inner">
+      @if (performance()!.onTimeDeliveryRate != null) {
+      <div class="sp-metric">
+        <span class="sp-metric__value">{{ performance()!.onTimeDeliveryRate! | number:'1.0-0' }}%</span>
+        <span class="sp-metric__label">On-time delivery</span>
+      </div>
+      }
+      @if (performance()!.returnRate != null) {
+      <div class="sp-metric">
+        <span class="sp-metric__value">{{ performance()!.returnRate! | number:'1.1-1' }}%</span>
+        <span class="sp-metric__label">Return rate</span>
+      </div>
+      }
+      @if (performance()!.averageRating != null) {
+      <div class="sp-metric">
+        <span class="sp-metric__value">{{ performance()!.averageRating! | number:'1.1-1' }}/5</span>
+        <span class="sp-metric__label">Average rating</span>
+      </div>
+      }
+    </div>
+  </section>
+  }
+
+  <!-- Return policy -->
+  <section class="sp-policy">
+    <div class="sp-policy__inner">
+      <h2 class="sp-policy__title">Return policy</h2>
+      <p>This seller honours the Tesco Marketplace 30-day returns policy. Raise a return from your orders page and the seller will respond within 72 hours.</p>
+    </div>
+  </section>
+
+  <!-- Listings preview -->
+  @if (listings().length) {
+  <section class="sp-listings">
+    <div class="sp-listings__inner">
+      <div class="sp-listings__header">
+        <h2 class="sp-listings__title">Products from this seller</h2>
+        <a [routerLink]="['/marketplace/shop']" [queryParams]="{ sellerId: seller()!.id }" class="sp-listings__link">See all</a>
+      </div>
+      <div class="sp-listings__grid">
+        @for (product of listings(); track product.id) {
+        <app-product-card [product]="product" />
+        }
+      </div>
+    </div>
+  </section>
+  }
+</div>
+}

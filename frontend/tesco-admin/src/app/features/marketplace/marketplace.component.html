@@ -1,101 +1,186 @@
-<div class="admin-page-header">
-  <h1 class="admin-page-header__title">Marketplace</h1>
-</div>
+<div class="mp-page">
 
-@if (message()) {
-  <div class="admin-alert admin-alert--success">{{ message() }}</div>
-}
+  <div class="mp-header">
+    <div>
+      <h1 class="mp-header__title">Marketplace</h1>
+      <p class="mp-header__sub">Manage sellers, listings, and dispute resolution</p>
+    </div>
+  </div>
 
-<div class="mp-tabs">
-  <button class="mp-tab" [class.active]="activeTab() === 'sellers'" (click)="activeTab.set('sellers')">Sellers</button>
-  <button class="mp-tab" [class.active]="activeTab() === 'disputes'" (click)="activeTab.set('disputes')">Disputes</button>
-</div>
-
-@if (loading()) {
-  <p class="admin-loading">Loading…</p>
-} @else {
-  @if (activeTab() === 'sellers') {
-    <div class="admin-card">
-      <div class="admin-search-bar">
-        <i class="bi bi-search admin-search-bar__icon"></i>
-        <input class="admin-search-bar__input" type="search" placeholder="Search by business name or email…" [value]="sellerSearch()" (input)="onSellerSearch($any($event.target).value)" />
-      </div>
-      <table class="admin-table">
-        <thead>
-          <tr><th>Business</th><th>Email</th><th>Status</th><th>Listings</th><th>Joined</th><th>Actions</th></tr>
-        </thead>
-        <tbody>
-          @for (s of pagedSellers(); track s.sellerId) {
-            <tr>
-              <td>{{ s.businessName }}</td>
-              <td>{{ s.email }}</td>
-              <td><span class="status-badge status--{{ s.status | lowercase }}">{{ s.status }}</span></td>
-              <td>{{ s.totalListings }}</td>
-              <td>{{ s.joinedOn | date:'dd MMM yyyy' }}</td>
-              <td>
-                <div class="actions-cell">
-                  @if (s.status !== 'Active') {
-                    <button class="table-btn table-btn--success" (click)="approveSeller(s.sellerId)">Approve</button>
-                  }
-                  @if (s.status === 'Active') {
-                    <button class="table-btn table-btn--danger" (click)="suspendSeller(s.sellerId)">Suspend</button>
-                  }
-                </div>
-              </td>
-            </tr>
-          } @empty {
-            <tr><td colspan="6" class="admin-empty">No sellers found.</td></tr>
-          }
-        </tbody>
-      </table>
-
-      <app-admin-pagination
-        [currentPage]="sellerPage()"
-        [totalPages]="sellerTotalPages()"
-        (pageChange)="goToSellerPage($event)">
-      </app-admin-pagination>
+  @if (message()) {
+    <div class="mp-alert mp-alert--success">
+      <i class="bi bi-check-circle-fill"></i> {{ message() }}
     </div>
   }
 
-  @if (activeTab() === 'disputes') {
-    <div class="admin-card">
-      <div class="admin-search-bar">
-        <i class="bi bi-search admin-search-bar__icon"></i>
-        <input class="admin-search-bar__input" type="search" placeholder="Search by seller name or reason…" [value]="disputeSearch()" (input)="onDisputeSearch($any($event.target).value)" />
-      </div>
-      <table class="admin-table">
-        <thead>
-          <tr><th>Dispute #</th><th>Order #</th><th>Seller</th><th>Reason</th><th>Status</th><th>Date</th><th>Actions</th></tr>
-        </thead>
-        <tbody>
-          @for (d of pagedDisputes(); track d.disputeId) {
-            <tr>
-              <td>#{{ d.disputeId }}</td>
-              <td>#{{ d.orderId }}</td>
-              <td>{{ d.sellerName }}</td>
-              <td>{{ d.reason }}</td>
-              <td><span class="status-badge status--{{ d.status | lowercase }}">{{ d.status }}</span></td>
-              <td>{{ d.createdOn | date:'dd MMM yyyy' }}</td>
-              <td>
-                <div class="actions-cell">
-                  @if (d.status === 'Open') {
-                    <button class="table-btn table-btn--success" (click)="resolveDispute(d.disputeId, 'BuyerFavour')">Buyer favour</button>
-                    <button class="table-btn table-btn--danger" (click)="resolveDispute(d.disputeId, 'SellerFavour')">Seller favour</button>
-                  }
-                </div>
-              </td>
-            </tr>
-          } @empty {
-            <tr><td colspan="7" class="admin-empty">No disputes found.</td></tr>
-          }
-        </tbody>
-      </table>
+  <div class="mp-tabs">
+    <button class="mp-tab" [class.mp-tab--active]="activeTab() === 'sellers'" (click)="activeTab.set('sellers')">
+      <i class="bi bi-shop"></i>
+      Sellers
+      <span class="mp-tab__count">{{ filteredSellers().length }}</span>
+    </button>
+    <button class="mp-tab" [class.mp-tab--active]="activeTab() === 'disputes'" (click)="activeTab.set('disputes')">
+      <i class="bi bi-flag"></i>
+      Disputes
+      <span class="mp-tab__count mp-tab__count--warn">{{ filteredDisputes().length }}</span>
+    </button>
+  </div>
 
-      <app-admin-pagination
-        [currentPage]="disputePage()"
-        [totalPages]="disputeTotalPages()"
-        (pageChange)="goToDisputePage($event)">
-      </app-admin-pagination>
+  @if (loading()) {
+    <div class="mp-loading">
+      <span class="mp-loading__spinner"></span>
+      Loading marketplace data…
     </div>
+  } @else {
+
+    @if (activeTab() === 'sellers') {
+      <div class="mp-card">
+        <div class="mp-card__header">
+          <span class="mp-card__title">All Sellers</span>
+          <div class="mp-search">
+            <i class="bi bi-search mp-search__icon"></i>
+            <input class="mp-search__input" type="search"
+              placeholder="Search by business name or email…"
+              [value]="sellerSearch()"
+              (input)="onSellerSearch($any($event.target).value)" />
+          </div>
+        </div>
+
+        <div class="mp-card__body">
+          <table class="mp-table">
+            <thead>
+              <tr>
+                <th>Business</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Listings</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of pagedSellers(); track s.sellerId) {
+                <tr>
+                  <td>
+                    <div class="mp-entity">
+                      <span class="mp-entity__avatar">{{ s.businessName.charAt(0) }}</span>
+                      <span class="mp-entity__name">{{ s.businessName }}</span>
+                    </div>
+                  </td>
+                  <td class="mp-text-secondary">{{ s.email }}</td>
+                  <td>
+                    <span class="mp-badge mp-badge--{{ s.status | lowercase }}">{{ s.status }}</span>
+                  </td>
+                  <td>{{ s.totalListings }}</td>
+                  <td class="mp-text-secondary">{{ s.joinedOn | date:'dd MMM yyyy' }}</td>
+                  <td>
+                    <div class="mp-row-actions">
+                      @if (s.status !== 'Active') {
+                        <button class="mp-btn mp-btn--success mp-btn--sm" (click)="approveSeller(s.sellerId)">
+                          <i class="bi bi-check-lg"></i> Approve
+                        </button>
+                      }
+                      @if (s.status === 'Active') {
+                        <button class="mp-btn mp-btn--danger mp-btn--sm" (click)="suspendSeller(s.sellerId)">
+                          <i class="bi bi-pause-circle"></i> Suspend
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="mp-empty">
+                    <i class="bi bi-shop"></i>
+                    <span>No sellers found.</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mp-card__footer">
+          <app-admin-pagination
+            [currentPage]="sellerPage()"
+            [totalPages]="sellerTotalPages()"
+            (pageChange)="goToSellerPage($event)">
+          </app-admin-pagination>
+        </div>
+      </div>
+    }
+
+    @if (activeTab() === 'disputes') {
+      <div class="mp-card">
+        <div class="mp-card__header">
+          <span class="mp-card__title">Disputes</span>
+          <div class="mp-search">
+            <i class="bi bi-search mp-search__icon"></i>
+            <input class="mp-search__input" type="search"
+              placeholder="Search by seller or reason…"
+              [value]="disputeSearch()"
+              (input)="onDisputeSearch($any($event.target).value)" />
+          </div>
+        </div>
+
+        <div class="mp-card__body">
+          <table class="mp-table">
+            <thead>
+              <tr>
+                <th>Dispute #</th>
+                <th>Order #</th>
+                <th>Seller</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of pagedDisputes(); track d.disputeId) {
+                <tr>
+                  <td><code class="mp-ref">#{{ d.disputeId }}</code></td>
+                  <td><code class="mp-ref">#{{ d.orderId }}</code></td>
+                  <td>{{ d.sellerName }}</td>
+                  <td class="mp-text-secondary">{{ d.reason }}</td>
+                  <td>
+                    <span class="mp-badge mp-badge--{{ d.status | lowercase }}">{{ d.status }}</span>
+                  </td>
+                  <td class="mp-text-secondary">{{ d.createdOn | date:'dd MMM yyyy' }}</td>
+                  <td>
+                    <div class="mp-row-actions">
+                      @if (d.status === 'Open') {
+                        <button class="mp-btn mp-btn--primary mp-btn--sm" (click)="resolveDispute(d.disputeId, 'BuyerFavour')">
+                          Buyer favour
+                        </button>
+                        <button class="mp-btn mp-btn--ghost mp-btn--sm" (click)="resolveDispute(d.disputeId, 'SellerFavour')">
+                          Seller favour
+                        </button>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="mp-empty">
+                    <i class="bi bi-flag"></i>
+                    <span>No disputes found.</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mp-card__footer">
+          <app-admin-pagination
+            [currentPage]="disputePage()"
+            [totalPages]="disputeTotalPages()"
+            (pageChange)="goToDisputePage($event)">
+          </app-admin-pagination>
+        </div>
+      </div>
+    }
+
   }
-}
+</div>

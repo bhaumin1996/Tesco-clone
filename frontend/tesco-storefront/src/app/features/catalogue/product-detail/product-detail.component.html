@@ -71,6 +71,39 @@
       </div>
       }
 
+      <!-- Marketplace seller badge + rating -->
+      @if (p.isMarketplace && p.sellerId) {
+      <div class="pdp-info__seller">
+        Sold by
+        <a [routerLink]="['/marketplace/sellers', p.sellerId]" class="pdp-info__seller-link">
+          {{ p.sellerName || 'Marketplace Seller' }}
+        </a>
+        <span class="pdp-info__seller-badge">Marketplace</span>
+      </div>
+
+      @if (sellerPerformance()) {
+      <div class="pdp-seller-rating">
+        <div class="pdp-seller-rating__stars">
+          <div class="star-rating" [attr.aria-label]="sellerPerformance()!.averageRating + ' seller rating'">
+            <span class="star-rating__empty" aria-hidden="true">★★★★★</span>
+            <span class="star-rating__filled" aria-hidden="true"
+              [style.width.%]="((sellerPerformance()!.averageRating ?? 0) / 5) * 100">★★★★★</span>
+          </div>
+          <span class="pdp-seller-rating__score">{{ sellerPerformance()!.averageRating | number:'1.1-1' }}</span>
+          <span class="pdp-seller-rating__label">seller rating</span>
+        </div>
+        @if (sellerPerformance()!.onTimeDeliveryRate) {
+        <span class="pdp-seller-rating__metric">
+          🚚 {{ sellerPerformance()!.onTimeDeliveryRate! | number:'1.0-0' }}% on-time delivery
+        </span>
+        }
+        <a [routerLink]="['/marketplace/sellers', p.sellerId]" class="pdp-seller-rating__link">
+          See all seller reviews →
+        </a>
+      </div>
+      }
+      }
+
       <!-- Clubcard / pricing block -->
       <div class="pdp-pricing">
         @if (p.clubcardPrice) {

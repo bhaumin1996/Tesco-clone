@@ -1,0 +1,117 @@
+<div class="py-page">
+
+  <div class="py-header">
+    <div>
+      <h1 class="py-header__title">Seller Payouts</h1>
+      <p class="py-header__sub">Process and track commission payouts for marketplace sellers</p>
+    </div>
+    @if (message()) {
+      <div class="py-header__msg"
+           [class.py-header__msg--success]="!message().includes('failed')"
+           [class.py-header__msg--error]="message().includes('failed')">
+        {{ message() }}
+      </div>
+    }
+  </div>
+
+  <!-- Run payout panel -->
+  <div class="py-run-card">
+    <div class="py-run-card__header">
+      <i class="bi bi-cash-coin py-run-card__icon"></i>
+      <div>
+        <div class="py-run-card__title">Run Payout</div>
+        <div class="py-run-card__desc">Process payouts for all sellers within the selected period</div>
+      </div>
+    </div>
+    <div class="py-run-card__form">
+      <div class="py-field">
+        <label class="py-field__label">Period Start</label>
+        <input class="py-field__input" type="date"
+          [value]="periodStart()"
+          (change)="periodStart.set($any($event.target).value)" />
+      </div>
+      <div class="py-field">
+        <label class="py-field__label">Period End</label>
+        <input class="py-field__input" type="date"
+          [value]="periodEnd()"
+          (change)="periodEnd.set($any($event.target).value)" />
+      </div>
+      <button class="py-btn py-btn--primary" [disabled]="runningPayout()" (click)="runPayout()">
+        @if (runningPayout()) {
+          <span class="py-btn__spinner"></span> Running…
+        } @else {
+          <i class="bi bi-play-fill"></i> Run All Payouts
+        }
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="py-loading">
+      <span class="py-loading__spinner"></span> Loading payout history…
+    </div>
+  } @else {
+    <div class="py-card">
+      <div class="py-card__header">
+        <span class="py-card__title">Payout History</span>
+        <span class="py-card__count">{{ payouts().length }} record{{ payouts().length !== 1 ? 's' : '' }}</span>
+      </div>
+      <div class="py-card__body">
+        <table class="py-table">
+          <thead>
+            <tr>
+              <th>Seller</th>
+              <th>Period</th>
+              <th>Gross Sales</th>
+              <th>Commission</th>
+              <th>Net Payout</th>
+              <th>Status</th>
+              <th>Processed</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (payout of payouts(); track payout.payoutId) {
+              <tr>
+                <td>
+                  <div class="py-entity">
+                    <span class="py-entity__avatar">{{ payout.businessName.charAt(0) }}</span>
+                    {{ payout.businessName }}
+                  </div>
+                </td>
+                <td class="py-text-secondary py-period">
+                  {{ payout.periodStart | date:'d MMM' }} – {{ payout.periodEnd | date:'d MMM yyyy' }}
+                </td>
+                <td>£{{ payout.grossSales | number:'1.2-2' }}</td>
+                <td class="py-deduction">-£{{ payout.commissionDeducted | number:'1.2-2' }}</td>
+                <td class="py-net">£{{ payout.netPayout | number:'1.2-2' }}</td>
+                <td>
+                  <span class="py-badge py-badge--{{ payout.status | lowercase }}">{{ payout.status }}</span>
+                </td>
+                <td class="py-text-secondary">
+                  {{ payout.processedOn ? (payout.processedOn | date:'d MMM yyyy') : '—' }}
+                </td>
+                <td>
+                  @if (payout.status === 'Pending') {
+                    <button class="py-btn py-btn--ghost py-btn--sm" [disabled]="runningPayout()"
+                      (click)="runPayout(payout.sellerId)">
+                      <i class="bi bi-send"></i> Pay now
+                    </button>
+                  }
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="py-empty">
+                  <i class="bi bi-cash-coin"></i>
+                  <span>No payout records found.</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+</div>

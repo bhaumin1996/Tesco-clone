@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../core/services/cart.service';
@@ -22,6 +22,34 @@ export class CartComponent implements OnInit {
   protected readonly cartService = inject(CartService);
   private readonly _notifications = inject(NotificationService);
   protected loading = signal(true);
+
+  readonly marketplaceSellerGroups = computed(() => {
+    const items = this.cartService.cart()?.items ?? [];
+    const map = new Map<number, { sellerId: number; sellerName: string; items: CartItem[]; lineTotal: number; deliveryCharge?: number; freeThreshold?: number }>();
+    for (const item of items) {
+      if (!item.isMarketplace || !item.sellerId) continue;
+      if (!map.has(item.sellerId)) {
+        map.set(item.sellerId, {
+          sellerId: item.sellerId,
+          sellerName: item.sellerName ?? 'Marketplace Seller',
+          items: [],
+          lineTotal: 0,
+          deliveryCharge: item.marketplaceDeliveryCharge,
+          freeThreshold: item.marketplaceFreeDeliveryThreshold
+        });
+      }
+      const g = map.get(item.sellerId)!;
+      g.items.push(item);
+      g.lineTotal += item.lineTotal;
+    }
+    return Array.from(map.values());
+  });
+
+  readonly hasMarketplaceItems = computed(() => this.marketplaceSellerGroups().length > 0);
+
+  readonly nonMarketplaceItems = computed(() =>
+    (this.cartService.cart()?.items ?? []).filter(i => !i.isMarketplace)
+  );
 
   ngOnInit(): void {
     this.cartService.loadCart().subscribe({

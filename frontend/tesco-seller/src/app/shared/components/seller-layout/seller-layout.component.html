@@ -1,0 +1,45 @@
+<div class="seller-shell">
+
+  @if (sidebarOpen()) {
+  <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
+  }
+
+  <aside class="seller-sidebar" [class.open]="sidebarOpen()">
+    <div class="seller-sidebar__logo">
+      <span class="seller-sidebar__logo-mark">T</span>
+      <div>
+        <span class="seller-sidebar__brand">Tesco</span>
+        <span class="seller-sidebar__sub">Seller Portal</span>
+      </div>
+    </div>
+
+    <nav class="seller-nav" aria-label="Seller navigation">
+      @for (item of navItems; track item.route) {
+      <a [routerLink]="item.route" routerLinkActive="active" class="seller-nav__item">
+        <span class="seller-nav__icon" aria-hidden="true">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+      }
+    </nav>
+
+    <div class="seller-sidebar__footer">
+      <div class="seller-user">
+        <div class="seller-user__info">
+          <span class="seller-user__name">{{ auth.user()?.businessName }}</span>
+          <span class="seller-user__email">{{ auth.user()?.email }}</span>
+        </div>
+        <button class="seller-user__logout" (click)="logout()" title="Sign out" aria-label="Sign out">⏻</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="seller-main">
+    <header class="seller-topbar">
+      <button class="seller-topbar__toggle" (click)="toggleSidebar()" aria-label="Toggle menu">☰</button>
+      <span class="seller-topbar__title">Tesco Marketplace Seller Portal</span>
+    </header>
+    <main class="seller-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

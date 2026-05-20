@@ -5,6 +5,7 @@ using TescoClone.API.Authorization;
 using TescoClone.Application.Analytics.Queries.GetSalesAnalytics;
 using TescoClone.Application.Analytics.Queries.GetTopProducts;
 using TescoClone.Application.Analytics.Queries.GetAnalyticsExport;
+using TescoClone.Application.Analytics.Queries.GetMarketplaceAnalytics;
 
 namespace TescoClone.API.Controllers;
 
@@ -76,5 +77,22 @@ public sealed class AdminAnalyticsController : ControllerBase
         var fileName = $"analytics-{from:yyyyMMdd}-to-{to:yyyyMMdd}.csv";
         
         return File(csvBytes, "text/csv", fileName);
+    }
+
+    [HttpGet("marketplace")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetMarketplaceAnalytics(
+        [FromQuery] DateTime dateFrom,
+        [FromQuery] DateTime dateTo,
+        CancellationToken cancellationToken)
+    {
+        if (dateFrom > dateTo)
+            return BadRequest("'dateFrom' must be before or equal to 'dateTo'.");
+
+        var result = await _mediator.Send(new GetMarketplaceAnalyticsQuery(dateFrom, dateTo), cancellationToken);
+        return Ok(result);
     }
 }

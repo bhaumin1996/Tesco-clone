@@ -1,0 +1,42 @@
+$sidebar-w: 220px;
+$tesco-blue: #00539f;
+$tesco-dark: #003a70;
+
+.seller-shell { display: flex; height: 100vh; overflow: hidden; font-family: 'Tesco Modern', Arial, sans-serif; }
+
+.sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 49; display: none; @media (max-width: 768px) { display: block; } }
+
+.seller-sidebar {
+  width: $sidebar-w; flex-shrink: 0; background: $tesco-blue; color: #fff; display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 50;
+  @media (max-width: 768px) { position: fixed; inset: 0 auto 0 0; transform: translateX(-100%); transition: transform .25s ease; &.open { transform: translateX(0); } }
+  &__logo { display: flex; align-items: center; gap: .75rem; padding: 1.25rem 1rem; border-bottom: 1px solid rgba(255,255,255,.15); }
+  &__logo-mark { width: 36px; height: 36px; background: #ffdd00; color: $tesco-blue; font-size: 1.1rem; font-weight: 900; display: flex; align-items: center; justify-content: center; border-radius: 6px; flex-shrink: 0; }
+  &__brand { display: block; font-size: .95rem; font-weight: 800; color: #fff; line-height: 1.1; }
+  &__sub { display: block; font-size: .68rem; color: rgba(255,255,255,.65); }
+  &__footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,.15); padding: .85rem 1rem; }
+}
+
+.seller-nav {
+  padding: .75rem 0; flex: 1; overflow-y: auto;
+  &__item { display: flex; align-items: center; gap: .6rem; padding: .65rem 1rem; color: rgba(255,255,255,.8); text-decoration: none; font-size: .875rem; font-weight: 500; transition: background .15s, color .15s;
+    &:hover { background: rgba(255,255,255,.1); color: #fff; }
+    &.active { background: rgba(255,255,255,.2); color: #fff; font-weight: 700; border-left: 3px solid #ffdd00; padding-left: calc(1rem - 3px); }
+  }
+  &__icon { font-size: 1rem; flex-shrink: 0; }
+}
+
+.seller-user { display: flex; align-items: center; gap: .5rem;
+  &__info { flex: 1; overflow: hidden; }
+  &__name { display: block; font-size: .82rem; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  &__email { display: block; font-size: .7rem; color: rgba(255,255,255,.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  &__logout { background: none; border: none; color: rgba(255,255,255,.7); font-size: 1.1rem; cursor: pointer; padding: .25rem; &:hover { color: #fff; } }
+}
+
+.seller-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #f5f7fa; }
+
+.seller-topbar { background: #fff; border-bottom: 1px solid #e8ecf0; padding: .75rem 1.25rem; display: flex; align-items: center; gap: 1rem;
+  &__toggle { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #555; display: none; @media (max-width: 768px) { display: block; } }
+  &__title { font-size: .9rem; font-weight: 700; color: $tesco-blue; }
+}
+
+.seller-content { flex: 1; overflow-y: auto; padding: 1.5rem; }

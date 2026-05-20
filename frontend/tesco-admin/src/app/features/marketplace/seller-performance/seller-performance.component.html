@@ -1,0 +1,150 @@
+<div class="sp-page">
+
+  <div class="sp-header">
+    <div>
+      <h1 class="sp-header__title">Seller Performance</h1>
+      <p class="sp-header__sub">Monitor seller metrics and take action on underperforming accounts</p>
+    </div>
+    @if (belowThresholdCount() > 0) {
+      <div class="sp-header__alert">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        {{ belowThresholdCount() }} seller{{ belowThresholdCount() > 1 ? 's' : '' }} below threshold
+      </div>
+    }
+  </div>
+
+  @if (message()) {
+    <div class="sp-alert sp-alert--success">
+      <i class="bi bi-check-circle-fill"></i> {{ message() }}
+    </div>
+  }
+
+  <div class="sp-toolbar">
+    <label class="sp-toggle">
+      <input type="checkbox" class="sp-toggle__input"
+        [checked]="showBelowOnly()"
+        (change)="showBelowOnly.set(!showBelowOnly())" />
+      <span class="sp-toggle__track"></span>
+      <span class="sp-toggle__label">Show below-threshold only</span>
+    </label>
+    <span class="sp-toolbar__count">{{ filtered().length }} seller{{ filtered().length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  @if (loading()) {
+    <div class="sp-loading">
+      <span class="sp-loading__spinner"></span> Loading performance data…
+    </div>
+  } @else {
+    <div class="sp-card">
+      <table class="sp-table">
+        <thead>
+          <tr>
+            <th>Seller</th>
+            <th>Rating</th>
+            <th>On-Time %</th>
+            <th>Return Rate</th>
+            <th>Cancel Rate</th>
+            <th>Overall Score</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (seller of filtered(); track seller.sellerId) {
+            <tr [class.sp-row--flagged]="seller.belowThreshold">
+              <td>
+                <div class="sp-entity">
+                  <span class="sp-entity__avatar" [class.sp-entity__avatar--warn]="seller.belowThreshold">
+                    {{ seller.businessName.charAt(0) || '?' }}
+                  </span>
+                  <div>
+                    <div class="sp-entity__name">{{ seller.businessName }}</div>
+                    @if (seller.belowThreshold) {
+                      <span class="sp-flag">Below threshold</span>
+                    }
+                  </div>
+                </div>
+              </td>
+              <td>
+                @if (seller.averageRating) {
+                  <div class="sp-stars">
+                    @for (s of stars(seller.averageRating); track $index) {
+                      <span [class.sp-stars__filled]="s === '★'">{{ s }}</span>
+                    }
+                    <span class="sp-stars__val">{{ seller.averageRating | number:'1.1-1' }}</span>
+                  </div>
+                } @else {
+                  <span class="sp-muted">—</span>
+                }
+              </td>
+              <td>
+                @if (seller.onTimeDeliveryRate != null) {
+                  <span class="sp-metric"
+                    [class.sp-metric--good]="seller.onTimeDeliveryRate >= 90"
+                    [class.sp-metric--warn]="seller.onTimeDeliveryRate >= 80 && seller.onTimeDeliveryRate < 90"
+                    [class.sp-metric--bad]="seller.onTimeDeliveryRate < 80">
+                    {{ seller.onTimeDeliveryRate | number:'1.0-0' }}%
+                  </span>
+                } @else {
+                  <span class="sp-muted">—</span>
+                }
+              </td>
+              <td>
+                @if (seller.returnRate != null) {
+                  <span class="sp-metric"
+                    [class.sp-metric--good]="seller.returnRate <= 5"
+                    [class.sp-metric--bad]="seller.returnRate > 10">
+                    {{ seller.returnRate | number:'1.1-1' }}%
+                  </span>
+                } @else {
+                  <span class="sp-muted">—</span>
+                }
+              </td>
+              <td>
+                @if (seller.cancellationRate != null) {
+                  <span class="sp-metric"
+                    [class.sp-metric--good]="seller.cancellationRate <= 2"
+                    [class.sp-metric--bad]="seller.cancellationRate > 5">
+                    {{ seller.cancellationRate | number:'1.1-1' }}%
+                  </span>
+                } @else {
+                  <span class="sp-muted">—</span>
+                }
+              </td>
+              <td>
+                @if (seller.overallScore != null) {
+                  <div class="sp-score">
+                    <div class="sp-score__bar">
+                      <div class="sp-score__fill"
+                        [class.sp-score__fill--low]="seller.overallScore < 60"
+                        [style.width.%]="seller.overallScore"></div>
+                    </div>
+                    <span class="sp-score__val" [class.sp-score__val--low]="seller.overallScore < 60">
+                      {{ seller.overallScore | number:'1.0-0' }}
+                    </span>
+                  </div>
+                } @else {
+                  <span class="sp-muted">—</span>
+                }
+              </td>
+              <td>
+                @if (seller.belowThreshold) {
+                  <button class="sp-btn sp-btn--danger" (click)="suspend(seller.sellerId)">
+                    <i class="bi bi-pause-circle"></i> Suspend
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="sp-empty">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>No sellers found.</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

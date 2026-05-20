@@ -100,6 +100,27 @@
   }
 }
 
+// ── Marketplace seller badge ───────────────────────────────────────────────────
+.product-card__seller-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #00539f;
+  background: #e8f0fb;
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+  text-decoration: none;
+  margin-bottom: 0.125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 // ── Star rating ────────────────────────────────────────────────────────────────
 .product-card__rating {
   display: flex;

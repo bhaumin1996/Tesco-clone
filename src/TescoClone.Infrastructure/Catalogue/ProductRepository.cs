@@ -51,6 +51,8 @@ public sealed class ProductRepository : IProductRepository
         string? sortDirection,
         int pageNumber,
         int pageSize,
+        bool includeMarketplace = false,
+        int? sellerId = null,
         CancellationToken cancellationToken = default)
     {
         try
@@ -82,6 +84,8 @@ public sealed class ProductRepository : IProductRepository
                     SqlHelper.Input("@SortDirection", sortDirection ?? "asc"),
                     SqlHelper.Input("@PageNumber", pageNumber),
                     SqlHelper.Input("@PageSize", pageSize),
+                    SqlHelper.Input("@IncludeMarketplace", includeMarketplace),
+                    SqlHelper.InputNullable("@SellerId", sellerId),
                 ],
                 cancellationToken);
 
@@ -124,8 +128,11 @@ public sealed class ProductRepository : IProductRepository
         }
     }
 
-    private static ProductDto MapProduct(Microsoft.Data.SqlClient.SqlDataReader reader) =>
-        new(
+    private static ProductDto MapProduct(Microsoft.Data.SqlClient.SqlDataReader reader)
+    {
+        // IsMarketplace and SellerId columns exist only in the search result set, not in GetById.
+        bool hasMarketplaceCol = HasColumn(reader, "IsMarketplace");
+        return new ProductDto(
             SqlHelper.GetValue<int>(reader, "Id"),
             SqlHelper.GetValue<int>(reader, "CategoryId"),
             SqlHelper.GetValue<string>(reader, "CategoryName"),
@@ -134,7 +141,7 @@ public sealed class ProductRepository : IProductRepository
             SqlHelper.GetValue<string>(reader, "Name"),
             SqlHelper.GetValue<string>(reader, "Slug"),
             SqlHelper.GetNullableString(reader, "Description"),
-            SqlHelper.GetValue<decimal>(reader, "BasePrice"),  // SQL column stays BasePrice
+            SqlHelper.GetValue<decimal>(reader, "BasePrice"),
             SqlHelper.GetNullableValue<decimal>(reader, "ClubcardPrice"),
             SqlHelper.GetNullableString(reader, "ImageUrl"),
             SqlHelper.GetValue<bool>(reader, "IsAvailable"),
@@ -143,5 +150,16 @@ public sealed class ProductRepository : IProductRepository
             SqlHelper.GetValue<int>(reader, "ReviewCount"),
             SqlHelper.GetNullableValue<int>(reader, "DefaultVariantId"),
             SqlHelper.GetNullableString(reader, "UnitPrice"),
-            SqlHelper.GetNullableString(reader, "PromotionLabel"));
+            SqlHelper.GetNullableString(reader, "PromotionLabel"),
+            IsMarketplace: hasMarketplaceCol && SqlHelper.GetValue<bool>(reader, "IsMarketplace"),
+            SellerId: hasMarketplaceCol ? SqlHelper.GetNullableValue<int>(reader, "SellerId") : null,
+            SellerName: hasMarketplaceCol ? SqlHelper.GetNullableString(reader, "SellerName") : null);
+    }
+
+    private static bool HasColumn(Microsoft.Data.SqlClient.SqlDataReader reader, string columnName)
+    {
+        for (int i = 0; i < reader.FieldCount; i++)
+            if (reader.GetName(i).Equals(columnName, StringComparison.OrdinalIgnoreCase)) return true;
+        return false;
+    }
 }

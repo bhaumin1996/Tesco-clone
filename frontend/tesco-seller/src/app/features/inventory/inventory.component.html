@@ -1,0 +1,99 @@
+<div class="inv-page">
+  <div class="inv-page__header">
+    <h1>Inventory</h1>
+    <div class="inv-page__actions">
+      @if (lowStockCount() > 0) {
+      <button class="inv-btn inv-btn--warn" (click)="filterLowStock.set(!filterLowStock())">
+        {{ filterLowStock() ? 'Show All' : '⚠ ' + lowStockCount() + ' Low Stock' }}
+      </button>
+      }
+      <button class="inv-btn inv-btn--ghost" (click)="exportCsv()">Export CSV</button>
+    </div>
+  </div>
+  @if (message()) { <div class="inv-msg">{{ message() }}</div> }
+
+  @if (loading()) { <p class="inv-loading">Loading…</p> }
+  @else {
+  <table class="inv-table">
+    <thead>
+      <tr>
+        <th>SKU</th>
+        <th>Title</th>
+        <th>Stock</th>
+        <th>Low Stock Threshold</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of displayed(); track item.id) {
+      <tr [class.inv-table__row--low]="item.stockQuantity <= item.lowStockThreshold">
+        <td class="inv-sku">{{ item.sku }}</td>
+        <td>{{ item.title }}</td>
+        <td [class.inv-qty--low]="item.stockQuantity <= item.lowStockThreshold">
+          {{ item.stockQuantity }}
+          @if (item.stockQuantity <= item.lowStockThreshold) {
+          <span class="inv-low-badge">Low</span>
+          }
+        </td>
+        <td>
+          <input class="inv-threshold" type="number" min="0"
+            [value]="item.lowStockThreshold"
+            (change)="updateThreshold(item, +$any($event.target).value)" />
+        </td>
+        <td><span class="inv-badge inv-badge--{{ item.statusName | lowercase }}">{{ item.statusName }}</span></td>
+        <td>
+          <button class="inv-btn inv-btn--sm inv-btn--ghost" (click)="openAdjust(item)">Adjust Stock</button>
+        </td>
+      </tr>
+      }
+      @empty {
+      <tr><td colspan="6" class="inv-empty">No inventory items found.</td></tr>
+      }
+    </tbody>
+  </table>
+  }
+</div>
+
+@if (adjustTarget()) {
+<div class="inv-overlay" (click)="closeAdjust()"></div>
+<div class="inv-modal">
+  <div class="inv-modal__header">
+    <h2>Adjust Stock — {{ adjustTarget()!.title }}</h2>
+    <button class="inv-modal__close" (click)="closeAdjust()">✕</button>
+  </div>
+  <div class="inv-modal__body">
+    <p class="inv-modal__current">Current stock: <strong>{{ adjustTarget()!.stockQuantity }}</strong></p>
+    <div class="inv-form">
+      <label class="inv-label">
+        Quantity Change (positive = add, negative = remove)
+        <input class="inv-input" type="number"
+          [value]="adjustQty()"
+          (input)="adjustQty.set(+$any($event.target).value)" />
+      </label>
+      <label class="inv-label">
+        Reason
+        <select class="inv-select" [value]="adjustReason()" (change)="adjustReason.set($any($event.target).value)">
+          @for (r of reasons; track r.value) {
+          <option [value]="r.value">{{ r.label }}</option>
+          }
+        </select>
+      </label>
+      <label class="inv-label">
+        Note (optional)
+        <textarea class="inv-textarea" rows="2" [value]="adjustNote()"
+          (input)="adjustNote.set($any($event.target).value)"></textarea>
+      </label>
+    </div>
+    <div class="inv-modal__preview">
+      New stock will be: <strong>{{ adjustTarget()!.stockQuantity + adjustQty() }}</strong>
+    </div>
+  </div>
+  <div class="inv-modal__footer">
+    <button class="inv-btn inv-btn--ghost" (click)="closeAdjust()">Cancel</button>
+    <button class="inv-btn inv-btn--primary" [disabled]="submitting() || adjustQty() === 0" (click)="submitAdjustment()">
+      {{ submitting() ? 'Saving…' : 'Confirm Adjustment' }}
+    </button>
+  </div>
+</div>
+}

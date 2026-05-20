@@ -1,0 +1,74 @@
+.mr {
+  padding: 2rem 0;
+  &__inner { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+  &__title { font-size: 1.6rem; font-weight: 800; margin: 0 0 .25rem; }
+  &__order-ref { font-size: .875rem; color: #666; margin: 0 0 1.5rem; }
+  &__spinner { padding: 3rem; display: flex; justify-content: center; }
+  &__error { background: #fff3f3; color: #b00; border: 1px solid #fcc; border-radius: 8px; padding: 1rem 1.25rem; }
+  &__submit-error { background: #fff3f3; color: #b00; border: 1px solid #fcc; border-radius: 8px; padding: .75rem 1rem; margin-bottom: 1rem; font-size: .875rem; }
+  &__footer { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.75rem; }
+  &__submit-btn {
+    background: #00539f; color: #fff; border: none; border-radius: 4px; padding: .75rem 1.75rem; font-size: 1rem; font-weight: 700; cursor: pointer;
+    &:disabled { opacity: .45; cursor: not-allowed; }
+    &:not(:disabled):hover { background: #003a70; }
+  }
+  &__cancel-link { color: #00539f; font-size: .9rem; font-weight: 600; text-decoration: none; &:hover { text-decoration: underline; } }
+}
+
+.mr-section {
+  margin-bottom: 1.75rem;
+  &__title { font-size: 1.05rem; font-weight: 700; margin: 0 0 .75rem; border-bottom: 2px solid #e8ecf0; padding-bottom: .4rem; }
+}
+
+.mr-items { display: flex; flex-direction: column; gap: .5rem; }
+
+.mr-item {
+  display: flex; align-items: center; gap: 1rem; padding: .75rem 1rem; border: 2px solid #e8ecf0; border-radius: 8px; background: #fff; cursor: pointer; text-align: left; width: 100%; transition: border-color .15s, background .15s;
+  &--selected { border-color: #00539f; background: #f0f6ff; }
+  &--returned { opacity: .65; cursor: not-allowed; }
+  &:not(.mr-item--returned):hover { border-color: #aac5e8; }
+  &__img-wrap { width: 56px; height: 56px; flex-shrink: 0; border-radius: 6px; overflow: hidden; border: 1px solid #e8ecf0; }
+  &__img { width: 100%; height: 100%; object-fit: cover; }
+  &__img-placeholder { width: 100%; height: 100%; background: #f1f5f9; }
+  &__info { flex: 1; display: flex; flex-direction: column; gap: .15rem; }
+  &__name { font-size: .9rem; font-weight: 600; color: #1c1c1c; }
+  &__seller { font-size: .78rem; color: #00539f; }
+  &__price { font-size: .88rem; font-weight: 700; color: #444; }
+  &__badge { font-size: .75rem; font-weight: 600; background: #e8f4e8; color: #1a6b2a; padding: .2rem .5rem; border-radius: 4px; white-space: nowrap; }
+}
+
+.mr-reasons { display: flex; flex-direction: column; gap: .4rem; }
+
+.mr-reason {
+  display: flex; align-items: center; gap: .65rem; padding: .6rem .9rem; border: 1.5px solid #e8ecf0; border-radius: 6px; cursor: pointer; font-size: .9rem; color: #333; transition: border-color .15s, background .15s;
+  input[type="radio"] { accent-color: #00539f; }
+  &--selected { border-color: #00539f; background: #f0f6ff; font-weight: 600; }
+  &:hover:not(.mr-reason--selected) { border-color: #aac5e8; }
+}
+
+// ── Confirmation ───────────────────────────────────────────────────────────────
+.mr-confirm {
+  text-align: center; padding: 3rem 1rem;
+  &__icon { margin-bottom: 1rem; display: flex; justify-content: center; }
+  &__title { font-size: 1.5rem; font-weight: 800; margin: 0 0 .75rem; color: #1a6b2a; }
+  &__desc { font-size: 1rem; color: #444; line-height: 1.7; margin: 0 auto 1.5rem; max-width: 480px; }
+  &__actions { display: flex; justify-content: center; }
+  &__btn { background: #00539f; color: #fff; padding: .75rem 1.75rem; border-radius: 4px; text-decoration: none; font-weight: 700; &:hover { background: #003a70; } }
+}
+
+// ── Status tracker ─────────────────────────────────────────────────────────────
+.mr-tracker {
+  border: 1px solid #e8ecf0; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1rem;
+  &__steps { display: flex; align-items: center; margin-bottom: .75rem; }
+  &__step {
+    display: flex; flex-direction: column; align-items: center; gap: .3rem; font-size: .72rem; color: #999; white-space: nowrap;
+    &--done { color: #1a6b2a; }
+    &--done .mr-tracker__dot { background: #1a6b2a; }
+  }
+  &__dot { width: 14px; height: 14px; border-radius: 50%; background: #d1d5db; flex-shrink: 0; }
+  &__line { flex: 1; height: 2px; background: #d1d5db; margin: 0 .25rem; margin-bottom: 1.1rem; &--done { background: #1a6b2a; } }
+  &__meta { display: flex; flex-direction: column; gap: .3rem; font-size: .83rem; color: #555; }
+  &__status strong { color: #1c1c1c; }
+  &__refund { color: #1a6b2a; font-weight: 600; }
+  &__sla { color: #999; font-size: .78rem; }
+}

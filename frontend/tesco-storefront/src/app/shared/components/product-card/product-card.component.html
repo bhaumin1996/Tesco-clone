@@ -21,6 +21,12 @@
 
     <!-- Body -->
     <div class="product-card__body">
+      @if (product.isMarketplace && product.sellerId) {
+      <a [routerLink]="['/marketplace/sellers', product.sellerId]" class="product-card__seller-badge"
+        (click)="$event.stopPropagation()">
+        Sold by {{ product.sellerName || 'Marketplace Seller' }}
+      </a>
+      }
       <h3 class="product-card__title">{{ product.name }}</h3>
 
       <!-- Star rating -->

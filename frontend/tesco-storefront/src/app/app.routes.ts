@@ -78,6 +78,19 @@ export const routes: Routes = [
             loadComponent: () => import('./features/orders/order-list/order-list.component').then(m => m.OrderListComponent)
           },
           {
+            path: 'marketplace',
+            children: [
+              {
+                path: '',
+                loadComponent: () => import('./features/marketplace/marketplace-orders/marketplace-orders.component').then(m => m.MarketplaceOrdersComponent)
+              },
+              {
+                path: ':id/return',
+                loadComponent: () => import('./features/marketplace/marketplace-return/marketplace-return.component').then(m => m.MarketplaceReturnComponent)
+              }
+            ]
+          },
+          {
             path: ':id',
             loadComponent: () => import('./features/orders/order-detail/order-detail.component').then(m => m.OrderDetailComponent)
           }
@@ -102,6 +115,31 @@ export const routes: Routes = [
       {
         path: 'favourites',
         loadComponent: () => import('./features/account/favourites/favourites.component').then(m => m.FavouritesComponent)
+      }
+    ]
+  },
+  {
+    path: 'marketplace',
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/marketplace/marketplace-landing/marketplace-landing.component').then(m => m.MarketplaceLandingComponent)
+      },
+      {
+        path: 'shop',
+        loadComponent: () => import('./features/marketplace/marketplace-shop/marketplace-shop.component').then(m => m.MarketplaceShopComponent)
+      },
+      {
+        path: 'shop/:category',
+        loadComponent: () => import('./features/marketplace/marketplace-shop/marketplace-shop.component').then(m => m.MarketplaceShopComponent)
+      },
+      {
+        path: 'sellers/:id',
+        loadComponent: () => import('./features/marketplace/seller-profile/seller-profile.component').then(m => m.SellerProfileComponent)
+      },
+      {
+        path: 'guarantee',
+        loadComponent: () => import('./features/marketplace/marketplace-guarantee/marketplace-guarantee.component').then(m => m.MarketplaceGuaranteeComponent)
       }
     ]
   },

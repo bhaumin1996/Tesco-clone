@@ -9,4 +9,6 @@ public sealed record DisputeDto(
     string StatusName,
     string? Resolution,
     DateTime CreatedOn,
-    DateTime? ResolvedOn);
+    DateTime? ResolvedOn,
+    string SellerName,
+    string Reason);

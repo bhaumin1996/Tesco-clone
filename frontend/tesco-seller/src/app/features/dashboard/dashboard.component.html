@@ -1,0 +1,58 @@
+<div class="sd-page">
+  <h1 class="sd-page__title">Dashboard</h1>
+
+  @if (loading()) {
+  <div class="sd-loading">Loading…</div>
+  } @else if (kpis()) {
+  <div class="sd-kpis">
+    <div class="sd-kpi">
+      <span class="sd-kpi__val">{{ kpis()!.ordersToday }}</span>
+      <span class="sd-kpi__label">Orders Today</span>
+    </div>
+    <div class="sd-kpi">
+      <span class="sd-kpi__val">£{{ kpis()!.gmvThisMonth | number:'1.0-0' }}</span>
+      <span class="sd-kpi__label">GMV This Month</span>
+    </div>
+    <div class="sd-kpi" [class.sd-kpi--warn]="kpis()!.pendingDispatches > 0">
+      <span class="sd-kpi__val">{{ kpis()!.pendingDispatches }}</span>
+      <span class="sd-kpi__label">Pending Dispatches</span>
+    </div>
+    <div class="sd-kpi" [class.sd-kpi--warn]="kpis()!.openReturnRequests > 0">
+      <span class="sd-kpi__val">{{ kpis()!.openReturnRequests }}</span>
+      <span class="sd-kpi__label">Open Returns</span>
+    </div>
+    @if (kpis()!.performanceScore != null) {
+    <div class="sd-kpi" [class.sd-kpi--low]="kpis()!.performanceScore! < 60">
+      <span class="sd-kpi__val">{{ kpis()!.performanceScore }}/100</span>
+      <span class="sd-kpi__label">Performance Score</span>
+    </div>
+    }
+    <div class="sd-kpi" [class.sd-kpi--warn]="kpis()!.lowStockCount > 0">
+      <span class="sd-kpi__val">{{ kpis()!.lowStockCount }}</span>
+      <span class="sd-kpi__label">Low Stock SKUs</span>
+    </div>
+  </div>
+
+  @if (recentOrders().length > 0) {
+  <div class="sd-section">
+    <h2 class="sd-section__title">Recent Orders</h2>
+    <table class="sd-table">
+      <thead>
+        <tr><th>Order</th><th>Items</th><th>Value</th><th>Status</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        @for (o of recentOrders(); track o.sellerOrderId) {
+        <tr>
+          <td>{{ o.orderNumber }}</td>
+          <td>{{ o.lineCount }}</td>
+          <td>£{{ o.sellerTotal | number:'1.2-2' }}</td>
+          <td><span class="sd-badge sd-badge--{{ o.statusName | lowercase }}">{{ o.statusName }}</span></td>
+          <td>{{ o.orderPlacedOn | date:'d MMM yyyy' }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+  }
+</div>

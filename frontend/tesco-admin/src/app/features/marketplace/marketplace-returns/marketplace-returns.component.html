@@ -1,0 +1,155 @@
+<div class="mr-page">
+
+  <div class="mr-header">
+    <div>
+      <h1 class="mr-header__title">Marketplace Returns</h1>
+      <p class="mr-header__sub">Review, escalate and resolve customer return requests</p>
+    </div>
+    <div class="mr-header__right">
+      @if (slaOverdue().length > 0) {
+        <div class="mr-sla-alert">
+          <i class="bi bi-clock-history"></i>
+          {{ slaOverdue().length }} SLA breach{{ slaOverdue().length > 1 ? 'es' : '' }} — action required
+        </div>
+      }
+      @if (message()) {
+        <div class="mr-msg"
+             [class.mr-msg--success]="!message().includes('failed')"
+             [class.mr-msg--error]="message().includes('failed')">
+          {{ message() }}
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Status filter tabs -->
+  <div class="mr-tabs">
+    @for (tab of [
+      { key: 'all',      label: 'All' },
+      { key: 'pending',  label: 'Pending' },
+      { key: 'disputed', label: 'Disputed' },
+      { key: 'resolved', label: 'Resolved' }
+    ]; track tab.key) {
+      <button class="mr-tab" [class.mr-tab--active]="statusFilter() === tab.key"
+        (click)="statusFilter.set(tab.key)">
+        {{ tab.label }}
+      </button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="mr-loading">
+      <span class="mr-loading__spinner"></span> Loading returns…
+    </div>
+  } @else {
+    <div class="mr-card">
+      <table class="mr-table">
+        <thead>
+          <tr>
+            <th>Return #</th>
+            <th>Order</th>
+            <th>Customer</th>
+            <th>Seller</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>SLA Deadline</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ret of filtered(); track ret.id) {
+            <tr [class.mr-row--breach]="isSlaBreached(ret.slaDeadline) && ret.statusName !== 'Resolved'">
+              <td><code class="mr-ref">#{{ ret.id }}</code></td>
+              <td><code class="mr-ref">{{ ret.orderNumber }}</code></td>
+              <td>{{ ret.customerName }}</td>
+              <td>{{ ret.sellerName }}</td>
+              <td class="mr-reason">{{ ret.returnReason }}</td>
+              <td>
+                <span class="mr-badge mr-badge--{{ ret.statusName | lowercase }}">{{ ret.statusName }}</span>
+              </td>
+              <td>
+                <div class="mr-sla" [class.mr-sla--breach]="isSlaBreached(ret.slaDeadline) && ret.statusName !== 'Resolved'">
+                  <span>{{ ret.slaDeadline | date:'d MMM, h:mm a' }}</span>
+                  @if (isSlaBreached(ret.slaDeadline) && ret.statusName !== 'Resolved') {
+                    <span class="mr-sla__chip"><i class="bi bi-clock-history"></i> Breached</span>
+                  }
+                </div>
+              </td>
+              <td>
+                @if (ret.statusName !== 'Resolved') {
+                  <button class="mr-btn mr-btn--ghost mr-btn--sm" (click)="openReturn(ret)">
+                    <i class="bi bi-check2-circle"></i> Resolve
+                  </button>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="8" class="mr-empty">
+                <i class="bi bi-arrow-return-left"></i>
+                <span>No returns found.</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
+
+<!-- Resolution panel -->
+@if (selectedReturn()) {
+  <div class="mr-overlay" (click)="closeDetail()"></div>
+  <aside class="mr-panel">
+    <div class="mr-panel__header">
+      <div>
+        <h2 class="mr-panel__title">Return #{{ selectedReturn()!.id }}</h2>
+        <span class="mr-badge mr-badge--{{ selectedReturn()!.statusName | lowercase }}">{{ selectedReturn()!.statusName }}</span>
+      </div>
+      <button class="mr-panel__close" (click)="closeDetail()"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="mr-panel__body">
+      <div class="mr-dl">
+        <div class="mr-dl__row"><dt>Order</dt><dd>{{ selectedReturn()!.orderNumber }}</dd></div>
+        <div class="mr-dl__row"><dt>Customer</dt><dd>{{ selectedReturn()!.customerName }}</dd></div>
+        <div class="mr-dl__row"><dt>Seller</dt><dd>{{ selectedReturn()!.sellerName }}</dd></div>
+        <div class="mr-dl__row"><dt>Reason</dt><dd>{{ selectedReturn()!.returnReason }}</dd></div>
+        @if (selectedReturn()!.sellerResponse) {
+          <div class="mr-dl__row"><dt>Seller Response</dt><dd>{{ selectedReturn()!.sellerResponse }}</dd></div>
+        }
+        @if (selectedReturn()!.refundAmount) {
+          <div class="mr-dl__row">
+            <dt>Refund Amount</dt>
+            <dd><strong>£{{ selectedReturn()!.refundAmount | number:'1.2-2' }}</strong></dd>
+          </div>
+        }
+        <div class="mr-dl__row">
+          <dt>SLA Deadline</dt>
+          <dd [class.mr-dl__breach]="isSlaBreached(selectedReturn()!.slaDeadline)">
+            {{ selectedReturn()!.slaDeadline | date:'d MMM yyyy, h:mm a' }}
+            @if (isSlaBreached(selectedReturn()!.slaDeadline)) { <span>(Breached)</span> }
+          </dd>
+        </div>
+      </div>
+
+      <div class="mr-panel__section">
+        <label class="mr-panel__label">Resolution <span class="mr-panel__required">*</span></label>
+        <textarea class="mr-panel__textarea" rows="4"
+          [value]="resolution()"
+          (input)="resolution.set($any($event.target).value)"
+          placeholder="Describe the resolution and outcome for the customer and seller…"></textarea>
+      </div>
+
+      <div class="mr-panel__actions">
+        <button class="mr-btn mr-btn--primary" [disabled]="submitting() || !resolution().trim()"
+          (click)="resolve(selectedReturn()!.id)">
+          @if (submitting()) { <span class="mr-btn__spinner"></span> Resolving… }
+          @else { <i class="bi bi-check-circle"></i> Confirm Resolution }
+        </button>
+        <button class="mr-btn mr-btn--ghost" (click)="closeDetail()">Cancel</button>
+      </div>
+    </div>
+  </aside>
+}

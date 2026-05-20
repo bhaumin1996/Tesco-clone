@@ -150,6 +150,20 @@ export class AdminLayoutComponent implements OnInit {
       ]
     },
     {
+      label: 'Marketplace',
+      items: [
+        { label: 'Sellers & Disputes', icon: 'bi-shop',            route: '/marketplace',                    module: 'Marketplace' },
+        { label: 'Applications',       icon: 'bi-person-plus',     route: '/marketplace/applications',       module: 'Marketplace' },
+        { label: 'Performance',        icon: 'bi-bar-chart-line',  route: '/marketplace/performance',        module: 'Marketplace' },
+        { label: 'Returns',            icon: 'bi-arrow-return-left', route: '/marketplace/returns',           module: 'Marketplace' },
+        { label: 'Commissions',        icon: 'bi-percent',         route: '/marketplace/commissions',        module: 'Marketplace' },
+        { label: 'Analytics',          icon: 'bi-graph-up',        route: '/marketplace/analytics',          module: 'Marketplace' },
+        { label: 'Payouts',            icon: 'bi-cash-coin',       route: '/marketplace/payouts',            module: 'Marketplace' },
+        { label: 'Messages',           icon: 'bi-chat-text',       route: '/marketplace/messages',           module: 'Marketplace' },
+        { label: 'Category Config',    icon: 'bi-toggles',         route: '/marketplace/category-eligibility', module: 'Marketplace' }
+      ]
+    },
+    {
       label: 'Reports',
       items: [
         { label: 'Analytics', icon: 'bi-graph-up-arrow', route: '/analytics', module: 'Analytics' },

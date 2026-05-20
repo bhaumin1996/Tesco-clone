@@ -65,6 +65,10 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(AuthorizationPolicies.SuperAdmin, policy =>
         policy.RequireAuthenticatedUser()
               .RequireRole(Roles.SuperAdmin));
+
+    options.AddPolicy(AuthorizationPolicies.Seller, policy =>
+        policy.RequireAuthenticatedUser()
+              .RequireRole(Roles.Seller));
 });
 
 // Rate limiting

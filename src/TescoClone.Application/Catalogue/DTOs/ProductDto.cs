@@ -18,4 +18,7 @@ public sealed record ProductDto(
     int ReviewCount = 0,
     int? DefaultVariantId = null,
     string? UnitPrice = null,
-    string? PromotionLabel = null);
+    string? PromotionLabel = null,
+    bool IsMarketplace = false,
+    int? SellerId = null,
+    string? SellerName = null);

@@ -29,5 +29,7 @@ public sealed class SearchProductsQueryHandler : IRequestHandler<SearchProductsQ
             request.SortDirection,
             request.PageNumber,
             request.PageSize,
+            request.IncludeMarketplace,
+            request.SellerId,
             cancellationToken);
 }

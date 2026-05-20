@@ -123,4 +123,49 @@ public sealed class AnalyticsRepository : IAnalyticsRepository
 
         return results;
     }
+
+    public async Task<MarketplaceAnalyticsDto> GetMarketplaceAnalyticsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        await connection.OpenAsync(cancellationToken);
+
+        using var command = connection.CreateCommand();
+        command.CommandType = System.Data.CommandType.StoredProcedure;
+        command.CommandText = "proc_Analytics_GetMarketplaceAnalytics";
+        command.Parameters.Add(new SqlParameter("@From", System.Data.SqlDbType.DateTime2) { Value = from });
+        command.Parameters.Add(new SqlParameter("@To", System.Data.SqlDbType.DateTime2) { Value = to });
+
+        using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        MarketplaceKpisDto kpis;
+        if (await reader.ReadAsync(cancellationToken))
+        {
+            kpis = new MarketplaceKpisDto(
+                Gmv: SqlHelper.GetValue<decimal>(reader, "Gmv"),
+                TotalOrders: SqlHelper.GetValue<int>(reader, "TotalOrders"),
+                AverageOrderValue: SqlHelper.GetValue<decimal>(reader, "AverageOrderValue"),
+                DisputeRate: SqlHelper.GetValue<decimal>(reader, "DisputeRate"),
+                ReturnRate: SqlHelper.GetValue<decimal>(reader, "ReturnRate"),
+                NewApplicationsCount: SqlHelper.GetValue<int>(reader, "NewApplicationsCount"));
+        }
+        else
+        {
+            kpis = new MarketplaceKpisDto(0m, 0, 0m, 0m, 0m, 0);
+        }
+
+        var topSellers = new List<TopSellerDto>();
+        if (await reader.NextResultAsync(cancellationToken))
+        {
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                topSellers.Add(new TopSellerDto(
+                    SellerId: SqlHelper.GetValue<int>(reader, "SellerId"),
+                    BusinessName: SqlHelper.GetValue<string>(reader, "BusinessName"),
+                    Revenue: SqlHelper.GetValue<decimal>(reader, "Revenue"),
+                    OrderCount: SqlHelper.GetValue<int>(reader, "OrderCount")));
+            }
+        }
+
+        return new MarketplaceAnalyticsDto(kpis, topSellers);
+    }
 }

@@ -1,0 +1,104 @@
+<div class="lf-page">
+  <div class="lf-page__header">
+    <h1>{{ isEdit() ? 'Edit Listing' : 'Create New Listing' }}</h1>
+    @if (message()) { <div class="lf-error">{{ message() }}</div> }
+  </div>
+
+  @if (loading()) { <p class="lf-loading">Loading…</p> }
+  @else {
+  <form class="lf-form" (ngSubmit)="save()">
+
+    <section class="lf-section">
+      <h2>Product Details</h2>
+      <label class="lf-label lf-label--full">
+        Title *
+        <input class="lf-input" type="text" required [value]="form().title"
+          (input)="update({ title: $any($event.target).value })" placeholder="e.g. Premium Organic Coffee Beans 250g" />
+      </label>
+      <label class="lf-label lf-label--full">
+        Description
+        <textarea class="lf-textarea" rows="6" [value]="form().description"
+          (input)="update({ description: $any($event.target).value })"
+          placeholder="Describe your product — ingredients, materials, key features…"></textarea>
+      </label>
+      <div class="lf-grid">
+        <label class="lf-label">
+          Category *
+          <select class="lf-select" [value]="form().categoryId ?? ''"
+            (change)="update({ categoryId: +$any($event.target).value || null })">
+            <option value="">Select category…</option>
+            @for (cat of categories(); track cat.id) {
+            <option [value]="cat.id">{{ cat.name }}</option>
+            }
+          </select>
+        </label>
+        <label class="lf-label">
+          SKU
+          <input class="lf-input" type="text" [value]="form().sku"
+            (input)="update({ sku: $any($event.target).value })" placeholder="e.g. COF-ORG-250" />
+        </label>
+        <label class="lf-label">
+          EAN / Barcode
+          <input class="lf-input" type="text" [value]="form().ean"
+            (input)="update({ ean: $any($event.target).value })" placeholder="e.g. 5012345678901" />
+        </label>
+      </div>
+    </section>
+
+    <section class="lf-section">
+      <h2>Pricing & Stock</h2>
+      <div class="lf-grid">
+        <label class="lf-label">
+          Sale Price (£) *
+          <input class="lf-input" type="number" min="0.01" step="0.01" required [value]="form().price"
+            (input)="update({ price: +$any($event.target).value })" />
+        </label>
+        <label class="lf-label">
+          Compare-At Price (£)
+          <input class="lf-input" type="number" min="0" step="0.01" [value]="form().compareAtPrice ?? ''"
+            (input)="update({ compareAtPrice: +$any($event.target).value || null })" />
+          <span class="lf-hint">Shown as strikethrough if set.</span>
+        </label>
+        <label class="lf-label">
+          Stock Quantity *
+          <input class="lf-input" type="number" min="0" required [value]="form().stockQuantity"
+            (input)="update({ stockQuantity: +$any($event.target).value })" />
+        </label>
+      </div>
+    </section>
+
+    <section class="lf-section">
+      <h2>Dimensions & Weight</h2>
+      <div class="lf-grid">
+        <label class="lf-label">
+          Weight (g)
+          <input class="lf-input" type="number" min="0" [value]="form().weight ?? ''"
+            (input)="update({ weight: +$any($event.target).value || null })" />
+        </label>
+        <label class="lf-label">
+          Width (mm)
+          <input class="lf-input" type="number" min="0" [value]="form().width ?? ''"
+            (input)="update({ width: +$any($event.target).value || null })" />
+        </label>
+        <label class="lf-label">
+          Height (mm)
+          <input class="lf-input" type="number" min="0" [value]="form().height ?? ''"
+            (input)="update({ height: +$any($event.target).value || null })" />
+        </label>
+        <label class="lf-label">
+          Depth (mm)
+          <input class="lf-input" type="number" min="0" [value]="form().depth ?? ''"
+            (input)="update({ depth: +$any($event.target).value || null })" />
+        </label>
+      </div>
+    </section>
+
+    <div class="lf-actions">
+      <button class="lf-btn lf-btn--ghost" type="button" (click)="cancel()">Cancel</button>
+      <button class="lf-btn lf-btn--primary" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : (isEdit() ? 'Save Changes' : 'Create Listing') }}
+      </button>
+    </div>
+  </form>
+  }
+</div>

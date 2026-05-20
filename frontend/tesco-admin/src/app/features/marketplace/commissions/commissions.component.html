@@ -1,0 +1,117 @@
+<div class="cm-page">
+
+  <div class="cm-header">
+    <div>
+      <h1 class="cm-header__title">Commission Configuration</h1>
+      <p class="cm-header__sub">Set commission rates per product category for marketplace sellers</p>
+    </div>
+    <button class="cm-btn cm-btn--primary" (click)="openNew()">
+      <i class="bi bi-plus-lg"></i> New Rate
+    </button>
+  </div>
+
+  @if (message()) {
+    <div class="cm-alert" [class.cm-alert--success]="!message().includes('failed')"
+         [class.cm-alert--error]="message().includes('failed')">
+      <i class="bi bi-check-circle-fill"></i> {{ message() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="cm-loading">
+      <span class="cm-loading__spinner"></span> Loading commission rates…
+    </div>
+  } @else {
+    <div class="cm-card">
+      <table class="cm-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Commission Rate</th>
+            <th>Effective From</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tier of tiers(); track tier.id) {
+            <tr>
+              <td>
+                <div class="cm-category">
+                  <span class="cm-category__icon"><i class="bi bi-tag"></i></span>
+                  {{ tier.categoryName }}
+                </div>
+              </td>
+              <td>
+                <span class="cm-rate">{{ tier.rate }}%</span>
+              </td>
+              <td class="cm-text-secondary">{{ tier.effectiveFrom | date:'d MMM yyyy' }}</td>
+              <td>
+                <button class="cm-btn cm-btn--ghost cm-btn--sm" (click)="openEdit(tier)">
+                  <i class="bi bi-pencil"></i> Edit
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="cm-empty">
+                <i class="bi bi-percent"></i>
+                <span>No commission rates configured yet.</span>
+                <button class="cm-btn cm-btn--primary cm-btn--sm" (click)="openNew()">Add first rate</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>
+
+<!-- Edit / New modal -->
+@if (showForm()) {
+  <div class="cm-overlay" (click)="cancel()"></div>
+  <div class="cm-modal">
+    <div class="cm-modal__header">
+      <h2 class="cm-modal__title">
+        <i class="bi bi-percent"></i>
+        {{ editTier().id ? 'Edit Commission Rate' : 'New Commission Rate' }}
+      </h2>
+      <button class="cm-modal__close" (click)="cancel()"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="cm-modal__body">
+      <div class="cm-field">
+        <label class="cm-field__label">Category ID</label>
+        <input class="cm-field__input" type="number" min="1"
+          [value]="editTier().categoryId ?? ''"
+          (input)="setCategoryId($any($event.target).value)"
+          placeholder="Enter category ID" />
+      </div>
+
+      <div class="cm-field">
+        <label class="cm-field__label">Commission Rate (%)</label>
+        <div class="cm-field__addon-wrap">
+          <input class="cm-field__input" type="number" min="0" max="100" step="0.5"
+            [value]="editTier().rate ?? ''"
+            (input)="setRate($any($event.target).value)"
+            placeholder="e.g. 10" />
+          <span class="cm-field__addon">%</span>
+        </div>
+      </div>
+
+      <div class="cm-field">
+        <label class="cm-field__label">Effective From</label>
+        <input class="cm-field__input" type="date"
+          [value]="editTier().effectiveFrom ?? ''"
+          (input)="setEffectiveFrom($any($event.target).value)" />
+      </div>
+    </div>
+
+    <div class="cm-modal__footer">
+      <button class="cm-btn cm-btn--primary" (click)="save()">
+        <i class="bi bi-check-lg"></i> Save Rate
+      </button>
+      <button class="cm-btn cm-btn--ghost" (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+}

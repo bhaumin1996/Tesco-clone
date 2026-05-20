@@ -1,0 +1,82 @@
+<div class="ce-page">
+
+  <div class="ce-header">
+    <div>
+      <h1 class="ce-header__title">Category Eligibility</h1>
+      <p class="ce-header__sub">Control which catalogue categories allow marketplace seller listings</p>
+    </div>
+    @if (message()) {
+      <div class="ce-header__msg"
+           [class.ce-header__msg--success]="message() === 'Saved.'"
+           [class.ce-header__msg--error]="message() === 'Save failed.'">
+        @if (message() === 'Saved.') { <i class="bi bi-check-circle-fill"></i> }
+        {{ message() }}
+      </div>
+    }
+  </div>
+
+  <div class="ce-info">
+    <i class="bi bi-info-circle ce-info__icon"></i>
+    Changes take effect immediately — toggling a category will prevent new listings from being created in it.
+  </div>
+
+  @if (loading()) {
+    <div class="ce-loading">
+      <span class="ce-loading__spinner"></span> Loading categories…
+    </div>
+  } @else {
+    <div class="ce-card">
+      <table class="ce-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Marketplace Eligible</th>
+            <th>Commission Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cat of categories(); track cat.categoryId) {
+            <tr>
+              <td>
+                <div class="ce-category">
+                  <span class="ce-category__icon" [class.ce-category__icon--on]="cat.isMarketplaceEligible">
+                    <i class="bi bi-tag"></i>
+                  </span>
+                  <span class="ce-category__name">{{ cat.categoryName }}</span>
+                </div>
+              </td>
+              <td>
+                <button class="ce-toggle"
+                  [class.ce-toggle--on]="cat.isMarketplaceEligible"
+                  [disabled]="saving() === cat.categoryId"
+                  (click)="toggle(cat)">
+                  @if (saving() === cat.categoryId) {
+                    <span class="ce-toggle__spinner"></span>
+                  } @else {
+                    <span class="ce-toggle__dot"></span>
+                  }
+                  {{ cat.isMarketplaceEligible ? 'Eligible' : 'Not eligible' }}
+                </button>
+              </td>
+              <td>
+                @if (cat.commissionRate != null) {
+                  <span class="ce-rate">{{ cat.commissionRate }}%</span>
+                } @else {
+                  <span class="ce-default">Default rate</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="3" class="ce-empty">
+                <i class="bi bi-tag"></i>
+                <span>No categories found.</span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

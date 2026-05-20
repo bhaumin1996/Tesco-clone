@@ -1,0 +1,96 @@
+<div class="perf-page">
+  <h1>Performance</h1>
+
+  @if (loading()) { <p class="perf-loading">Loading…</p> }
+  @else if (perf()) {
+  <div class="perf-overview">
+    <div class="perf-score perf-score--{{ scoreColor() }}">
+      <span class="perf-score__value">{{ perf()!.overallScore }}</span>
+      <span class="perf-score__label">Overall Score</span>
+      <span class="perf-score__trend">
+        @if (perf()!.trend === 'up') { ▲ Improving }
+        @else if (perf()!.trend === 'down') { ▼ Declining }
+        @else { → Stable }
+      </span>
+    </div>
+    <div class="perf-vs">
+      <span class="perf-vs__label">Marketplace Average</span>
+      <span class="perf-vs__value">{{ perf()!.marketplaceAvgScore }}</span>
+      @if (perf()!.overallScore >= perf()!.marketplaceAvgScore) {
+      <span class="perf-vs__badge perf-vs__badge--above">Above Average</span>
+      } @else {
+      <span class="perf-vs__badge perf-vs__badge--below">Below Average</span>
+      }
+    </div>
+    <div class="perf-reviews">
+      <div class="perf-reviews__stars">
+        @for (s of stars(perf()!.averageRating); track $index) {
+        <span [class.perf-star--filled]="s === '★'">{{ s }}</span>
+        }
+      </div>
+      <span class="perf-reviews__count">{{ perf()!.averageRating | number:'1.1-1' }} from {{ perf()!.totalReviews }} reviews</span>
+    </div>
+  </div>
+
+  <div class="perf-metrics">
+    @for (m of metrics(); track m.label) {
+    <div class="perf-metric" [class.perf-metric--good]="isAboveBenchmark(m)" [class.perf-metric--poor]="!isAboveBenchmark(m)">
+      <div class="perf-metric__header">
+        <span class="perf-metric__label">{{ m.label }}</span>
+        <span class="perf-metric__badge" [class.perf-metric__badge--good]="isAboveBenchmark(m)" [class.perf-metric__badge--poor]="!isAboveBenchmark(m)">
+          {{ isAboveBenchmark(m) ? 'On Track' : 'Needs Attention' }}
+        </span>
+      </div>
+      <div class="perf-metric__value">{{ m.value | number:'1.1-1' }}<span class="perf-metric__unit">{{ m.unit }}</span></div>
+      <div class="perf-bar">
+        <div class="perf-bar__fill" [class.perf-bar__fill--good]="isAboveBenchmark(m)" [class.perf-bar__fill--poor]="!isAboveBenchmark(m)"
+          [style.width.%]="m.label === 'Average Rating' ? (m.value / 5 * 100) : (m.label === 'Return Rate' || m.label === 'Cancellation Rate' ? (100 - m.value) : m.value)">
+        </div>
+      </div>
+      <p class="perf-metric__desc">{{ m.description }} Target: {{ m.benchmark }}{{ m.unit }}.</p>
+    </div>
+    }
+  </div>
+
+  <div class="perf-tips">
+    <h2>Improvement Guidance</h2>
+    <div class="perf-tips__grid">
+      @if (perf()!.onTimeRate < 95) {
+      <div class="perf-tip">
+        <span class="perf-tip__icon">🚚</span>
+        <h3>Improve Dispatch Speed</h3>
+        <p>Confirm and dispatch orders within 24 hours of placement to maintain your on-time delivery rate above the 95% threshold.</p>
+      </div>
+      }
+      @if (perf()!.returnRate > 5) {
+      <div class="perf-tip">
+        <span class="perf-tip__icon">📦</span>
+        <h3>Reduce Return Rate</h3>
+        <p>Review your product descriptions and images to ensure they accurately represent your items. Accurate listings reduce return rates significantly.</p>
+      </div>
+      }
+      @if (perf()!.cancellationRate > 2) {
+      <div class="perf-tip">
+        <span class="perf-tip__icon">📋</span>
+        <h3>Manage Stock Levels</h3>
+        <p>Set low-stock alerts in your inventory to avoid accepting orders for items you cannot fulfil. Cancellations hurt your score.</p>
+      </div>
+      }
+      @if (perf()!.averageRating < 4) {
+      <div class="perf-tip">
+        <span class="perf-tip__icon">⭐</span>
+        <h3>Improve Customer Satisfaction</h3>
+        <p>Respond promptly to customer messages and return requests. Fast, friendly communication leads to higher review scores.</p>
+      </div>
+      }
+      @if (perf()!.overallScore >= 80) {
+      <div class="perf-tip perf-tip--good">
+        <span class="perf-tip__icon">🏆</span>
+        <h3>Great Performance!</h3>
+        <p>You're performing above the marketplace average. Keep it up to maintain your Top Seller badge and priority listing placement.</p>
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>

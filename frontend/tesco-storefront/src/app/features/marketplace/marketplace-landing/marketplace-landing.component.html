@@ -1,0 +1,85 @@
+<app-breadcrumb [items]="breadcrumbs" />
+
+<!-- Hero Banner -->
+<section class="mp-hero">
+  <div class="mp-hero__inner">
+    <div class="mp-hero__text">
+      <span class="mp-hero__eyebrow">Tesco Marketplace</span>
+      <h1 class="mp-hero__title">Millions of products.<br>One trusted place.</h1>
+      <p class="mp-hero__sub">Shop from hundreds of verified sellers — all backed by the Tesco guarantee.</p>
+      <a routerLink="/marketplace/shop" class="mp-hero__cta">Shop Marketplace</a>
+    </div>
+    <div class="mp-hero__badge">
+      <div class="clubcard-badge">
+        <span class="clubcard-badge__cc">Clubcard</span>
+        <span class="clubcard-badge__pts">Points</span>
+        <span class="clubcard-badge__sub">on every order</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust Badges -->
+<section class="mp-trust">
+  <div class="mp-trust__inner">
+    @for (badge of trustBadges; track badge.title) {
+    <div class="mp-trust__item">
+      <span class="mp-trust__icon">{{ badge.icon }}</span>
+      <div class="mp-trust__text">
+        <strong>{{ badge.title }}</strong>
+        <span>{{ badge.desc }}</span>
+      </div>
+    </div>
+    }
+  </div>
+</section>
+
+<!-- Top Categories -->
+<section class="mp-section">
+  <div class="mp-section__inner">
+    <h2 class="mp-section__title">Shop by category</h2>
+    <div class="mp-categories">
+      @for (cat of categories(); track cat.id) {
+      <a [routerLink]="['/marketplace/shop', cat.slug]" class="mp-category-card">
+        @if (cat.imageUrl) {
+        <img [src]="cat.imageUrl" [alt]="cat.name" class="mp-category-card__img" loading="lazy" />
+        } @else {
+        <div class="mp-category-card__img-placeholder"></div>
+        }
+        <span class="mp-category-card__name">{{ cat.name }}</span>
+      </a>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Trending Products -->
+<section class="mp-section mp-section--grey">
+  <div class="mp-section__inner">
+    <div class="mp-section__header">
+      <h2 class="mp-section__title">Trending now</h2>
+      <a routerLink="/marketplace/shop" class="mp-section__link">See all</a>
+    </div>
+    @if (loading()) {
+    <app-spinner />
+    } @else {
+    <div class="mp-product-grid">
+      @for (product of trendingProducts(); track product.id) {
+      <app-product-card [product]="product" />
+      }
+    </div>
+    }
+  </div>
+</section>
+
+<!-- Guarantee -->
+<section class="mp-guarantee">
+  <div class="mp-guarantee__inner">
+    <h2 class="mp-guarantee__title">The Tesco Marketplace Guarantee</h2>
+    <p class="mp-guarantee__text">
+      Every item sold on Tesco Marketplace is backed by our guarantee. If something goes wrong,
+      we'll make it right — no quibbles.
+    </p>
+    <a routerLink="/marketplace/guarantee" class="mp-guarantee__link">Learn more about our guarantee →</a>
+  </div>
+</section>

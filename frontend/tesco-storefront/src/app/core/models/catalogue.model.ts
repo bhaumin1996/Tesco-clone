@@ -43,6 +43,9 @@ export interface ProductSummary {
   averageRating: number;
   reviewCount: number;
   isInStock: boolean;
+  isMarketplace?: boolean;
+  sellerId?: number;
+  sellerName?: string;
 }
 
 export interface ProductDetail extends ProductSummary {

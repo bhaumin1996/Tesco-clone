@@ -17,4 +17,6 @@ public sealed record SearchProductsQuery(
     string? SortBy,
     string? SortDirection,
     int PageNumber = 1,
-    int PageSize = 20) : IRequest<PaginatedResult<ProductDto>>;
+    int PageSize = 20,
+    bool IncludeMarketplace = false,
+    int? SellerId = null) : IRequest<PaginatedResult<ProductDto>>;

@@ -1,0 +1,107 @@
+<div class="sl-page">
+
+  <!-- Left brand panel -->
+  <div class="sl-panel sl-panel--brand">
+    <div class="sl-brand">
+      <div class="sl-brand__logo">
+        <span class="sl-brand__mark">T</span>
+        <div>
+          <span class="sl-brand__name">Tesco</span>
+          <span class="sl-brand__tagline">Seller Portal</span>
+        </div>
+      </div>
+      <h2 class="sl-brand__headline">Grow your business<br>with Tesco Marketplace</h2>
+      <ul class="sl-perks">
+        <li class="sl-perks__item">
+          <span class="sl-perks__icon">🏪</span>
+          <span>Reach millions of Tesco shoppers every day</span>
+        </li>
+        <li class="sl-perks__item">
+          <span class="sl-perks__icon">📦</span>
+          <span>Manage orders and inventory in one place</span>
+        </li>
+        <li class="sl-perks__item">
+          <span class="sl-perks__icon">📊</span>
+          <span>Access powerful real-time sales analytics</span>
+        </li>
+        <li class="sl-perks__item">
+          <span class="sl-perks__icon">💰</span>
+          <span>Competitive commission with fast payouts</span>
+        </li>
+      </ul>
+      <div class="sl-brand__badge">
+        Trusted by <strong>10,000+</strong> sellers across the UK
+      </div>
+    </div>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="sl-panel sl-panel--form">
+    <div class="sl-form-wrap">
+
+      <div class="sl-form-header">
+        <div class="sl-form-header__logo">
+          <span class="sl-form-header__mark">T</span>
+        </div>
+        <h1 class="sl-form-header__title">Welcome back</h1>
+        <p class="sl-form-header__sub">Sign in to your seller account to continue</p>
+      </div>
+
+      @if (error()) {
+        <div class="sl-alert sl-alert--error">
+          <span class="sl-alert__icon">⚠</span>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <form class="sl-form" (submit)="submit(); $event.preventDefault()">
+
+        <div class="sl-field">
+          <label class="sl-field__label" for="sl-email">Email address</label>
+          <input class="sl-field__input" id="sl-email" type="email"
+            autocomplete="email" required
+            placeholder="jane@yourstore.com"
+            [value]="email()"
+            (input)="email.set($any($event.target).value)" />
+        </div>
+
+        <div class="sl-field">
+          <div class="sl-field__label-row">
+            <label class="sl-field__label" for="sl-password">Password</label>
+            <a class="sl-link" href="#">Forgot password?</a>
+          </div>
+          <input class="sl-field__input" id="sl-password" type="password"
+            autocomplete="current-password" required
+            placeholder="Enter your password"
+            [value]="password()"
+            (input)="password.set($any($event.target).value)" />
+        </div>
+
+        <button class="sl-btn sl-btn--primary" type="submit" [disabled]="loading()">
+          @if (loading()) {
+            <span class="sl-btn__spinner"></span>
+            <span>Signing in…</span>
+          } @else {
+            <span>Sign in</span>
+            <span class="sl-btn__arrow">→</span>
+          }
+        </button>
+
+      </form>
+
+      <div class="sl-divider"><span>New to Tesco Marketplace?</span></div>
+
+      <a routerLink="/auth/apply" class="sl-btn sl-btn--outline">
+        Apply to become a seller
+      </a>
+
+      <p class="sl-legal">
+        By signing in you agree to the
+        <a href="#" target="_blank">Seller Terms of Service</a>
+        and <a href="#" target="_blank">Privacy Policy</a>.
+      </p>
+
+    </div>
+  </div>
+
+</div>

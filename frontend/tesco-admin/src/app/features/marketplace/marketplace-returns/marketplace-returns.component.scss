@@ -1,0 +1,363 @@
+@use '../../../../styles/tokens' as *;
+
+.mr-page {}
+
+.mr-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: $color-ink;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  &__sub { font-size: $font-size-sm; color: $color-text-secondary; margin: 0; }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+}
+
+.mr-sla-alert {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: $color-error-light;
+  color: $color-error;
+  border-radius: $radius-sm;
+  padding: 0.4375rem 0.875rem;
+  font-size: $font-size-sm;
+  font-weight: 700;
+}
+
+.mr-msg {
+  font-size: $font-size-sm;
+  font-weight: 500;
+  padding: 0.4375rem 0.875rem;
+  border-radius: $radius-sm;
+  &--success { background: $color-success-light; color: $color-success; }
+  &--error   { background: $color-error-light; color: $color-error; }
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+.mr-tabs {
+  display: flex;
+  border-bottom: 2px solid $color-border;
+  margin-bottom: 1rem;
+}
+
+.mr-tab {
+  border: none;
+  background: none;
+  padding: 0.5625rem 1rem;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  color: $color-text-secondary;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: $font-family-base;
+
+  &--active {
+    color: $color-tesco-blue;
+    border-bottom-color: $color-tesco-blue;
+    font-weight: 600;
+  }
+
+  &:hover:not(&--active) { color: $color-ink; }
+}
+
+.mr-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 4rem;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+
+  &__spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid $color-border;
+    border-top-color: $color-tesco-blue;
+    border-radius: 50%;
+    animation: mr-spin 0.65s linear infinite;
+  }
+}
+
+@keyframes mr-spin { to { transform: rotate(360deg); } }
+
+.mr-card {
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.mr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: $font-size-sm;
+
+  th {
+    text-align: left;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: $color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: $color-surface-alt;
+    border-bottom: 1px solid $color-border;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid $color-border;
+    color: $color-ink;
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background 0.1s;
+    &:last-child td { border-bottom: none; }
+    &:hover td { background: $color-surface-alt; }
+  }
+}
+
+.mr-row--breach td { background: rgba($color-error, 0.04); }
+
+.mr-ref {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+  background: $color-surface-alt;
+  border: 1px solid $color-border;
+  border-radius: 3px;
+  padding: 0.0625rem 0.375rem;
+  color: $color-text-secondary;
+}
+
+.mr-reason {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: $color-text-secondary;
+}
+
+.mr-badge {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  text-transform: capitalize;
+
+  &--pending   { background: $color-warning-light; color: $color-warning; }
+  &--disputed  { background: $color-error-light; color: $color-error; }
+  &--accepted  { background: $color-info-light; color: $color-info; }
+  &--resolved, &--refunded { background: $color-success-light; color: $color-success; }
+}
+
+.mr-sla {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1875rem;
+  font-size: 0.8125rem;
+  color: $color-text-secondary;
+  white-space: nowrap;
+
+  &--breach { color: $color-error; font-weight: 600; }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    background: $color-error;
+    color: #fff;
+    font-size: 0.625rem;
+    font-weight: 700;
+    padding: 0.0625rem 0.375rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    width: fit-content;
+  }
+}
+
+.mr-empty {
+  text-align: center;
+  padding: 3.5rem;
+  color: $color-muted;
+  font-size: $font-size-sm;
+
+  i { display: block; font-size: 1.75rem; margin-bottom: 0.5rem; opacity: 0.5; }
+}
+
+// ── Overlay + Panel ──────────────────────────────────────────────────────────
+.mr-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 300;
+  backdrop-filter: blur(2px);
+}
+
+.mr-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 440px;
+  max-width: 95vw;
+  background: $color-surface;
+  z-index: 301;
+  box-shadow: -6px 0 32px rgba(15, 23, 42, 0.15);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid $color-border;
+    gap: 1rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $color-ink;
+    margin: 0 0 0.25rem;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $color-muted;
+    font-size: 1rem;
+    padding: 0.25rem;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+    &:hover { color: $color-ink; background: $color-surface-alt; }
+  }
+
+  &__body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__section {}
+
+  &__label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $color-ink;
+    margin-bottom: 0.4375rem;
+  }
+
+  &__required { color: $color-error; }
+
+  &__textarea {
+    width: 100%;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    padding: 0.5rem 0.75rem;
+    font-size: $font-size-sm;
+    font-family: $font-family-base;
+    color: $color-ink;
+    resize: vertical;
+    box-sizing: border-box;
+    transition: border-color 0.15s, box-shadow 0.15s;
+
+    &:focus {
+      outline: none;
+      border-color: $color-tesco-blue;
+      box-shadow: 0 0 0 3px rgba($color-tesco-blue, 0.1);
+    }
+
+    &::placeholder { color: $color-muted; }
+  }
+
+  &__actions { display: flex; gap: 0.75rem; }
+}
+
+.mr-dl {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  font-size: $font-size-sm;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0.5rem;
+    padding: 0.5625rem 0.875rem;
+    border-bottom: 1px solid $color-border;
+
+    &:last-child { border-bottom: none; }
+
+    dt { font-weight: 600; color: $color-text-secondary; }
+    dd { color: $color-ink; margin: 0; word-break: break-word; }
+  }
+
+  &__breach { color: $color-error; font-weight: 600; }
+}
+
+.mr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  font-family: $font-family-base;
+  transition: background 0.15s;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &--sm { font-size: 0.8125rem; padding: 0.3125rem 0.6875rem; }
+
+  &--primary { background: $color-tesco-blue; color: #fff;
+    &:hover:not(:disabled) { background: $color-tesco-blue-dark; } }
+  &--ghost   { background: transparent; color: $color-tesco-blue; border: 1.5px solid $color-tesco-blue;
+    &:hover:not(:disabled) { background: $color-tesco-blue-light; } }
+
+  &__spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: mr-spin 0.65s linear infinite;
+  }
+}
